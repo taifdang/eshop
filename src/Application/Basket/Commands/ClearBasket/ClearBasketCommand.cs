@@ -15,17 +15,11 @@ public class ClearCartCommandHandler : IRequestHandler<ClearBasketCommand, Unit>
     }
     public async Task<Unit> Handle(ClearBasketCommand request, CancellationToken cancellationToken)
     {
-
-        //var basket = await _unitOfWork.BasketRepository.FirstOrDefault(filter: x => x.CustomerId == request.CustomerId);
         var basket = await _basketRepository.FirstOrDefaultAsync(new BasketCustomerWithItemSpec(request.customerId));
-
         if (basket != null)
-        {
-            // _unitOfWork.BasketItemRepository.DeleteRange(basket.Items);
-            //await _unitOfWork.SaveChangesAsync(cancellationToken);
+        {          
             await _basketRepository.DeleteRangeAsync((IEnumerable<Domain.Entities.Basket>)basket.Items, cancellationToken);
         }
-
         return Unit.Value;
     }
 }

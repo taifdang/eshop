@@ -15,7 +15,6 @@ public record CreateOptionCommand : IRequest<Unit>
 
 public class CreateOptionCommandHandler : IRequestHandler<CreateOptionCommand, Unit>
 {
-    //private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<ProductOption> _productOptionRepository;
     private readonly IMapper _mapper;
     public CreateOptionCommandHandler(IRepository<ProductOption> productOptionrepository, IMapper mapper)
@@ -25,9 +24,6 @@ public class CreateOptionCommandHandler : IRequestHandler<CreateOptionCommand, U
     }
     public async Task<Unit> Handle(CreateOptionCommand request, CancellationToken cancellationToken)
     {
-        //var existing = await _unitOfWork.ProductOptionRepository.AnyAsync(x =>
-        //    x.ProductId == request.ProductId && 
-        //    x.AllowImage);
         var existing = await _productOptionRepository.AnyAsync(new OptionImageFilterSpec(request.ProductId));
 
         if (existing && request.AllowImage)
@@ -38,8 +34,6 @@ public class CreateOptionCommandHandler : IRequestHandler<CreateOptionCommand, U
         var productOption = _mapper.Map<ProductOption>(request);
 
         await _productOptionRepository.AddAsync(productOption, cancellationToken);
-        //await _unitOfWork.ExecuteTransactionAsync(() =>_unitOfWork.ProductOptionRepository.AddAsync(productOption), cancellationToken);
-
         return Unit.Value;
     }
 }

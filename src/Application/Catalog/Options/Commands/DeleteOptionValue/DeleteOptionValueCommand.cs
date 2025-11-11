@@ -14,7 +14,6 @@ public record DeleteOptionValueCommand : IRequest<Unit>
 
 public class DeleteOptionValueCommandHandler : IRequestHandler<DeleteOptionValueCommand, Unit>
 {
-    //private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<OptionValue> _optionValueRepository;
     public DeleteOptionValueCommandHandler(IRepository<OptionValue> optionValueRepository)
     {
@@ -22,16 +21,10 @@ public class DeleteOptionValueCommandHandler : IRequestHandler<DeleteOptionValue
     }
     public async Task<Unit> Handle(DeleteOptionValueCommand request, CancellationToken cancellationToken)
     {
-        //var optionValue = await _unitOfWork.OptionValueRepository.FirstOrDefault(x => 
-        //        x.Id == request.Id && 
-        //        x.ProductOptionId == request.OptionId)
         var optionValue = await _optionValueRepository.FirstOrDefaultAsync(new OptionValueFilterSpec(request.Id, request.OptionId))
             ?? throw new EntityNotFoundException(nameof(OptionValue), request.Id);
 
-        //_unitOfWork.OptionValueRepository.Delete(optionValue);
-        //await _unitOfWork.SaveChangesAsync(cancellationToken);
         await _optionValueRepository.DeleteAsync(optionValue, cancellationToken);
-
         return Unit.Value;
     }
 }

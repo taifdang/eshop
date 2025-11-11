@@ -1,6 +1,7 @@
 ﻿using Application.Catalog.Variants.Queries.GetVariantById;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Specifications;
 using Application.Customer.Queries.GetCustomerByUserId;
 using Domain.Entities;
 using MediatR;
@@ -43,26 +44,11 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, int>
                 ?? throw new EntityNotFoundException("Customer not found");
 
         // Validate ProductVariant exists
-        #region
-        //var productVariant = await _unitOfWork.ProductVariantRepository.GetAsync(
-        //        filter: x => x.Id == request.Id,
-        //        cancellationToken: cancellationToken)
-        //    ?? throw new EntityNotFoundException("Product variant not found");
-        #endregion
-
         var variant = await _mediator.Send(new GetVariantByIdQuery { Id =  request.Id })
                 ?? throw new EntityNotFoundException("Product variant not found");
 
         // Get or create basket
-        //var specification = new BasketCustomerWithItemSpec(customer.Id);
-        var basket = await _basketRepository.GetByIdAsync(customer.Id);
-        #region
-        //var basket = await _unitOfWork.BasketRepository.GetAsync(
-        //   filter: x => x.CustomerId == customerId,
-        //   include: y => y.Include(x => x.Items),
-        //   cancellationToken);    
-        #endregion
-
+        var basket = await _basketRepository.FirstOrDefaultAsync(new BasketCustomerWithItemSpec(customer.Id));
         if (basket == null)
         {
             basket = new Domain.Entities.Basket()
@@ -70,7 +56,7 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, int>
                 CustomerId = customer.Id,
                 Items = new List<BasketItem>()
             };
-            //await _unitOfWork.BasketRepository.AddAsync(basket);
+            //await _basketRepository.AddAsync(basket);
 
         }
         // Update basket items
@@ -102,7 +88,6 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, int>
 
         basket.LastModified = DateTime.UtcNow;
 
-        //await _unitOfWork.SaveChangesAsync(cancellationToken);
         await _basketRepository.SaveChangesAsync(cancellationToken);
 
         return basket.Id;

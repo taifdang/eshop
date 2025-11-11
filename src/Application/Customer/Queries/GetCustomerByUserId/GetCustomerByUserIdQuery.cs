@@ -23,12 +23,6 @@ public class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByUserIdQu
     public async Task<CustomerDto> Handle(GetCustomerByUserIdQuery request, CancellationToken cancellationToken)
     {
         var customer = await _customerRepository.FirstOrDefaultAsync(new CustomerUserSpec(request.UserId), cancellationToken);
-        #region
-        //var customer = await _customerRepository.GetBySpecAsync(
-        //    filter: x => x.UserId == request.UserId,
-        //    selector: x => x.Id);
-        #endregion
-        //_mapper.Map<CustomerDto>(customer)
         return customer;
     }
 }

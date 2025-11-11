@@ -19,7 +19,6 @@ public record UploadFileCommand : IRequest<Unit>
 
 public class CreateImageCommandHandler : IRequestHandler<UploadFileCommand, Unit>
 {
-    //private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<ProductImage> _productImageRepository;
     private readonly IRepository<OptionValue> _optionValueRepository;
     private readonly IFileService _storageService;
@@ -39,17 +38,8 @@ public class CreateImageCommandHandler : IRequestHandler<UploadFileCommand, Unit
         //    throw new ArgumentException("Media file cannot be null.", nameof(request.MediaFile));
 
         if (request.OptionValueId.HasValue)
-        {
-            // Check option value exists and allow image
-            //if (!await _unitOfWork.OptionValueRepository.AnyAsync(x => 
-            //        x.Id == request.OptionValueId &&
-            //        x.ProductOption.ProductId == request.ProductId &&
-            //        x.ProductOption.AllowImage))
-            //{
-            //    throw new EntityNotFoundException(nameof(OptionValue), "This OptionValue not support add image");
-            //}           
-            var specification = new OptionValueWithImageSpec(request.OptionValueId.Value, request.ProductId);
-            if(!await _optionValueRepository.AnyAsync(specification))
+        {       
+            if(!await _optionValueRepository.AnyAsync(new OptionValueWithImageSpec(request.OptionValueId.Value, request.ProductId)))
             {
                 throw new EntityNotFoundException(nameof(OptionValue), "This OptionValue not support add image");
             }
@@ -65,10 +55,8 @@ public class CreateImageCommandHandler : IRequestHandler<UploadFileCommand, Unit
                 ImageUrl = pathMedia.Path,
                 IsMain = request.OptionValueId.HasValue ? true : request.IsMain
             };
-            //await _unitOfWork.ExecuteTransactionAsync(async () => await _unitOfWork.ProductImageRepository.AddAsync(productImage), cancellationToken);
             await _productImageRepository.AddAsync(productImage, cancellationToken);
         }
-
         return Unit.Value;
     }
 }

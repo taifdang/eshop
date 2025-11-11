@@ -16,7 +16,6 @@ public record CreateProductCommand : IRequest<int>
 
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, int>
 {
-    //private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<Domain.Entities.Product> _productRepository;
     private readonly IMapper _mapper;
 
@@ -29,11 +28,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, int>
     public async Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         var product = _mapper.Map<Domain.Entities.Product>(request);
-
-        //await _unitOfWork.ExecuteTransactionAsync(async () => 
-        //    await _unitOfWork.ProductRepository.AddAsync(product), cancellationToken);
         await _productRepository.AddAsync(product, cancellationToken);
-
         return product.Id;
     }
 }

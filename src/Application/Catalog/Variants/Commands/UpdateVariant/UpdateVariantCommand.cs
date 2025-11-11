@@ -10,7 +10,6 @@ public record UpdateVariantCommand : IRequest<Unit>
 {
     public int Id { get; init; } // variant id
     public decimal RegularPrice { get; init; }
-    //public decimal MaxPrice { get; init; }
     public int Quantity { get; init; }
     public decimal? Percent { get; init; }
     public string? Sku { get; init; }
@@ -18,7 +17,6 @@ public record UpdateVariantCommand : IRequest<Unit>
 
 public class UpdateVariantCommandHandler : IRequestHandler<UpdateVariantCommand, Unit>
 {
-    //private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<ProductVariant> _productVariantRepository;
 
     public UpdateVariantCommandHandler(IRepository<ProductVariant> productVariantRepository)
@@ -31,12 +29,9 @@ public class UpdateVariantCommandHandler : IRequestHandler<UpdateVariantCommand,
         var specification = new VariantFilterSpec(null, request.Id);
         var variant = await _productVariantRepository.FirstOrDefaultAsync(specification)
             ?? throw new EntityNotFoundException(nameof(ProductVariant), request.Id);
-        //var variant = 
-        //    await _unitOfWork.ProductVariantRepository.FirstOrDefault(x => x.Id == request.Id)
 
         variant.Sku = variant.Sku;
         variant.RegularPrice = request.RegularPrice;
-        //variant.MaxPrice = request.MaxPrice;
         variant.Quantity = request.Quantity;
         //no update variant option value, percent
 

@@ -22,11 +22,6 @@ public class GetBasketByCustomerIdQueryHandler : IRequestHandler<GetBasketByCust
         // Get basket
         var specification = new BasketCustomerWithItemSpec(request.CustomerId);
         var basket = await _basketRepository.FirstOrDefaultAsync(specification);
-        //var basket = await _unitOfWork.BasketRepository.GetAsync(
-        //    filter: x => x.CustomerId == request.CustomerId,
-        //    include: y => y.Include(x => x.Items),
-        //    cancellationToken);
-
 
         // If basket doesn't exist, return an empty basket
         if (basket == null)

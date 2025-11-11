@@ -15,7 +15,6 @@ public record GenerateVariantCommand : IRequest<Unit>
 
 public class GenerateVariantCommandHandler : IRequestHandler<GenerateVariantCommand, Unit>
 {
-    //private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<ProductVariant> _productVariantRepository;
     private readonly IRepository<Domain.Entities.Product> _productRepository;
     private readonly IRepository<OptionValue> _optionValueRepository;
@@ -35,17 +34,11 @@ public class GenerateVariantCommandHandler : IRequestHandler<GenerateVariantComm
         if (request.OptionValueMap == null || request.OptionValueMap.Count == 0)
             throw new ArgumentException("No option values provided.");
 
-        //var product = await _unitOfWork.ProductRepository.FirstOrDefault(x => x.Id == request.ProductId)
         var product = await _productRepository.FirstOrDefaultAsync(new ProductFilterSpec(request.ProductId), cancellationToken)
             ?? throw new EntityNotFoundException(nameof(Product), request.ProductId);
 
         // Implementation for generating variants would go here
         var optionValues = request.OptionValueMap.SelectMany(x => x.Value).ToList();
-
-        //var optionValueEntities = 
-        //    await _unitOfWork.OptionValueRepository.GetListAsync(
-        //        filter: x => optionValues.Contains(x.Id),
-        //        selector: x => new { x.Id, x.Label, x.Value });
 
         var optionValueEntities = await _optionValueRepository.ListAsync(new OptionValueExistSpec(optionValues), cancellationToken);
 
@@ -87,42 +80,4 @@ public class GenerateVariantCommandHandler : IRequestHandler<GenerateVariantComm
         return Unit.Value;
     }
 }
-
-//foreach (var combination in CombinationHelper.CartesianProduct(combinations))
-//{
-//    var optionValueIds = combination.ToList();
-
-//    var title = string.Join(" - ", optionValueIds.Select(id => optionValueDict[id]));
-
-//    var variant = new ProductVariant
-//    {
-//        ProductId = product.Id,
-//        Title = title,
-//        //MinPrice = product.MinPrice,
-//        //MaxPrice = product.MaxPrice,
-//        //no map sku, quantity, percent 
-//        VariantOptionValues = optionValueIds.Select(x => new VariantOptionValue
-//        {
-//            OptionValueId = x
-//        }).ToList()
-//    };
-
-//    batch.Add(variant);
-
-//    if (batch.Count >= batchSize)
-//    {
-//        //await _unitOfWork.ProductVariantRepository.AddRangeAsync(batch);
-//        //await _unitOfWork.SaveChangesAsync(cancellationToken);
-//        await _productVariantRepository.AddRangeAsync(batch, cancellationToken);
-//        batch.Clear();
-//    }
-//}
-
-//if (batch.Count > 0)
-//{
-//    //await _unitOfWork.ProductVariantRepository.AddRangeAsync(batch);
-//    //await _unitOfWork.SaveChangesAsync(cancellationToken);
-//    await _productVariantRepository.AddRangeAsync(batch, cancellationToken);
-//    batch.Clear();
-//}
 

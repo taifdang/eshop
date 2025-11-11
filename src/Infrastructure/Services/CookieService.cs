@@ -28,27 +28,4 @@ public class CookieService(IHttpContextAccessor httpContextAccessor) : ICookieSe
             });
 
     public void Delete() => _httpContextAccessor.HttpContext?.Response.Cookies.Delete("token_key");
-
-    #region Guest_SessionId
-    public string GetGuestId()
-    {
-        var sessionId = _httpContextAccessor.HttpContext?.Request.Cookies["guest_id"];
-        return string.IsNullOrEmpty(sessionId)
-            ? throw new Exception("not exist guest session id")
-            : sessionId;
-    }
-
-    public void SetGuestId()
-        => _httpContextAccessor.HttpContext?.Response.Cookies.Append(
-            "guest_id",
-            Guid.NewGuid().ToString("N"),
-            new CookieOptions
-            {
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                HttpOnly = true,
-                MaxAge = TimeSpan.FromMinutes(30)
-            });
-
-    #endregion
 }

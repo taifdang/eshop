@@ -26,14 +26,7 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
                 ?? throw new EntityNotFoundException("Customer not found");
 
         // Get basket
-        var specification = new BasketCustomerWithItemSpec(customer.Id);
-        var basket = await _basketRepository.FirstOrDefaultAsync(specification);
-        #region
-        //var basket = await _unitOfWork.BasketRepository.GetAsync(
-        //    filter: x => x.CustomerId == customerId,
-        //    include: y => y.Include(x => x.Items),
-        //    cancellationToken);
-        #endregion
+        var basket = await _basketRepository.FirstOrDefaultAsync(new BasketCustomerWithItemSpec(customer.Id));
 
         // If basket doesn't exist, return an empty basket
         if (basket == null)

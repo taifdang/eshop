@@ -150,8 +150,6 @@ public class IdentityService(
         var user = await _userManager.FindByEmailAsync(request.Email)
             ?? throw new Exception("email not exist");
 
-        //var forgotPassword = await _unitOfWork.ForgotPasswordRepository
-        //        .FirstOrDefault(x => x.UserId == user.Id && x.OTP == request.OTP);
         var forgotPassword = await _appIdentityDbContext.ForgetPassword.FirstOrDefaultAsync(x => x.UserId == user.Id && x.OTP == request.OTP);
 
         var expireTime = forgotPassword.DateTime.AddMinutes(3);
@@ -186,11 +184,10 @@ public class IdentityService(
             DateTime = DateTime.Now
         };
 
-        //await _unitOfWork.ExecuteTransactionAsync(async () =>
-        //     await _unitOfWork.ForgotPasswordRepository.AddAsync(forgotPassword), cancellationToken);
         await _appIdentityDbContext.AddAsync(forgotPassword, cancellationToken);
-
         // send email => hangfire
+        //
+        //
     }
 
 }

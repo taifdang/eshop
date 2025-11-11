@@ -73,12 +73,10 @@ public class TokenService(
             Created = DateTime.UtcNow
         };
 
-        //var existToken = await _unitOfWork.RefreshTokenRepository.FirstOrDefault(x => x.UserId == user.Id);
         var existToken = await _appIdentityDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.Id);
 
         if (existToken == null)
         {
-            //await _unitOfWork.ExecuteTransactionAsync(async () => await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken), cancellationToken);
             await _appIdentityDbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
         }
 
@@ -93,12 +91,6 @@ public class TokenService(
         }
         else
         {
-            //await _unitOfWork.ExecuteTransactionAsync(
-            //   async () =>
-            //   {
-            //       _unitOfWork.RefreshTokenRepository.Delete(refreshToken);
-            //       await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
-            //   }, cancellationToken);
             await _unitOfWork.ExecuteTransactionAsync(
                async () =>
                {
