@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using AutoMapper;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.Catalog.Products.Commands.CreateProduct;
@@ -16,10 +17,10 @@ public record CreateProductCommand : IRequest<int>
 
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, int>
 {
-    private readonly IRepository<Domain.Entities.Product> _productRepository;
+    private readonly IRepository<Product> _productRepository;
     private readonly IMapper _mapper;
 
-    public CreateProductHandler(IRepository<Domain.Entities.Product> productRepository, IMapper mapper)
+    public CreateProductHandler(IRepository<Product> productRepository, IMapper mapper)
     {
         _productRepository = productRepository;
         _mapper = mapper;
@@ -27,7 +28,15 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, int>
 
     public async Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var product = _mapper.Map<Domain.Entities.Product>(request);
+        //var product = _mapper.Map<Domain.Entities.Product>(request);
+        var product = new Product
+        {
+            CategoryId = request.CategoryId,
+            Title = request.Title,
+            Description = request.Description,
+            IsPublished = false
+
+        };
         await _productRepository.AddAsync(product, cancellationToken);
         return product.Id;
     }

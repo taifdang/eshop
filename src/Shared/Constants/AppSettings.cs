@@ -7,7 +7,7 @@ public class AppSettings
     public Identity Identity { get; set; }
     public FileStorageSettings FileStorageSettings { get; set; }
     public ConnectionStrings ConnectionStrings { get; set; }
-    public string BaseUrl { get; set; } = "";
+    public string BaseUrl { get; set; } = "https://localhost:7129/";
 }
 public class ConnectionStrings
 {

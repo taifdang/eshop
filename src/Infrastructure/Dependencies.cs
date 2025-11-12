@@ -16,7 +16,7 @@ public static class Dependencies
 {
     public static IServiceCollection AddInfrastructureService(this IServiceCollection services, AppSettings appSettings)
     {
-        services.AddDbContext<ApplicationDbContext>();
+        services.AddDbContext<ApplicationDbContext>(p => p.UseSqlServer(appSettings.ConnectionStrings.DefaultConnection));
 
         services.AddDbContext<AppIdentityDbContext>(p => p.UseSqlServer(appSettings.ConnectionStrings.DefaultConnection));
         services.AddIdentity<ApplicationUser, ApplicationRole>()

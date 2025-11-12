@@ -11,6 +11,9 @@ public static class HostingExtensions
         //builder.Services.AddApplicationService(appsettings);
         builder.Services.AddWebAPIService(appsettings);
 
+        //builder.Services.AddMediatR(cfg =>cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies())); 
+
         return builder;
     }
     public static WebApplication ConfigurePipelineAsync(this WebApplication app, AppSettings appsettings)

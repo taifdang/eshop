@@ -13,7 +13,7 @@ public class ProductsController : BaseController
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetList(GetListProductQuery query)
+    public async Task<IActionResult> GetList([FromQuery] GetListProductQuery query, CancellationToken cancellationToken)
     {
         return Ok(await Mediator.Send(query));
     }
@@ -29,9 +29,10 @@ public class ProductsController : BaseController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Add(CreateProductCommand command)
+    public async Task<IActionResult> Add(CreateProductCommand command, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(command));
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
     }
 
     [HttpPut]

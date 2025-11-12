@@ -24,7 +24,8 @@ public class LocalStorageService : IFileService
         _webHostEnvironment = webHostEnvironment;
         _logger = logger;
         _fileStorage = appSettings.FileStorageSettings;
-        _userContentFolder = Path.Combine(_webHostEnvironment.ContentRootPath, _fileStorage.Path);
+        //_userContentFolder = Path.Combine(_webHostEnvironment.ContentRootPath, _fileStorage.Path);
+        _userContentFolder = Path.Combine(_webHostEnvironment.WebRootPath, _fileStorage.Path); // wwwroot
         _baseUrl = appSettings.BaseUrl;
 
     }
@@ -58,16 +59,22 @@ public class LocalStorageService : IFileService
             _logger.LogError(ex, $"Error saving file {fileName}");
             throw new IOException($"An error occurred while saving the file {fileName}.", ex);
         }
+
+        //var publicUrl = $"{_baseUrl.TrimEnd('/')}/{_fileStorage.Path}/{fileName}";
+
         return new FileUploadResult
         {
             Name = fileName,
-            Path = filePath
+            Path = GetPublicUrl(fileName)
+            //filePath
         };
     }
 
     public Task DeleteFileAsync(DeleteFileRequest request)
     {
-        var filePath = Path.Combine(_userContentFolder, request.FileName);
+        var relativePath = request.FileName.Replace(_baseUrl, "").TrimStart('/');
+        var filePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+        //var filePath = Path.Combine(_userContentFolder, request.FileName);
         if (File.Exists(filePath))
         {
             try
@@ -87,6 +94,9 @@ public class LocalStorageService : IFileService
         }
         return Task.CompletedTask;
     }
+
+    // Convert physical url to public url
+    private string GetPublicUrl(string fileName) => $"{_baseUrl.TrimEnd('/')}/{_fileStorage.Path}/{fileName}";
 
     public string GetFileUrl(string fileName)
     {
