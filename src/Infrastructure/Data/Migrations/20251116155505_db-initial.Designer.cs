@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251111153620_db-initial")]
+    [Migration("20251116155505_db-initial")]
     partial class dbinitial
     {
         /// <inheritdoc />
@@ -97,17 +97,12 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("ProductTypeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductTypeId");
 
                     b.ToTable("Category", (string)null);
                 });
@@ -395,28 +390,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ProductOption", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProductType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Label")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProductType", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.ProductVariant", b =>
                 {
                     b.Property<int>("Id")
@@ -480,17 +453,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("BasketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.Category", b =>
-                {
-                    b.HasOne("Domain.Entities.ProductType", "ProductType")
-                        .WithMany("Categories")
-                        .HasForeignKey("ProductTypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("ProductType");
                 });
 
             modelBuilder.Entity("Domain.Entities.OptionValue", b =>
@@ -617,11 +579,6 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.ProductOption", b =>
                 {
                     b.Navigation("OptionValues");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProductType", b =>
-                {
-                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Domain.Entities.ProductVariant", b =>

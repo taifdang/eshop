@@ -9,7 +9,6 @@ public class ApplicationDbContext : DbContext
     {
     }
     public DbSet<Product> Products { get; set; } = default!;
-    public DbSet<ProductType> ProductTypes { get; set; } = default!;
     public DbSet<Category> Categories { get; set; }
     public DbSet<VariantOptionValue> Variants { get; set; }
     public DbSet<ProductVariant> ProductVariants { get; set; } = default!;

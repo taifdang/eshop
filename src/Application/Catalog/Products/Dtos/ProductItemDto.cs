@@ -10,7 +10,6 @@ public class ProductItemDto
     public decimal MaxPrice { get; set; }
     public string Description { get; set; }
     public string Category { get; set; }
-    public string ProductType { get; set; }
     public List<ProductImageDto> Images { get; set; } = new();
     public List<ProductOptionValueDto> OptionValues { get; set; } = new();
     public List<ProductOptionDto> Options { get; set; } = new();

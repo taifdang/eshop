@@ -7,6 +7,5 @@ public class ProductListDto
     public decimal Price { get; set; } // Min Price of all variants
     public string Description { get; set; }
     public string Category { get; set; }
-    public string ProductType { get; set; }
     public ProductImageDto Image { get; set; } // Main image URL
 }

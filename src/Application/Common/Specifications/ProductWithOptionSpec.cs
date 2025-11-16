@@ -23,7 +23,6 @@ public class ProductWithOptionSpec : Specification<Product, ProductItemDto>
                 MaxPrice = x.ProductVariants.Max(x => x.RegularPrice),
                 Description = x.Description ?? string.Empty,
                 Category = x.Category.Title,
-                ProductType = x.Category.ProductType.Title,
                 Images = x.ProductImages.Select(img => new ProductImageDto
                 {
                     Id = img.Id,

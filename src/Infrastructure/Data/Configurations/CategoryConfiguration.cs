@@ -14,9 +14,6 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
 
-        builder.Property(x => x.ProductTypeId)
-            .IsRequired();
-
         builder.Property(x => x.Title)
             .IsRequired()
             .HasMaxLength(255);
@@ -25,11 +22,6 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .HasMaxLength(100);
 
         // Relationships
-        builder.HasOne(x => x.ProductType)
-            .WithMany(y => y.Categories)
-            .HasForeignKey(x => x.ProductTypeId)
-            .OnDelete(DeleteBehavior.NoAction);
-
         builder.HasMany(x => x.Products)
             .WithOne(y => y.Category)
             .HasForeignKey(p => p.CategoryId)

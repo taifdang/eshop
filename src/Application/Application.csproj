@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Catalog\Categories\Commands\" />
-    <Folder Include="Catalog\Categories\Queries\" />
-    <Folder Include="Catalog\ProductTypes\Commands\" />
-    <Folder Include="Catalog\ProductTypes\Queries\" />
     <Folder Include="Common\Behaviors\" />
     <Folder Include="Customer\Commands\" />
     <Folder Include="Order\Dtos\" />

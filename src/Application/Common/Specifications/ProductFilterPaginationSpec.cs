@@ -22,7 +22,6 @@ public class ProductFilterPaginationSpec : Specification<Product, ProductListDto
             Price = x.ProductVariants.Min(pv => pv.RegularPrice), // Min Price of all variants
             Description = x.Description ?? string.Empty,
             Category = x.Category.Title,
-            ProductType = x.Category.ProductType.Title,
             Image = x.ProductImages
                     .Where(c => c.IsMain && c.OptionValueId == null) // Main image not linked to option value
                     .Select(pi => new ProductImageDto
