@@ -11,8 +11,8 @@ builder.AddPresentation();
 var app = builder.Build();
 
 app.UsePresentation();  
+app.UseInfrastructure();
 
 app.Run();
 
-// test
 public partial class Program { }

@@ -2,14 +2,14 @@
 using Infrastructure.Data;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Identity.Data;
-using Infrastructure.Identity.Models;
+using Infrastructure.Identity.Data.Seed;
+using Infrastructure.Identity.Extensions;
 using Infrastructure.Identity.Services;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Constants;
+using Shared.EFCore;
 using Shared.Web;
 
 namespace Infrastructure;
@@ -23,19 +23,11 @@ public static class DependencyInjection
         builder.Services.AddSingleton(appSettings);
 
         // DbContext
-        builder.Services.AddDbContext<ApplicationDbContext>(p => p.UseSqlServer(appSettings.ConnectionStrings.DefaultConnection));
+        builder.AddCustomDbContext<ApplicationDbContext>();
 
         // Identity
-        builder.Services.AddDbContext<AppIdentityDbContext>(p => p.UseSqlServer(appSettings.ConnectionStrings.DefaultConnection));
-        builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
-        {
-            config.Password.RequiredLength = 6;
-            config.Password.RequireDigit = false;
-            config.Password.RequireNonAlphanumeric = false;
-            config.Password.RequireUppercase = false;
-        })
-        .AddEntityFrameworkStores<AppIdentityDbContext>()
-        .AddDefaultTokenProviders();
+        builder.AddCustomDbContext<AppIdentityDbContext>();
+        builder.AddCustomIdentity();
 
         // Jwt
         builder.Services.AddScoped<ITokenService, TokenService>();
@@ -55,6 +47,16 @@ public static class DependencyInjection
         builder.Services.AddScoped<IIdentityService, IdentityService>();
         builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 
+        // Seeders
+        builder.Services.AddScoped<IDataSeeder, IdentityDataSeeder>();
+    
         return builder;
+    }
+
+    public static WebApplication UseInfrastructure(this WebApplication app)
+    {
+        app.UseMigration<AppIdentityDbContext>();
+
+        return app;
     }
 }

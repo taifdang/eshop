@@ -1,4 +1,5 @@
-﻿using Shared.Jwt;
+﻿using Shared.EFCore;
+using Shared.Jwt;
 using Shared.OpenApi;
 using Shared.Web;
 using System.Text.Json.Serialization;
@@ -34,7 +35,7 @@ public static class DependencyInjection
     }
 
     public static WebApplication UsePresentation(this WebApplication app)
-    {
+    {  
         app.UseHttpsRedirection();
 
         if (app.Environment.IsDevelopment())

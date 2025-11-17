@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Constants;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Constants;
 using Shared.Web;
+using System.Security.Claims;
 using System.Text;
 
 namespace Shared.Jwt;
@@ -33,10 +34,10 @@ public static class JwtExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
 
                 NameClaimType = "name", // map claim, User.Identity.Name = "name"
-                RoleClaimType = "role", // map claim, User.Identity.Role = "role"
+                RoleClaimType = ClaimTypes.Role, // map claim, User.Identity.Role = "role"
             };
 
-            options.MapInboundClaims = false;
+            options.MapInboundClaims = true;
         });
 
         services.AddAuthorization(

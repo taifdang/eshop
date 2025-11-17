@@ -1,5 +1,7 @@
 ﻿using Application.Common.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Constants;
 using Shared.Models.User;
 using Shared.Web;
 
