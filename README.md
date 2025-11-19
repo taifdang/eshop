@@ -1,7 +1,7 @@
 # About
 
-# N-Tier Architecture
-![image](https://github.com/user-attachments/assets/19671c9c-883b-4d48-bb75-18cbf61ccfe4)
+# Clean Architecture
+
 
 # ERD
 ![image](https://github.com/user-attachments/assets/dce1247a-7065-4599-b95e-a5891649f988)
