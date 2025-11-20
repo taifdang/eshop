@@ -8,7 +8,6 @@ public class ProductVariantOptionFilterSpec : Specification<ProductVariant>
 {
     public ProductVariantOptionFilterSpec(
         Guid productId, 
-        //Dictionary<int, int>? options,
         List<Guid> optionValues, 
         bool exact)
     {
@@ -25,12 +24,6 @@ public class ProductVariantOptionFilterSpec : Specification<ProductVariant>
         if (optionValues != null && optionValues.Count > 0)
         {
             // Not enough to option values, need to match all provided options
-            //Query.Where(x =>
-                //options.All(opt =>
-                //    x.VariantOptionValues.Any(v =>
-                //        v.OptionValue.ProductOptionId == opt.Key &&
-                //        v.OptionValue.ProductOptionId == opt.Value))
-                //);
                 Query
                     .Where(x =>
                         optionValues.All(opt =>
@@ -42,9 +35,6 @@ public class ProductVariantOptionFilterSpec : Specification<ProductVariant>
             {
                 // Corrected to ensure exact match of option values
                 // Ex: Color : Red, Size: M  should not match Color: Red, Size: M, Material: Cotton
-                //Query
-                //.Where(x => x.VariantOptionValues.Count == options.Count);
-
                 Query
                   .Where(x => x.VariantOptionValues.Count == optionValues.Count);
 

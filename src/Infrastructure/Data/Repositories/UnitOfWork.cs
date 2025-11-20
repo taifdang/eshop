@@ -1,59 +1,40 @@
 ﻿using Application.Common.Interfaces;
-using Infrastructure.Identity.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Infrastructure.Data.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly AppIdentityDbContext _context;
+    private readonly ApplicationDbContext _dbContext;
 
-    public UnitOfWork(AppIdentityDbContext context)
+    public UnitOfWork(ApplicationDbContext dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
-    public Task CommitTransactionAsync(CancellationToken cancellationToken = default)
+    // ref: https://learn.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency#execution-strategies-and-transactions
+    public async Task ExecuteTransactionalAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task ExecuteTransactionAsync(Action action, CancellationToken token)
-    {
-        using var transaction = await _context.Database.BeginTransactionAsync(token);
-        try
+        var stragegy = _dbContext.Database.CreateExecutionStrategy();
+        await stragegy.ExecuteAsync(async () =>
         {
-            action();
-            await _context.SaveChangesAsync(token);
-            await transaction.CommitAsync(token);
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync(token);
-        }
-    }
-
-    public async Task ExecuteTransactionAsync(Func<Task> action, CancellationToken token)
-    {
-        using var transaction = await _context.Database.BeginTransactionAsync(token);
-        try
-        {
-            await action();
-            await _context.SaveChangesAsync(token);
-            await transaction.CommitAsync(token);
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync(token);
-        }
-    }
-
-    public Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+            try
+            {
+                await SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        });
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.SaveChangesAsync(cancellationToken);
+        return await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

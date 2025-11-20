@@ -47,7 +47,7 @@ public class IdentityService(
         return user;
     }
 
-    public async Task<TokenResult> SignIn(SignInRequest request, CancellationToken cancellationToken)
+    public async Task<TokenResult> Authenticate(SignInRequest request, CancellationToken cancellationToken)
     {
         var user = await _userManager.Users
             .Include(u => u.UserRoles)
@@ -73,13 +73,13 @@ public class IdentityService(
         return token;
     }
 
-    public async Task SignOut()
+    public async Task Logout()
     {
         _cookieService.Delete();
         await _signInManager.SignOutAsync();
     }
 
-    public async Task<Guid> SignUp(SignUpRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Register(SignUpRequest request, CancellationToken cancellationToken)
     {
         if(await _userManager.FindByNameAsync(request.UserName) != null)
         {
@@ -187,7 +187,20 @@ public class IdentityService(
 
         await _appIdentityDbContext.AddAsync(forgotPassword, cancellationToken);
         // send email => hangfire
-
     }
 
+    public Task ConfirmEmail(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task TwoFactor(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task VerifyTwoFactor(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -39,7 +39,7 @@ public static class DependencyInjection
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Custom Servicess      
-        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddTransient<IEmailService, EmailService>();
         //if (appSettings.FileStorageSettings.LocalStorage)
         //{
         //    builder.Services.AddSingleton<IFileService, LocalStorageService>();

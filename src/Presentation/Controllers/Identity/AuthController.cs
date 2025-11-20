@@ -14,14 +14,14 @@ public class AuthController(IIdentityService identityService) : BaseController
     [HttpPost("login")]
     public async Task<IActionResult> Login(SignInRequest request, CancellationToken cancellationToken)
     {
-        var tokenResult = await _identityService.SignIn(request, cancellationToken);
+        var tokenResult = await _identityService.Authenticate(request, cancellationToken);
         return Ok(tokenResult); 
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(SignUpRequest request, CancellationToken cancellationToken)
     {
-        var userId = await _identityService.SignUp(request, cancellationToken);
+        var userId = await _identityService.Register(request, cancellationToken);
 
         await Mediator.Send(new CreateCustomerCommand(userId, request.Email));
 
@@ -31,7 +31,7 @@ public class AuthController(IIdentityService identityService) : BaseController
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        await _identityService.SignOut();
+        await _identityService.Logout();
         return NoContent();
     }
 }
