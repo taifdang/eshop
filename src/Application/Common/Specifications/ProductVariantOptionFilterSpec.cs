@@ -1,5 +1,6 @@
 ﻿using Application.Catalog.Variants.Queries.GetVariantById;
 using Application.Catalog.Variants.Queries.GetVariantByOption;
+using Application.Common.Models;
 using Ardalis.Specification;
 using Domain.Entities;
 
@@ -25,20 +26,20 @@ public class ProductVariantOptionFilterSpec : Specification<ProductVariant, Vari
         }
 
         Query.Select(x => new VariantItemDto
-             {
-                Id = x.Id,
-                Price = x.Price,
-                Percent = x.Percent,
-                Quantity = x.Quantity,
-                Sku = x.Sku ?? string.Empty,
-                Options = x.VariantOptionValues.Select(y => new VariantOptionValueDto
-                {
-                    Title = y.OptionValue.ProductOption.OptionName,
-                    Value = y.OptionValue.Value
-                })
-                .OrderBy(o => o.Title)
-                .ToList()
-             });
+        {
+            Id = x.Id,
+            Price = x.Price,
+            Percent = x.Percent,
+            Quantity = x.Quantity,
+            Options = x.VariantOptionValues.Select(y => new OptionValueLookupDto
+            {
+                Title = y.OptionValue.ProductOption.OptionName,
+                Id = y.OptionValueId,
+                Value = y.OptionValue.Value
+            })
+            .OrderBy(o => o.Title)
+            .ToList()
+        });
     }
 
 }

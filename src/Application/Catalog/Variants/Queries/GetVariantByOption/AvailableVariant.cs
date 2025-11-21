@@ -1,6 +1,4 @@
-﻿using Application.Catalog.Variants.Queries.GetVariantById;
-
-namespace Application.Catalog.Variants.Queries.GetVariantByOption;
+﻿namespace Application.Catalog.Variants.Queries.GetVariantByOption;
 
 public class AvailableVariant
 {
