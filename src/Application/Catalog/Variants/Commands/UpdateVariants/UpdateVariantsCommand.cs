@@ -27,7 +27,7 @@ public class UpdateVariantsCommandHandler : IRequestHandler<UpdateVariantsComman
         {
             if (request.Price.HasValue)
             {
-                v.RegularPrice = request.Price.Value;
+                v.Price = request.Price.Value;
             }
             if (request.Quantity.HasValue)
             {

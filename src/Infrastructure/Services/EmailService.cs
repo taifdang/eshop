@@ -1,5 +1,4 @@
 ﻿using Application.Common.Interfaces;
-using Azure.Core;
 using Microsoft.Extensions.Configuration;
 using Shared.Constants;
 using Shared.Web;
@@ -13,7 +12,7 @@ public class EmailService : IEmailService
     private readonly IConfiguration _configuration;
     public EmailService(IConfiguration configuration) => _configuration = configuration;
 
-    public async Task SendAync(string to, string Subject, string Message)
+    public async Task SendAsync(string To, string Subject, string Message)
     {
         var mailConfig = _configuration.GetOptions<AppSettings>().MailConfig;
 
@@ -21,7 +20,7 @@ public class EmailService : IEmailService
         client.Credentials = new NetworkCredential(mailConfig.From, mailConfig.Password);
         client.EnableSsl = true;
 
-        var message = new MailMessage(mailConfig.From,to,Subject, Message);
+        var message = new MailMessage(mailConfig.From, To, Subject, Message);
 
         await client.SendMailAsync(message);
     }

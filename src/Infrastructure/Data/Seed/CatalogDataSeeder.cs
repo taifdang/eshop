@@ -93,7 +93,7 @@ public class CatalogDataSeeder : IDataSeeder
                     await _dbContext.ProductVariants.AddAsync(new Domain.Entities.ProductVariant
                     {
                         ProductId = product.Id,
-                        RegularPrice = 40000,
+                        Price = 40000,
                         Quantity = 20,
                         //Sku = $"SKU-{product.Id}-1"
                     });

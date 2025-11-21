@@ -14,10 +14,10 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
          .MaximumLength(2000).WithMessage("Description must not exceed 2000 characters.");
          
         //RuleFor(x => x.MinPrice)
-        //    .GreaterThanOrEqualTo(0).WithMessage("Regular price must be greater than or equal to 0.");
+        //    .GreaterThanOrEqualTo(0).WithMessage("Regular Price must be greater than or equal to 0.");
         //RuleFor(x => x.MaxPrice)
-        //    .GreaterThanOrEqualTo(0).WithMessage("Compare price must be greater than or equal to 0.")
-        //    .GreaterThanOrEqualTo(x => x.MinPrice).WithMessage("Compare price must be greater than or equal to regular price.");
+        //    .GreaterThanOrEqualTo(0).WithMessage("Compare Price must be greater than or equal to 0.")
+        //    .GreaterThanOrEqualTo(x => x.MinPrice).WithMessage("Compare Price must be greater than or equal to regular Price.");
         //RuleFor(x => x.Quantity)
         //    .GreaterThanOrEqualTo(0).WithMessage("Quantity must be greater than or equal to 0.");
     }

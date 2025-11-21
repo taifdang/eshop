@@ -16,9 +16,9 @@ public class GetListProductQueryHandler : IRequestHandler<GetListProductQuery, P
     }
     public async Task<PageList<ProductListDto>> Handle(GetListProductQuery request, CancellationToken cancellationToken)
     {
-
         var specification = new ProductListPaginationSpec(request.PageIndex * request.PageSize, take: request.PageSize);
         var productList = await _productRepository.ListAsync(specification, cancellationToken);
+
         return new PageList<ProductListDto>(
            productList!,
            productList.Count,
@@ -36,7 +36,7 @@ public class GetListProductQueryHandler : IRequestHandler<GetListProductQuery, P
         //            Title = x.Title,
         //            //MinPrice = x.MinPrice,
         //            //MaxPrice = x.MaxPrice,
-        //            Price = x.ProductVariants.Min(pv => pv.RegularPrice), // Min Price of all variants
+        //            Price = x.ProductVariants.Min(pv => pv.Price), // Min Price of all variants
         //            Description = x.Description ?? string.Empty,
         //            Category = x.Category.Title,
         //            ProductType = x.Category.ProductType.Title,

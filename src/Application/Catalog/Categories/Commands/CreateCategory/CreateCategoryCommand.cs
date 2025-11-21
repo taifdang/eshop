@@ -8,10 +8,10 @@ public record CreateCategoryCommand(string Title, string? Label) : IRequest<Guid
 
 public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Guid>
 {
-    private readonly IRepository<Category> _categoryRepository;
-    public CreateCategoryCommandHandler(IRepository<Category> categoryRepository)
+    private readonly IRepository<Category> _categoryRepo;
+    public CreateCategoryCommandHandler(IRepository<Category> categoryRepo)
     {
-        _categoryRepository = categoryRepository;
+        _categoryRepo = categoryRepo;
     }
 
     public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             Label = request.Label,
         };
 
-        await _categoryRepository.AddAsync(category, cancellationToken);
+        await _categoryRepo.AddAsync(category);
 
         return category.Id;
     }

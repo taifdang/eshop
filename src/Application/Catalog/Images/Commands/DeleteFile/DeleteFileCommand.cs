@@ -1,6 +1,6 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Common.Specifications;
+using Ardalis.GuardClauses;
 using Domain.Entities;
 using MediatR;
 
@@ -12,21 +12,23 @@ public class DeleteFileCommandHandler : IRequestHandler<DeleteFileCommand, Unit>
 {
     private readonly IRepository<ProductImage> _productImageRepository;
     private readonly IFileService _storageService;
-    
 
-    public DeleteFileCommandHandler(IRepository<ProductImage> productImageRepository, IFileService storageService)
+    public DeleteFileCommandHandler(
+        IFileService storageService,
+        IRepository<ProductImage> productImageRepository)
     {
-        _productImageRepository = productImageRepository;
         _storageService = storageService;
+        _productImageRepository = productImageRepository;
     }
 
     public async Task<Unit> Handle(DeleteFileCommand request, CancellationToken cancellationToken)
     {
-        var productImage = await _productImageRepository.FirstOrDefaultAsync(new ProductImageByIdSpec(request.ProductId, request.Id))
-                ?? throw new EntityNotFoundException(nameof(ProductImage), request.Id);
+        var spec = new ProductImageByIdSpec(request.ProductId, request.Id);
+        var productImage = await _productImageRepository.FirstOrDefaultAsync(spec, cancellationToken);
+        Guard.Against.Null(productImage);
 
         // Remove file
-        if(productImage != null)
+        if (productImage != null)
         {
             if(productImage.ImageUrl != null)
             {
@@ -34,6 +36,7 @@ public class DeleteFileCommandHandler : IRequestHandler<DeleteFileCommand, Unit>
             }
             await _productImageRepository.DeleteAsync(productImage, cancellationToken);
         }
+
         return Unit.Value;
     }
 }

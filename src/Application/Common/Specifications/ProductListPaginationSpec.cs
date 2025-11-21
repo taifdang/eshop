@@ -14,19 +14,19 @@ public class ProductListPaginationSpec : Specification<Product, ProductListDto>
         {
             take = int.MaxValue;
         }
-        Query
-            .Where(x => x.Status == Domain.Enums.ProductStatus.Published)
-            .AsSplitQuery();
+
+        Query.Where(x => x.Status == Domain.Enums.ProductStatus.Published).AsNoTracking();
+
+        Query.OrderBy(x => x.Id).Skip(skip).Take(take);
 
         Query.Select(x => new ProductListDto
         {
             Id = x.Id,
             Title = x.Title,
-            Price = x.ProductVariants.Min(pv => pv.RegularPrice), // Min Price of all variants
-            Description = x.Description ?? string.Empty,
+            Price = x.ProductVariants.Min(pv => pv.Price),
             Category = x.Category.Title,
             Image = x.ProductImages
-                    .Where(c => c.IsMain && c.OptionValueId == null) // Main image not linked to option value
+                    .Where(c => c.IsMain && c.OptionValueId == null) // main image
                     .Select(pi => new ImageLookupDto
                     {
                         Id = pi.Id,
@@ -34,7 +34,5 @@ public class ProductListPaginationSpec : Specification<Product, ProductListDto>
                     })
                     .FirstOrDefault() ?? new(),
         });
-
-        Query.OrderBy(x=>x.Id).Skip(skip).Take(take);
     }
 }

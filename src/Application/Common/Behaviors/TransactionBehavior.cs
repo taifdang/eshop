@@ -1,6 +1,8 @@
 ﻿using Application.Common.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace Application.Common.Behaviors;
 
@@ -9,37 +11,35 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
     where TResponse : notnull
 {
     private readonly ILogger<TransactionBehavior<TRequest, TResponse>> _logger;
-    private readonly IUnitOfWork _uow;
-    private readonly IMediator _mediatr;
+    private readonly IApplicationDbContext _context;
 
     public TransactionBehavior(
         ILogger<TransactionBehavior<TRequest, TResponse>> logger, 
-        IUnitOfWork uow,
-        IMediator mediatr)
+        IApplicationDbContext context)
     {
         _logger = logger;
-        _uow = uow;
-        _mediatr = mediatr;
+        _context = context;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        _logger.LogInformation(
-           "{Prefix} Handled command {MediatrRequest}",
-           nameof(TransactionBehavior<TRequest, TResponse>),
-           typeof(TRequest).Name);
-
-        var response = await next();
-
-        _logger.LogInformation(
-            "{Prefix} Executed the {MediatrRequest} request",
-            nameof(TransactionBehavior<TRequest, TResponse>),
-            typeof(TRequest).FullName);
-
-        while (true)
+        if (request is IRequest<TResponse>)
         {
-            await _uow.ExecuteTransactionalAsync(cancellationToken);
+            return await next();
         }
+           
+        var strategy = ((DbContext)_context).Database.CreateExecutionStrategy();
 
+        return await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await ((DbContext)_context).Database.BeginTransactionAsync(IsolationLevel.ReadCommitted ,cancellationToken);
+            
+            var response = await next();
+
+            await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+
+            return response;
+        });
     }
 }

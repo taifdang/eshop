@@ -28,8 +28,8 @@ public class ProductDetailSpec : Specification<Product>
         //    {
         //        Id = x.Id,
         //        Title = x.Title,
-        //        MinPrice = x.ProductVariants.Min(x => x.RegularPrice),
-        //        MaxPrice = x.ProductVariants.Max(x => x.RegularPrice),
+        //        MinPrice = x.ProductVariants.Min(x => x.Price),
+        //        MaxPrice = x.ProductVariants.Max(x => x.Price),
         //        Description = x.Description ?? string.Empty,
         //        Category = x.Category.Title,
         //        Images = x.ProductImages.Select(img => new ImageLookupDto

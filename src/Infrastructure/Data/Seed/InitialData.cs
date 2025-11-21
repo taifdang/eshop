@@ -140,7 +140,7 @@ public static class InitialData
         //    {
         //        Id = 1,
         //        ProductId = 1,
-        //        RegularPrice = 50000,
+        //        Price = 50000,
         //        Quantity = 10,
         //        Percent = 0,
         //        Status = 0,

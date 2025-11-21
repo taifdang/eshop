@@ -8,7 +8,7 @@ public class CategoryListSpec : Specification<Category, CategoryDto>
 {
     public CategoryListSpec()
     {
-        Query
-            .Select(x => new CategoryDto(x.Id, x.Title, x.Label ?? ""));
+        //Query
+        //    .Select(x => new CategoryDto(x.Id, x.Title, x.Label ?? ""));
     }
 }

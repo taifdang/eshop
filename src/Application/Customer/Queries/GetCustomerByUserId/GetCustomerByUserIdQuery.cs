@@ -8,14 +8,17 @@ public record GetCustomerByUserIdQuery(Guid UserId) : IRequest<Guid>;
 
 public class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByUserIdQuery, Guid>
 {
-    private readonly IReadRepository<Domain.Entities.Customer> _customerRepository;
-    public GetCustomerByIdQueryHandler(IReadRepository<Domain.Entities.Customer> customerRepository)
+    private readonly IReadRepository<Domain.Entities.Customer> _customerRepo;
+    public GetCustomerByIdQueryHandler(IReadRepository<Domain.Entities.Customer> customerRepo)
     {
-        _customerRepository = customerRepository;
+        _customerRepo = customerRepo;
     }
     public async Task<Guid> Handle(GetCustomerByUserIdQuery request, CancellationToken cancellationToken)
     {
-        var customer = await _customerRepository.FirstOrDefaultAsync(new CustomerByUserIdSpec(request.UserId), cancellationToken);
+        var spec = new CustomerByUserIdSpec(request.UserId);
+
+        var customer = await _customerRepo.FirstOrDefaultAsync(spec);
+
         return customer.Id;
     }
 }

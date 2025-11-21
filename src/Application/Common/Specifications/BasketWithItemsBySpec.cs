@@ -2,9 +2,9 @@
 
 namespace Application.Common.Specifications;
 
-public class BasketWithItemsByCustomerIdSpec : Specification<Domain.Entities.Basket>
+public class BasketWithItemsBySpec : Specification<Domain.Entities.Basket>
 {
-    public BasketWithItemsByCustomerIdSpec(Guid customerId)
+    public BasketWithItemsBySpec(Guid customerId)
     {
         Query
             .Where(x => x.CustomerId == customerId)

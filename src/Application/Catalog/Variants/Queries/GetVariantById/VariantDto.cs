@@ -8,7 +8,7 @@ public class VariantDto
     public Guid ProductId { get; set; }
     public string ProductName { get; set; }
     public string Title { get; set; }
-    public decimal RegularPrice { get; set; }
+    public decimal Price { get; set; }
     public decimal Percent { get; set; }
     public int Quantity { get; set; }
     public string Sku { get; set; }

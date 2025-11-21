@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Specifications;
+using AutoMapper;
 using MediatR;
 
 namespace Application.Catalog.Products.Queries.GetProductById;
@@ -9,22 +10,28 @@ public record GetProductByIdQuery(Guid Id) : IRequest<ProductItemDto>;
 public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductItemDto>
 {
     private readonly IRepository<Domain.Entities.Product> _productRepository;
+    private readonly IMapper _mapper;
 
-    public GetProductByIdQueryHandler(IRepository<Domain.Entities.Product> productRepository)
+    public GetProductByIdQueryHandler(
+        IRepository<Domain.Entities.Product> productRepository, 
+        IMapper mapper)
     {
         _productRepository = productRepository;
+        _mapper = mapper;
     }
 
     public async Task<ProductItemDto> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
         // *When user click product, we will load all options, option values, images for product to client side
-        // *Then user select option values, we will generate variant on client side (based on option values selected) to show price, sku, quantity, image...
-        var product = await _productRepository.FirstOrDefaultAsync(new ProductDetailSpec(request.Id), cancellationToken);
-        if (product == null)
+        // *Then user select option values, we will generate variant on client side (based on option values selected) to show Price, sku, quantity, image...
+        var products = await _productRepository.FirstOrDefaultAsync(new ProductDetailSpec(request.Id), cancellationToken);
+        if (products == null)
         {
             return null!;
         }
-        return product.ToDto();
+        var productItemDtos = _mapper.Map<ProductItemDto>(products);
+
+        return productItemDtos;
         #region
         //var productVm = await _unitOfWork.ProductRepository.GetByIdAsync(
         //    filter: x => x.ProductOptionId == request.ProductOptionId,
@@ -32,8 +39,8 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
         //    {
         //        ProductOptionId = x.ProductOptionId,
         //        Title = x.Title,
-        //        MinPrice = x.ProductVariants.Min(x => x.RegularPrice),
-        //        MaxPrice = x.ProductVariants.Max(x => x.RegularPrice),
+        //        MinPrice = x.ProductVariants.Min(x => x.Price),
+        //        MaxPrice = x.ProductVariants.Max(x => x.Price),
         //        Description = x.Description ?? string.Empty,
         //        Category = x.Category.Title,
         //        ProductType = x.Category.ProductType.Title,
@@ -64,6 +71,5 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
         //        }).ToList(),
         //    });
         #endregion
-
     }
 }

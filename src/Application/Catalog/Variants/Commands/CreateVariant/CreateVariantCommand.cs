@@ -20,7 +20,7 @@ public class CreateVariantCommandHandler : IRequestHandler<CreateVariantCommand,
         var variant = new ProductVariant
         {
             ProductId = request.ProductId,
-            RegularPrice = request.RegularPrice,
+            Price = request.RegularPrice,
             Quantity = request.Quantity,
             Status = Domain.Enums.IntentoryStatus.InStock,
             Percent = 0

@@ -1,12 +1,9 @@
 ﻿using Application.Basket.Queries.GetCartList;
-using Application.Catalog.Variants.EventHandlers;
 using Application.Catalog.Variants.Queries.GetVariantById;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
-using Application.Order.Dtos;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Enums;
 using MediatR;
 
 namespace Application.Order.Commands.CreateOrder;
@@ -14,12 +11,15 @@ namespace Application.Order.Commands.CreateOrder;
 public record CreateOrderCommand(Guid CustomerId, string ShippingAddress) : IRequest<Guid>;
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
 {
-    private readonly IRepository<Domain.Entities.Order> _orderRepository;
+    private readonly IRepository<Domain.Entities.Order> _orderRepo;
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    public CreateOrderCommandHandler(IRepository<Domain.Entities.Order> orderRepository, IMediator mediator, IMapper mapper)
+    public CreateOrderCommandHandler(
+        IRepository<Domain.Entities.Order> orderRepo,
+        IMediator mediator,
+        IMapper mapper)
     {
-        _orderRepository = orderRepository;
+        _orderRepo = orderRepo;
         _mediator = mediator;
         _mapper = mapper;
     }
@@ -54,7 +54,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
                 ProductVariantId = productVariant.Id,     
                 ProductName = productVariant.ProductName,
                 VariantName = productVariant.Title,
-                UnitPrice = productVariant.RegularPrice,
+                UnitPrice = productVariant.Price,
                 Quantity = basketItem.Quantity,
                 ImageUrl = productVariant.Image.Url
             };
@@ -63,26 +63,29 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             totalAmount += orderItem.TotalPrice;
         }
 
-        var order = new Domain.Entities.Order
-        {
-            CustomerId = request.CustomerId,
-            Status = OrderStatus.Pending,
-            TotalAmount = totalAmount,
-            ShippingAddress = request.ShippingAddress,
-            Items = orderItems,
-            OrderDate = DateTime.UtcNow,
-            CreatedAt = DateTime.UtcNow
-        };
+        //var order = new Domain.Entities.Order
+        //{
+        //    CustomerId = request.CustomerId,
+        //    Status = OrderStatus.Pending,
+        //    TotalAmount = totalAmount,
+        //    ShippingAddress = request.ShippingAddress,
+        //    Items = orderItems,
+        //    OrderDate = DateTime.UtcNow,
+        //    CreatedAt = DateTime.UtcNow
+        //};
+        var order = Domain.Entities.Order.Create(Guid.NewGuid(), request.CustomerId,
+                request.ShippingAddress, orderItems, totalAmount);
 
-        await _orderRepository.AddAsync(order, cancellationToken);
+        await _orderRepo.AddAsync(order);
 
-        var orderItemsAdded = _mapper.Map<List<OrderItemDto>>(orderItems);
+        // event
+        //var orderItemsAdded = _mapper.Map<List<OrderItemDto>>(orderItems);
 
         // Update product variant quanity
-        await _mediator.Send(new ReduceStockCommand(orderItemsAdded));
+        // await _mediator.Send(new ReduceStockCommand(orderItemsAdded));
 
         // Clear the basket after creating the order
-        await _mediator.Send(new Basket.Commands.ClearBasket.ClearBasketCommand(request.CustomerId));
+        //await _mediator.Send(new Basket.Commands.ClearBasket.ClearBasketCommand(request.CustomerId));
 
         return order.Id;
     }

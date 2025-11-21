@@ -24,7 +24,7 @@ public class ProductVariantConfiguration : IEntityTypeConfiguration<ProductVaria
         //    .IsRequired()
         //    .HasColumnType("decimal(18,2)");
 
-        builder.Property(x => x.RegularPrice)
+        builder.Property(x => x.Price)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
 

@@ -14,7 +14,7 @@ public static class VariantManualMappings
             ProductId = variant.ProductId,
             ProductName = variant.Product.Title,
             Title = variant.Title,
-            RegularPrice = variant.RegularPrice,
+            Price = variant.Price,
             Percent = variant.Percent,
             Quantity = variant.Quantity,
             Sku = variant.Sku,

@@ -1,25 +1,25 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
-    public DbSet<Product> Products { get; set; } = default!;
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<VariantOptionValue> Variants { get; set; }
-    public DbSet<ProductVariant> ProductVariants { get; set; } = default!;
-    public DbSet<OptionValue> OptionValues { get; set; } = default!;
-    public DbSet<ProductOption> ProductOptions { get; set; } = default!;
-    public DbSet<ProductImage> ProductImages { get; set; } = default!;
-    public DbSet<Basket> Baskets { get; set; } = default!;
-    public DbSet<BasketItem> BasketItems { get; set; } = default!;
-    public DbSet<Order> Orders { get; set; } = default!;
-    public DbSet<OrderItem> OrderItems { get; set; } = default!;
-
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<VariantOptionValue> Variants => Set<VariantOptionValue>();
+    public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+    public DbSet<OptionValue> OptionValues => Set<OptionValue>();
+    public DbSet<ProductOption> ProductOptions => Set<ProductOption>();
+    public DbSet<ProductImage> ProductImages => Set<ProductImage>();
+    public DbSet<Basket> Baskets => Set<Basket>();
+    public DbSet<BasketItem> BasketItems => Set<BasketItem>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<VariantOptionValue> VariantOptionValues => Set<VariantOptionValue>();
+    public DbSet<Customer> Customers => Set<Customer>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

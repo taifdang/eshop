@@ -6,8 +6,7 @@ public class ProductListDto
 {
     public Guid Id { get; init; }
     public string Title { get; init; }
-    public decimal Price { get; init; } // Min price of all variants
-    public string Description { get; init; }
+    public decimal Price { get; init; }
     public string Category { get; init; }
-    public ImageLookupDto Image { get; init; } // main image URL
+    public ImageLookupDto Image { get; init; }
 }

@@ -32,7 +32,6 @@ public class UploadFileCommandValidator : AbstractValidator<UploadFileCommand>
         return false;
     }
 
-
     private async Task<bool> BeValidImageRules(UploadFileCommand cmd, CancellationToken ct)
     {
         var specification = new ProductImageFilterSpec(cmd.ProductId, cmd.OptionValueId);

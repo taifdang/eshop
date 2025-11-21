@@ -6,11 +6,7 @@ namespace Domain.Entities;
 public class Product : Entity<Guid>
 {
     public string Title { get; set; }
-    //public decimal RegularPrice { get; set; }
-    //public decimal ComparePrice { get; set; }
-    //public int Quantity { get; set; }
     public string Description { get; set; }
-    //public ProductStatus Status { get; set; }
     public ProductStatus Status { get; set; }
     public Guid CategoryId { get; set; }
     public Category Category { get; set; }

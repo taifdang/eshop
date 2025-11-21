@@ -379,14 +379,14 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Percent")
                         .HasColumnType("decimal(5,2)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("RegularPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Sku")
                         .HasMaxLength(100)

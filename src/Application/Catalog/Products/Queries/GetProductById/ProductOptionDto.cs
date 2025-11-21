@@ -3,5 +3,5 @@
 public class ProductOptionDto
 {
     public string Title { get; init; }
-    public List<string> Values { get; init; }
+    public List<ProductOptionValueDto> Values { get; init; }
 }

@@ -1,8 +1,9 @@
-﻿namespace Application.Catalog.Products.Queries.GetProductById;
+﻿using Application.Common.Models;
+
+namespace Application.Catalog.Products.Queries.GetProductById;
 
 public class ProductOptionValueDto
 {
-    public string Title { get; init; }
-    public List<ProductOptionVariantDto> Variants { get; init; }
-    public List<string> Values { get; init; }
+    public string Value { get; init; }
+    public ImageLookupDto? Image { get; init; }
 }

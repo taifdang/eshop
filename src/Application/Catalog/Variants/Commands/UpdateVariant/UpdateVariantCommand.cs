@@ -23,7 +23,7 @@ public class UpdateVariantCommandHandler : IRequestHandler<UpdateVariantCommand,
             ?? throw new EntityNotFoundException(nameof(ProductVariant), request.Id);
 
         //variant.Sku = variant.Sku;
-        variant.RegularPrice = request.RegularPrice;
+        variant.Price = request.RegularPrice;
         if(request.Quantity > 0)
         {
             variant.Quantity = request.Quantity;

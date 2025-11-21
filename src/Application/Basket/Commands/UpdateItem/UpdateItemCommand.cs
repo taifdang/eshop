@@ -5,6 +5,7 @@ using Application.Common.Specifications;
 using Application.Customer.Queries.GetCustomerByUserId;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Shared.Web;
 
 namespace Application.Basket.Commands.UpdateItem;
@@ -13,16 +14,16 @@ public record UpdateItemCommand(Guid Id, int Quantity) : IRequest<Guid>;
 
 public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
 {
-    private readonly IRepository<Domain.Entities.Basket> _basketRepository;
+    private readonly IRepository<Domain.Entities.Basket> _basketRepo;
     private readonly IMediator _mediator;
     private readonly ICurrentUserProdvider _currentUserProdvider;
     public UpdateItemCommandHandler(
+        IRepository<Domain.Entities.Basket> basketRepo,
         IMediator mediator,
-        IRepository<Domain.Entities.Basket> basketRepository,
         ICurrentUserProdvider currentUserProdvider)
     {
+        _basketRepo = basketRepo;
         _mediator = mediator;
-        _basketRepository = basketRepository;
         _currentUserProdvider = currentUserProdvider;
     }
     public async Task<Guid> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
@@ -48,7 +49,9 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
         }
 
         // Get or create basket
-        var basket = await _basketRepository.FirstOrDefaultAsync(new BasketWithItemsByCustomerIdSpec(customerId));
+        var spec = new BasketWithItemsBySpec(customerId);
+        var basket = await _basketRepo.FirstOrDefaultAsync(spec);
+
         if (basket == null)
         {
             basket = new Domain.Entities.Basket()
@@ -57,7 +60,7 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
                 Items = new List<BasketItem>(),
                 CreatedAt = DateTime.UtcNow,
             };
-            await _basketRepository.AddAsync(basket);
+            await _basketRepo.AddAsync(basket);
         }
         // Update basket items
         var existingItem = basket.Items.FirstOrDefault(x => x.ProductVariantId == request.Id);
@@ -87,7 +90,7 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
 
         basket.LastModified = DateTime.UtcNow;
 
-        await _basketRepository.SaveChangesAsync(cancellationToken);
+        //await _basketRepo.SaveChangesAsync(cancellationToken);
 
         return basket.Id;
     }

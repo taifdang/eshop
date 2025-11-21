@@ -13,17 +13,17 @@ public record GetBasketQuery(Guid? CustomerId) : IRequest<BasketDto>;
 
 public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
 {
-    private readonly IRepository<Domain.Entities.Basket> _basketRepository;
+    private readonly IRepository<Domain.Entities.Basket> _basketRepo;
     private readonly IMediator _mediator;
     private readonly ICurrentUserProdvider _currentUserProdvider;
     public GetBasketQueryHandler(
-        IRepository<Domain.Entities.Basket> baskerRepository, 
-        IMediator mediator, 
-        ICurrentUserProdvider currentUserProdvider)
+        IMediator mediator,
+        ICurrentUserProdvider currentUserProdvider,
+        IRepository<Domain.Entities.Basket> basketRepo)
     {
-        _basketRepository = baskerRepository;
         _mediator = mediator;
         _currentUserProdvider = currentUserProdvider;
+        _basketRepo = basketRepo;
     }
     public async Task<BasketDto> Handle(GetBasketQuery request, CancellationToken cancellationToken)
     {
@@ -45,9 +45,10 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
 
         if (customerId is null) 
             throw new EntityNotFoundException("User not found");
-     
+
         // Get basket
-        var basket = await _basketRepository.FirstOrDefaultAsync(new BasketWithItemsByCustomerIdSpec(customerId.Value), cancellationToken);
+        var spec = new BasketWithItemsBySpec(customerId.Value);
+        var basket = await _basketRepo.FirstOrDefaultAsync(spec, cancellationToken);
 
         // If basket doesn't exist, return an empty basket
         if (basket == null)
@@ -61,7 +62,7 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
         {
             var productVariant = await _mediator.Send(new GetVariantByIdQuery(item.ProductVariantId));
             var cartItem = basket.Items.First(x => x.ProductVariantId == productVariant.Id);
-            basketDto.Items.Add(new BasketItemDto(cartItem.ProductVariantId, productVariant.ProductName ,productVariant.Title, productVariant.RegularPrice, productVariant.Image.Url ?? "", cartItem.Quantity));
+            basketDto.Items.Add(new BasketItemDto(cartItem.ProductVariantId, productVariant.ProductName ,productVariant.Title, productVariant.Price, productVariant.Image.Url ?? "", cartItem.Quantity));
         }
 
         return basketDto;

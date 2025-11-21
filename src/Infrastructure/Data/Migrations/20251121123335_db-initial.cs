@@ -181,7 +181,7 @@ namespace Infrastructure.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    RegularPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Percent = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
                     Sku = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
