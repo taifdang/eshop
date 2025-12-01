@@ -1,7 +1,7 @@
 ﻿using Application.Catalog.Products.Commands.UploadFile;
 using Application.Catalog.Products.Queries.GetProductImage;
 using Application.Catalog.Products.Specifications;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using Application.Common.Models;
 using Ardalis.Specification;
 using Domain.Entities;

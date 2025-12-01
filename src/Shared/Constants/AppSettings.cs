@@ -31,3 +31,9 @@ public class Identity
     public string Audience { get; set; }
     public int ExpiredTime { get; set; }
 }
+
+public class BackgroundTaskOptions
+{
+    public int GracePeriodTime { get; set; }
+    public int CheckUpdateTime { get; set; }
+}

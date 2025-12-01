@@ -1,6 +1,6 @@
 ﻿using Application.Catalog.Products.Specifications;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using Application.Common.Utilities;
 using Ardalis.Specification;
 using Domain.Entities;

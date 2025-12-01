@@ -2,7 +2,7 @@
 using Application.Basket.Specifications;
 using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using Application.Customer.Queries.GetCustomerByUserId;
 using MediatR;
 using Shared.Web;

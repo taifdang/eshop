@@ -1,5 +1,5 @@
 ﻿using Application.Catalog.Products.Specifications;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using Application.Common.Models;
 using Ardalis.Specification;
 using MediatR;

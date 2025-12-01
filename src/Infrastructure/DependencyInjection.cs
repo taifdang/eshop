@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces.Services;
 using Infrastructure.Data;
 using Infrastructure.Data.Interceptors;
 using Infrastructure.Data.Repositories;
@@ -7,6 +8,7 @@ using Infrastructure.Identity.Data;
 using Infrastructure.Identity.Data.Seed;
 using Infrastructure.Identity.Extensions;
 using Infrastructure.Identity.Services;
+using Infrastructure.Payments.Gateways;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -55,9 +57,16 @@ public static class DependencyInjection
         builder.Services.AddScoped<IIdentityService, IdentityService>();
         builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 
+        builder.Services.AddScoped<IPaymentProvider, PaypalGateway>();
+        builder.Services.AddScoped<IPaymentProvider, VnPayGateway>();
+
         // Seeders    
         builder.Services.AddScoped<IDataSeeder, IdentityDataSeeder>();
         builder.Services.AddScoped<IDataSeeder, CatalogDataSeeder>();
+
+        // Hosted Services
+        //builder.Services.AddHostedService<MessageBusConsumerBackgroundService<>();
+
 
         return builder;
     }

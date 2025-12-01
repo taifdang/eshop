@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces.Services;
 using Infrastructure.Identity.Data;
 using Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;

@@ -1,6 +1,6 @@
 ﻿using Application.Catalog.Products.Commands.DeleteFile;
 using Application.Catalog.Products.Commands.UploadFile;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

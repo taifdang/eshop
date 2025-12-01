@@ -26,4 +26,10 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Order\Commands\SetStockRejectedOrderStatus\" />
+    <Folder Include="Order\Commands\SetCompletedOrderStatus\" />
+    <Folder Include="Order\Commands\SetStockConfirmedOrderStatus\" />
+  </ItemGroup>
+
 </Project>

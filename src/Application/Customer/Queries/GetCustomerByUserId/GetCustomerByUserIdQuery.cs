@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces.Persistence;
 using Application.Customer.Specifications;
 using Ardalis.Specification;
 using MediatR;

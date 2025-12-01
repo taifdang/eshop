@@ -1,9 +1,10 @@
 ﻿using Domain.Common;
 using Domain.Enums;
+using Domain.Events;
 
 namespace Domain.Entities;
 
-public class Product : Entity<Guid>
+public class Product : Aggregate<Guid>
 {
     public string Title { get; set; }
     public string Description { get; set; }
@@ -12,5 +13,5 @@ public class Product : Entity<Guid>
     public Category Category { get; set; }
     public ICollection<ProductOption> ProductOptions { get; set; } = new List<ProductOption>();
     public ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
-    public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>(); 
 }

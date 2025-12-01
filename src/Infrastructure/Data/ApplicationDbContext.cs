@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces.Persistence;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +20,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<VariantOptionValue> VariantOptionValues => Set<VariantOptionValue>();
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<OutBoxMessage> OutBoxMessages => Set<OutBoxMessage>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

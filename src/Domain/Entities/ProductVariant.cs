@@ -6,12 +6,20 @@ public class ProductVariant
 {
     public Guid Id { get; set; }
     public Guid ProductId { get; set; }
-    public string? Title { get; set; } // Product non-option specific title
+    public string? Title { get; set; }
     public decimal Price { get; set; }
-    public int Quantity { get; set; } // Inventory 
-    public decimal Percent { get; set; } // Discount Percent
+    public int Quantity { get; set; }
+    public decimal Percent { get; set; }
     public string? Sku { get; set; }
-    public IntentoryStatus Status { get; set; } // Inventory
+    public IntentoryStatus Status { get; set; }
     public Product Product { get; set; } 
     public ICollection<VariantOptionValue> VariantOptionValues { get; set; } = new List<VariantOptionValue>();
+
+    public void DeductStock(int quantity)
+    {
+        if (Quantity < quantity)
+            throw new ArgumentException("Not enough quantity", nameof(quantity));
+
+        Quantity -= quantity;
+    }
 }

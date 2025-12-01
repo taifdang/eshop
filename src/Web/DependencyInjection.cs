@@ -23,7 +23,7 @@ public static class DependencyInjection
         
             //.AddJsonOptions(opt =>
             //{
-            //    // Handle reference loops
+            //    // HandleAsync reference loops
             //    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             //    opt.JsonSerializerOptions.WriteIndented = true;
 

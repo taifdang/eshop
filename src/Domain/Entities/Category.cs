@@ -1,8 +1,9 @@
-﻿namespace Domain.Entities;
+﻿using Domain.Common;
 
-public class Category
+namespace Domain.Entities;
+
+public class Category : Aggregate<Guid>
 {
-    public Guid Id { get; set; }
     public string Title { get; set; }
     public string? Label { get; set; }
     public ICollection<Product> Products { get; set; } = new List<Product>();

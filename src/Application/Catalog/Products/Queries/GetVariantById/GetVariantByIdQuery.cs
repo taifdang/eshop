@@ -1,6 +1,6 @@
 ﻿using Application.Catalog.Products.Services;
 using Application.Catalog.Products.Specifications;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using Ardalis.GuardClauses;
 using Ardalis.Specification;
 using AutoMapper;

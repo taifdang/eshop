@@ -1,7 +1,8 @@
 ﻿using Application.Catalog.Products.Services;
 using Application.Catalog.Products.Specifications;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces.Services;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;

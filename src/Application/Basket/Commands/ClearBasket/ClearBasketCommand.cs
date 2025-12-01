@@ -1,5 +1,5 @@
 ﻿using Application.Basket.Specifications;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using MediatR;
 
 namespace Application.Basket.Commands.ClearBasket;

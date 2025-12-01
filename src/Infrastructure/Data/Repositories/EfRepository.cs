@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces.Persistence;
 using Ardalis.Specification.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories;
@@ -10,6 +10,4 @@ public class EfRepository<T> : RepositoryBase<T>, IReadRepository<T>, IRepositor
     {
         UnitOfWork = unitOfWork;
     }
-
-
 }

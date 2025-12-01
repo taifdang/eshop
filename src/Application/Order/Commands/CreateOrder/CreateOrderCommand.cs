@@ -1,13 +1,20 @@
 ﻿using Application.Basket.Queries.GetCartList;
 using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using Domain.Entities;
+using Domain.Enums;
+using Domain.ValueObject;
 using MediatR;
 
 namespace Application.Order.Commands.CreateOrder;
 
-public record CreateOrderCommand(Guid CustomerId, string ShippingAddress) : IRequest<Guid>;
+public record CreateOrderCommand(
+    Guid CustomerId, 
+    Address ShippingAddress,
+    PaymentMethod PaymentMethod,
+    PaymentProvider? PaymentProvider = null,
+    string? PaymentUrl = null) : IRequest<Guid>;
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
 {
     private readonly IRepository<Domain.Entities.Order> _orderRepo;
@@ -30,7 +37,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             throw new Exception("Basket is empty. Cannot create order.");
 
         var orderItems = new List<OrderItem>();
-        decimal totalAmount = 0;
+        //decimal totalAmount = 0;
+        Money totalAmount = Money.InitValue();
 
         foreach (var basketItem in basket.Items)
         {
@@ -41,10 +49,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
                 throw new EntityNotFoundException();
             }
 
-            //if(productVariant.Quantity < basketItem.Quantity)
-            //{
-            //    throw new Exception("Not enough product variant quantity");
-            //}
+            if (productVariant.Quantity < basketItem.Quantity)
+            {
+                throw new Exception("Not enough product variant quantity");
+            }
 
             var orderItem = new OrderItem
             {
@@ -57,11 +65,24 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             };
 
             orderItems.Add(orderItem);
-            totalAmount += orderItem.TotalPrice;
+            //totalAmount += orderItem.TotalPrice;
+            totalAmount += Money.Vnd(orderItem.TotalPrice);
         }
 
-        var order = Domain.Entities.Order.Create(Guid.NewGuid(), request.CustomerId,
-                request.ShippingAddress, orderItems, totalAmount);
+        Payment payment = request.PaymentMethod switch
+        {
+            PaymentMethod.Cod => Payment.CreateCod(totalAmount),
+            PaymentMethod.Online => Payment.CreateOnline(request.PaymentProvider.Value, totalAmount, request.PaymentUrl),
+            _ => throw new Exception("Payment method not support")
+        };
+
+        var order = Domain.Entities.Order.Create(
+            Guid.NewGuid(),
+            request.CustomerId,
+            request.ShippingAddress, 
+            orderItems, 
+            totalAmount,
+            payment);
 
         await _orderRepo.AddAsync(order);
 

@@ -1,5 +1,5 @@
 ﻿using Application.Catalog.Products.Specifications;
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Persistence;
 using Ardalis.GuardClauses;
 using Domain.Entities;
 using MediatR;

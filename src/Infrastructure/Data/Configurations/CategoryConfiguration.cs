@@ -21,6 +21,8 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(x => x.Label)
             .HasMaxLength(100);
 
+        builder.Property(r => r.Version).IsConcurrencyToken();
+
         // Relationships
         builder.HasMany(x => x.Products)
             .WithOne(y => y.Category)

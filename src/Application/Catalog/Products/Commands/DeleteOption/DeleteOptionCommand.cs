@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Domain.Entities;
-using Application.Common.Interfaces;
 using Ardalis.GuardClauses;
 using Application.Catalog.Products.Specifications;
+using Application.Common.Interfaces.Persistence;
 
 namespace Application.Catalog.Products.Commands.DeleteOption;
 
