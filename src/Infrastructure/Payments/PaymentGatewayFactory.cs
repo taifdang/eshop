@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces.Services;
+﻿using Application.Common.Interfaces;
 using Domain.Enums;
 using Infrastructure.Payments.Gateways;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,13 +14,13 @@ public class PaymentGatewayFactory
         _serviceProvider = serviceProvider;
     }
 
-    public IPaymentProvider GetPaymentProvider(PaymentProvider provider)
-    {
-        return provider switch
-        {
-            PaymentProvider.Vnpay => _serviceProvider.GetRequiredService<VnPayGateway>(),
-            PaymentProvider.Paypal => _serviceProvider.GetRequiredService<PaypalGateway>(),
-            _ => throw new NotSupportedException("Not supports this payment prodvider")
-        };
-    }
+    //public IPaymentProvider GetPaymentProvider(PaymentProvider provider)
+    //{
+    //    return provider switch
+    //    {
+    //        PaymentProvider.Vnpay => _serviceProvider.GetRequiredService<VnPayGateway>(),
+    //        PaymentProvider.Paypal => _serviceProvider.GetRequiredService<PaypalGateway>(),
+    //        _ => throw new NotSupportedException("Not supports this payment prodvider")
+    //    };
+    //}
 }

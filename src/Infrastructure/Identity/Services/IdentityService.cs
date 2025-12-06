@@ -1,5 +1,4 @@
-﻿using Application.Common.Interfaces.Persistence;
-using Application.Common.Interfaces.Services;
+﻿using Application.Common.Interfaces;
 using Application.Common.Utilities;
 using Infrastructure.Identity.Data;
 using Infrastructure.Identity.Models;

@@ -1,10 +1,10 @@
 ﻿using Application.Basket.Queries.GetBasket;
-using Application.Basket.Specifications;
 using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces;
 using Application.Customer.Queries.GetCustomerByUserId;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Shared.Web;
 
 namespace Application.Basket.Queries.GetCartList;
@@ -13,17 +13,17 @@ public record GetBasketQuery(Guid? CustomerId = null) : IRequest<BasketDto>;
 
 public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
 {
-    private readonly IRepository<Domain.Entities.Basket> _basketRepo;
+    private readonly IApplicationDbContext _dbContext;
     private readonly IMediator _mediator;
     private readonly ICurrentUserProdvider _currentUserProdvider;
     public GetBasketQueryHandler(
         IMediator mediator,
         ICurrentUserProdvider currentUserProdvider,
-        IRepository<Domain.Entities.Basket> basketRepo)
+        IApplicationDbContext dbContext)
     {
         _mediator = mediator;
         _currentUserProdvider = currentUserProdvider;
-        _basketRepo = basketRepo;
+        _dbContext = dbContext;
     }
     public async Task<BasketDto> Handle(GetBasketQuery request, CancellationToken cancellationToken)
     {
@@ -49,11 +49,9 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
             throw new EntityNotFoundException("User not found");
 
         // Get basket
-        var spec = new BasketSpec()
-            .ByCustomerId(customerId.Value)
-            .WithItems();
-        
-        var basket = await _basketRepo.FirstOrDefaultAsync(spec, cancellationToken);
+        var basket = await _dbContext.Baskets
+            .Include(m => m.Items)
+            .FirstOrDefaultAsync(b => b.CustomerId == customerId.Value);
 
         // If basket doesn't exist, return an empty basket
         if (basket == null)
@@ -65,9 +63,15 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
 
         foreach (var item in basket.Items)
         {
-            var productVariant = await _mediator.Send(new GetVariantByIdQuery(item.ProductVariantId));
-            var cartItem = basket.Items.First(x => x.ProductVariantId == productVariant.Id);
-            basketDto.Items.Add(new BasketItemDto(cartItem.ProductVariantId, productVariant.ProductName ,productVariant.Title, productVariant.Price, productVariant.Image.Url ?? "", cartItem.Quantity));
+            var variant = await _mediator.Send(new GetVariantByIdQuery(item.VariantId));
+
+            var image = variant.Options
+                .Where(x => x.Image != null)
+                .Select(x => x.Image.Url)
+                .FirstOrDefault();
+
+            var cartItem = basket.Items.First(x => x.VariantId == variant.Id);
+            basketDto.Items.Add(new BasketItemDto(cartItem.VariantId, variant.ProductName ,variant.Title, variant.Price, image, cartItem.Quantity));
         }
 
         return basketDto;

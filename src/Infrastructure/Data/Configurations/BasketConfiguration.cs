@@ -17,14 +17,15 @@ public class BasketConfiguration : IEntityTypeConfiguration<Basket>
         builder.Property(c => c.CustomerId)
             .IsRequired();
 
-        builder.HasMany(c => c.Items)
-            .WithOne()
-            .HasForeignKey(c => c.BasketId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasIndex(c => c.CustomerId);
 
         builder.Property(x => x.Version)
            .IsConcurrencyToken();
+
+        // Relationships
+        builder.HasMany(c => c.Items)
+           .WithOne()
+           .HasForeignKey(c => c.BasketId)
+           .OnDelete(DeleteBehavior.Cascade);
     }
 }

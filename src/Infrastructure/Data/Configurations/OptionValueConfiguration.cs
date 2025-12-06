@@ -14,30 +14,17 @@ public class OptionValueConfiguration : IEntityTypeConfiguration<OptionValue>
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
 
-        builder.Property(x => x.ProductOptionId)
+        builder.Property(x => x.OptionId)
             .IsRequired();
 
         builder.Property(x => x.Value)
             .IsRequired()
-            .HasMaxLength(100);
-
-        builder.Property(x => x.Label)
-            .HasMaxLength(100);
+            .HasMaxLength(255);
 
         // Relationships
-        builder.HasOne(x => x.ProductOption)
-            .WithMany(po => po.OptionValues)
-            .HasForeignKey(x => x.ProductOptionId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(x => x.VariantOptionValues)
-            .WithOne(po => po.OptionValue)
-            .HasForeignKey(x => x.OptionValueId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.HasMany(x => x.ProductImages)
-          .WithOne(po => po.OptionValue)
-          .HasForeignKey(x => x.OptionValueId)
-          .OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(x => x.Image)
+            .WithMany()
+            .HasForeignKey(x => x.ImageId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

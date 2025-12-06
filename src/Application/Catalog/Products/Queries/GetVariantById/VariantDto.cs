@@ -1,7 +1,4 @@
-﻿using Application.Common.Models;
-using AutoMapper;
-
-namespace Application.Catalog.Products.Queries.GetVariantById;
+﻿namespace Application.Catalog.Products.Queries.GetVariantById;
 
 public class VariantDto
 {
@@ -10,18 +7,7 @@ public class VariantDto
     public string ProductName { get; set; }
     public string Title { get; set; }
     public decimal Price { get; set; }
-    public decimal Percent { get; set; }
     public int Quantity { get; set; }
     public string Sku { get; set; }
-    public ImageLookupDto? Image { get; set; }
-    public List<OptionValueLookupDto> Options { get; set; }
-
-    private class Mapping : Profile 
-    { 
-        public Mapping()
-        {
-            CreateMap<VariantVm, VariantDto>();
-        }
-    }
-
+    public List<VariantOptionDto> Options { get; set; }
 }

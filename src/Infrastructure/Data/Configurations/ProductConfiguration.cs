@@ -17,52 +17,33 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.CategoryId)
             .IsRequired();
 
-        builder.Property(x => x.Title)
+        builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(255);
 
-        builder.Property(x => x.Status)
-            .IsRequired()
-            .HasConversion<string>();
-
-        //builder.Property(x => x.MinPrice)
-        //    .IsRequired()
-        //    .HasColumnType("decimal(18,2)");
-
-        //builder.Property(x => x.MaxPrice)
-        //    .IsRequired()
-        //    .HasColumnType("decimal(18,2)");
-
-        //builder.Property(x => x.Quantity)
-        //    .IsRequired();
+        builder.Property(x => x.UrlSlug)
+           .HasMaxLength(3000);
 
         builder.Property(x => x.Description)
             .HasMaxLength(3000);
 
-        //builder.Property(x => x.Status)
-        //    .IsRequired()
-        //    .HasConversion<string>();
-
-        builder.Property(x => x.Version)
-            .IsConcurrencyToken();
-
         // Relationships
         builder.HasOne(x => x.Category)
-            .WithMany(y => y.Products)
+            .WithMany()
             .HasForeignKey(x => x.CategoryId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(x => x.ProductOptions)
+        builder.HasMany(x => x.Options)
             .WithOne()
             .HasForeignKey(po => po.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.ProductVariants)
+        builder.HasMany(x => x.Variants)
             .WithOne()
             .HasForeignKey(pv => pv.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.ProductImages)
+        builder.HasMany(x => x.Images)
             .WithOne()
             .HasForeignKey(pi => pi.ProductId)
             .OnDelete(DeleteBehavior.Cascade);

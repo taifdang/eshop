@@ -1,15 +1,14 @@
-﻿using Application.Common.Interfaces.Persistence;
-using Application.Common.Interfaces.Services;
+﻿using Application.Common.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.Interceptors;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Data.Seed;
+using Infrastructure.ExternalServices;
 using Infrastructure.Identity.Data;
 using Infrastructure.Identity.Data.Seed;
 using Infrastructure.Identity.Extensions;
 using Infrastructure.Identity.Services;
 using Infrastructure.Payments.Gateways;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,11 +40,10 @@ public static class DependencyInjection
         // Jwt
         builder.Services.AddScoped<ITokenService, TokenService>();
 
-        // Repositores
-        builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
-        builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        // Repositores    
         builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        builder.Services.AddScoped<IUnitOfWork, ApplicationDbContext>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
         // Custom Servicess      
         builder.Services.AddTransient<IEmailService, EmailService>();
@@ -61,12 +59,11 @@ public static class DependencyInjection
         builder.Services.AddScoped<IPaymentProvider, VnPayGateway>();
 
         // Seeders    
-        builder.Services.AddScoped<IDataSeeder, IdentityDataSeeder>();
-        builder.Services.AddScoped<IDataSeeder, CatalogDataSeeder>();
+        //builder.Services.AddScoped<IDataSeeder, IdentityDataSeeder>();
+        //builder.Services.AddScoped<IDataSeeder, CatalogDataSeeder>();
 
         // Hosted Services
         //builder.Services.AddHostedService<MessageBusConsumerBackgroundService<>();
-
 
         return builder;
     }

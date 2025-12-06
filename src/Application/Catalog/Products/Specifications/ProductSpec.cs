@@ -5,88 +5,88 @@ using Ardalis.Specification;
 
 namespace Application.Catalog.Products.Specifications;
 
-public class ProductSpec : Specification<Domain.Entities.Product>
-{
-    public ProductSpec()
-    {
+//public class ProductSpec : Specification<Domain.Entities.Product>
+//{
+//    public ProductSpec()
+//    {
         
-    }
+//    }
 
-    public ProductSpec ById(Guid productId)
-    {
-        Query.Where(x => x.Id == productId);
+//    public ProductSpec ById(Guid productId)
+//    {
+//        Query.Where(x => x.OptionValueId == productId);
 
-        return this;
-    }
+//        return this;
+//    }
 
-    public ProductSpec WithIsPublished()
-    {
-        Query.Where(x => x.Status == Domain.Enums.ProductStatus.Published);
+//    public ProductSpec WithIsPublished()
+//    {
+//        Query.Where(x => x.Status == Domain.Enums.ProductStatus.Published);
 
-        return this;
-    }
+//        return this;
+//    }
 
-    public ProductSpec ApplyPaging(int skip, int take)
-    {
-        if (take == 0)
-        {
-            take = int.MaxValue;
-        }
+//    public ProductSpec ApplyPaging(int skip, int take)
+//    {
+//        if (take == 0)
+//        {
+//            take = int.MaxValue;
+//        }
 
-        Query.OrderBy(x => x.Id).Skip(skip).Take(take);
+//        Query.OrderBy(x => x.OptionValueId).Skip(skip).Take(take);
 
-        return this;
-    }
-}
+//        return this;
+//    }
+//}
 
-public class ProductListProjectionSpec : Specification<Domain.Entities.Product, ProductListDto>
-{
-    public ProductListProjectionSpec()
-    {
-        Query.Select(x => new ProductListDto
-        {
-            Id = x.Id,
-            Title = x.Title,
-            Price = x.ProductVariants.Min(pv => pv.Price),
-            Category = x.Category.Title,
-            Image = x.ProductImages
-                 .Where(c => c.IsMain && c.OptionValueId == null) // main image
-                 .Select(pi => new ImageLookupDto
-                 {
-                     Id = pi.Id,
-                     Url = pi.ImageUrl
-                 })
-                 .FirstOrDefault() ?? new(),
-        });
-    }
-}
+//public class ProductListProjectionSpec : Specification<Domain.Entities.Product, ProductListDto>
+//{
+//    public ProductListProjectionSpec()
+//    {
+//        Query.Select(x => new ProductListDto
+//        {
+//            OptionValueId = x.OptionValueId,
+//            OptionId = x.Name,
+//            Price = x.Variants.Min(pv => pv.Price),
+//            Category = x.Category.Name,
+//            Image = x.Images
+//                 .Where(c => c.IsMain && c.OptionValueId == null) // main image
+//                 .Select(pi => new ImageLookupDto
+//                 {
+//                     OptionValueId = pi.OptionValueId,
+//                     Url = pi.Url
+//                 })
+//                 .FirstOrDefault() ?? new(),
+//        });
+//    }
+//}
 
-public class ProductItemProjectionSpec : Specification<Domain.Entities.Product, ProductItemDto>
-{
-    public ProductItemProjectionSpec()
-    {
-        Query.Select(p => new ProductItemDto
-        {
-            Id = p.Id,
-            Title = p.Title,
-            MinPrice = p.ProductVariants.Min(pv => pv.Price),
-            MaxPrice = p.ProductVariants.Max(pv => pv.Price),
-            Description = p.Description ?? "",
-            Category = p.Category.Title,
-            MainImage = null,
-            Images = null,
-            Options = p.ProductOptions.Select(po => new ProductOptionDto
-            {
-                Title = po.OptionName,
-                OptionValues = po.OptionValues.Select(ov => new ProductOptionValueDto
-                {
-                    Id = ov.Id,
-                    Value = ov.Value,
-                    Image = null
-                }).ToList()
-            }).ToList()
-        });
-    }
-}
+//public class ProductItemProjectionSpec : Specification<Domain.Entities.Product, ProductItemDto>
+//{
+//    public ProductItemProjectionSpec()
+//    {
+//        Query.Select(p => new ProductItemDto
+//        {
+//            OptionValueId = p.OptionValueId,
+//            OptionId = p.Name,
+//            MinPrice = p.Variants.Min(pv => pv.Price),
+//            MaxPrice = p.Variants.Max(pv => pv.Price),
+//            Description = p.Description ?? "",
+//            Category = p.Category.Name,
+//            MainImage = null,
+//            Images = null,
+//            Options = p.Options.Select(po => new ProductOptionDto
+//            {
+//                OptionId = po.Name,
+//                OptionValues = po.Values.Select(ov => new ProductOptionValueDto
+//                {
+//                    OptionValueId = ov.OptionValueId,
+//                    Value = ov.Value,
+//                    Image = null
+//                }).ToList()
+//            }).ToList()
+//        });
+//    }
+//}
 
 

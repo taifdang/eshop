@@ -10,7 +10,5 @@ public class UpdateVariantCommandValidator : AbstractValidator<UpdateVariantComm
             .GreaterThanOrEqualTo(0).WithMessage("Regular price must be greater than or equal to 0.");
         RuleFor(x => x.Quantity)
             .GreaterThanOrEqualTo(0).WithMessage("Quantity must be greater than or equal to 0.");
-        RuleFor(x => x.Percent)
-           .GreaterThanOrEqualTo(0).WithMessage("Percent must be greater than or equal to 0.");
     }
 }

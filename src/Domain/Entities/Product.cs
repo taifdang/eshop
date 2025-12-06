@@ -1,17 +1,18 @@
-﻿using Domain.Common;
-using Domain.Enums;
-using Domain.Events;
+﻿namespace Domain.Entities;
 
-namespace Domain.Entities;
-
-public class Product : Aggregate<Guid>
+public class Product
 {
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public ProductStatus Status { get; set; }
-    public Guid CategoryId { get; set; }
-    public Category Category { get; set; }
-    public ICollection<ProductOption> ProductOptions { get; set; } = new List<ProductOption>();
-    public ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
-    public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>(); 
+    public Guid Id { get; set; }
+    public string Name { get; set; } = default!;
+    public string UrlSlug { get; set; } = default!;
+    public string Description { get; set; } = default!;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsActive { get; set; }
+    public bool IsDeleted { get; set; }
+    public Guid CategoryId { get; set; } = default!;
+    public Category Category { get; set; } = default!;
+    public List<ProductImage> Images { get; set; } = [];
+    public List<ProductOption> Options { get; set; } = [];
+    public List<Variant> Variants { get; set; } = [];
 }

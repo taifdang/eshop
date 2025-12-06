@@ -14,20 +14,12 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(x => x.Id)
             .ValueGeneratedOnAdd();
 
-        builder.Property(x => x.Title)
+        builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(255);
 
-        builder.Property(x => x.Label)
-            .HasMaxLength(100);
-
-        builder.Property(r => r.Version).IsConcurrencyToken();
-
-        // Relationships
-        builder.HasMany(x => x.Products)
-            .WithOne(y => y.Category)
-            .HasForeignKey(p => p.CategoryId)
-            .OnDelete(DeleteBehavior.NoAction);
-
+        builder.Property(x => x.UrlSlug)
+           .IsRequired()
+           .HasMaxLength(255);
     }
 }

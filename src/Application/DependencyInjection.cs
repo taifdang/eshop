@@ -1,8 +1,10 @@
 ﻿using Application.Catalog.Products.Services;
 using Application.Common.Behaviors;
+using EventBus.InMemory;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using TransactionalOutbox.Extensions;
 
 namespace Application;
 
@@ -24,7 +26,11 @@ public static class DependencyInjection
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
         // Service
-        builder.Services.AddScoped<IProductImageService, ProductImageService>();
+        builder.Services.AddScoped<IImageLookupService, ImageLookupService>();
+
+        builder.Services.AddInMemoryEventBus();
+        // ?
+        builder.AddTransactionalOutbox();
 
         return builder;
     }

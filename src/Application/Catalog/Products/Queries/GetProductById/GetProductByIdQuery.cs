@@ -1,10 +1,7 @@
 ﻿using Application.Catalog.Products.Services;
-using Application.Catalog.Products.Specifications;
-using Application.Common.Interfaces.Persistence;
-using Ardalis.Specification;
-using AutoMapper;
+using Application.Common.Interfaces;
 using MediatR;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Queries.GetProductById;
 
@@ -12,43 +9,66 @@ public record GetProductByIdQuery(Guid Id) : IRequest<ProductItemDto>;
 
 public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductItemDto>
 {
-    private readonly IRepository<Domain.Entities.Product> _productRepository;
-    private readonly IProductImageService _productImageService;
+    private readonly IApplicationDbContext _dbContext;
+    private readonly IImageLookupService _imageLookupService;
 
     public GetProductByIdQueryHandler(
-        IRepository<Domain.Entities.Product> productRepository,
-        IProductImageService productImageService,
-        IMapper mapper,
-        IApplicationDbContext context)
+        IImageLookupService imageLookupService,
+        IApplicationDbContext dbContext)
     {
-        _productRepository = productRepository;
-        _productImageService = productImageService;
+        _imageLookupService = imageLookupService;
+        _dbContext = dbContext;
     }
 
     public async Task<ProductItemDto> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
         // *When user click product, we will load all options, option values, images for product to client side
-        // *Then user select option values, we will generate variant on client side (based on option values selected) to show Price, sku, quantity, image...
-        var spec = new ProductSpec()
-            .ById(request.Id)
-            .WithProjectionOf(new ProductItemProjectionSpec());
+        // *Then user select option values, we will generate variant on client side (based on option values selected)
+        // to show Price, sku, quantity, image...
 
-        var products = await _productRepository.FirstOrDefaultAsync(spec, cancellationToken);
+        //var spec = new ProductSpec()
+        //    .ById(request.OptionValueId)
+        //    .WithProjectionOf(new ProductItemProjectionSpec());
+
+        var products = await _dbContext.Products
+            .AsNoTracking()
+            .Where(x => x.Id == request.Id)
+            .Select(m => new ProductItemDto
+            {
+                Id = m.Id,
+                Title = m.Name,
+                MinPrice = m.Variants.Any() ? m.Variants.Min(v => v.Price) : 0m,
+                MaxPrice = m.Variants.Any() ? m.Variants.Max(v => v.Price) : 0m,
+                Description = m.Description ?? string.Empty,
+                Category = m.Category.Name,
+                Options = m.Options.Select(po => new ProductOptionDto
+                {
+                    Title = po.Name,
+                    OptionValues = po.Values.Select(ov => new ProductOptionValueDto
+                    {
+                        Id = ov.Id,
+                        Value = ov.Value,
+                    }).ToList()
+                }).ToList(),
+            })
+            .FirstOrDefaultAsync();
+
         if (products == null)
         {
             return null!;
         }
 
-        var images = await _productImageService.GetOrderedImagesAsync(request.Id, null);
+        var imageLookup = await _imageLookupService.GetProductDetailImageAsync(request.Id);
 
-        products.MainImage = images.MainImage;
-        products.Images = images.CommonImages;
+        products.MainImage = imageLookup.MainImage;
+        products.Images = imageLookup.CommonImages;
+
+        // variant image = option value image
         products.Options = products.Options.Select(po => new ProductOptionDto
         {
             OptionValues = po.OptionValues.Select(x => new ProductOptionValueDto
             {
-                Id = x.Id,
-                Image = images.VariantImages.TryGetValue(x.Id, out var img) ? img : null,
+                Image = imageLookup.VariantImages.TryGetValue(x.Id, out var img) ? img : null,
             }).ToList()
         }).ToList();
 
@@ -58,38 +78,38 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
 
 #region
 //var productVm = await _unitOfWork.ProductRepository.GetByIdAsync(
-//    filter: x => x.ProductOptionId == request.ProductOptionId,
+//    filter: x => x.OptionId == request.OptionId,
 //    selector: x => new ProductDetailVm
 //    {
-//        ProductOptionId = x.ProductOptionId,
-//        Title = x.Title,
-//        MinPrice = x.ProductVariants.Min(x => x.Price),
-//        MaxPrice = x.ProductVariants.Max(x => x.Price),
+//        OptionId = x.OptionId,
+//        Name = x.Name,
+//        MinPrice = x.Variants.Min(x => x.Price),
+//        MaxPrice = x.Variants.Max(x => x.Price),
 //        Description = x.Description ?? string.Empty,
-//        Category = x.Category.Title,
-//        ProductType = x.Category.ProductType.Title,
-//        Images = x.ProductImages.Select(img => new ImageLookupDto
+//        Category = x.Category.Name,
+//        ProductType = x.Category.ProductType.Name,
+//        Images = x.Images.Select(img => new ImageLookupDto
 //        {
-//            ProductOptionId = img.ProductOptionId,
-//            Url = img.Image,
+//            OptionId = img.OptionId,
+//            Url = img.eImage,
 //        }).ToList(),
-//        Options = x.ProductOptions.Select(po => new OptionLookupDto 
+//        Options = x.Options.Select(po => new OptionLookupDto 
 //        { 
-//            Title = po.OptionName,
+//            Name = po.Name,
 //            OptionValues = po.OptionValues.Select(v => v.Value).ToList()
 //        }).ToList(),
-//        OptionValues = x.ProductOptions.Select(po => new OptionValueDto
+//        OptionValues = x.Options.Select(po => new OptionValueDto
 //        {
-//            Title = po.OptionName,
+//            Name = po.Name,
 //            OptionValues = po.OptionValues.Select(v => v.Value).ToList(),
 //            Options = po.OptionValues.Select(ov => new OptionValueImageDto
 //            {
-//                Title = ov.Value,
+//                Name = ov.Value,
 //                Label = ov.Label,
-//                Image = ov.ProductImages!.Select(pi => new ImageLookupDto
+//                eImage = ov.Images!.Select(pi => new ImageLookupDto
 //                {
-//                    ProductOptionId = pi.ProductOptionId,
-//                    Url = pi.Image
+//                    OptionId = pi.OptionId,
+//                    Url = pi.eImage
 //                }).ToList()
 //            }).ToList()
 //        }).ToList(),

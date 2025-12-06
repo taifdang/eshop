@@ -10,30 +10,25 @@ public class ProductOptionConfiguration : IEntityTypeConfiguration<ProductOption
     {
         builder.ToTable(nameof(ProductOption));
 
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id)
+        builder.HasKey(po => po.Id);
+        builder.Property(po => po.Id)
             .ValueGeneratedOnAdd();
 
-        builder.Property(x => x.ProductId)
+        builder.Property(po => po.ProductId)
             .IsRequired();
 
-        builder.Property(x => x.OptionName)
+        builder.Property(po => po.Name)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(255);
 
         builder.HasIndex(x => x.ProductId)
           .IsUnique()
-          .HasFilter("[AllowImage] = 1");
+          .HasFilter("[AllowImage] = 1"); // Ensures only one option with images per product
 
         // Relationships
-        builder.HasOne(x => x.Product)
-            .WithMany(p => p.ProductOptions)
-            .HasForeignKey(x => x.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(x => x.OptionValues)
-            .WithOne(y => y.ProductOption)
-            .HasForeignKey(ov => ov.ProductOptionId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(x => x.Values)
+            .WithOne()
+            .HasForeignKey(pov => pov.OptionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -9,14 +9,15 @@ public class Order : Aggregate<Guid>
 {
     public Guid CustomerId { get; init; }
     public OrderStatus Status { get; private set; }
-    public Money TotalAmount { get; init; }
-    public Address ShippingAddress { get; private set; }
-    public Payment? Payment { get; private set; }
+    public Money TotalAmount { get; init; } = default!;
+    public Address ShippingAddress { get; private set; } = default!;
+    public string? CardBrand { get; set; }
+    public string? TransactionId { get; set; }
     public DateTime OrderDate { get; init; } = DateTime.Now;
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 
     public static Order Create(Guid orderId, Guid customerId, Address shippingAddress,
-        List<OrderItem> items, Money totalAmount, Payment payment)
+        List<OrderItem> items, Money totalAmount)
     {
         var order = new Order 
         { 
@@ -24,24 +25,11 @@ public class Order : Aggregate<Guid>
             CustomerId = customerId,
             TotalAmount = totalAmount,
             ShippingAddress = shippingAddress,
-            Status = payment.Method == PaymentMethod.Cod 
-                ? OrderStatus.Confirmed 
-                : OrderStatus.Pending,
             Items = items,
             OrderDate = DateTime.Now,
             CreatedAt = DateTime.UtcNow
         };
-
-        //var orderItems = 
-        //    items.Select(x => new OrderItemDto(x.ProductVariantId, x.Quantity)).ToList();
-
         order.AddDomainEvent(new OrderCreatedDomainEvent(order.Id, customerId));
-
-        //if (payment.Method == PaymentMethod.Cod)
-        //{
-        //    order.AddDomainEvent(new BasketShouldBeClearedEvent(customerId));
-        //}
-
         return order;
     }
 
@@ -57,28 +45,16 @@ public class Order : Aggregate<Guid>
         AddDomainEvent(new OrderStatusChangedToConfirmedDomainEvent(orderId));
     }
 
-
-    public void AddPayment(PaymentProvider provider, string paymentUrl, string transactionId)
-    {
-        if (Payment.Method != PaymentMethod.Online)
-            throw new Exception("Only online payment can have URL");
-        Payment = Payment.WithPayment(provider, paymentUrl, transactionId);
-    }
-
     public void MarkPaymentSuccess(string transactionId)
     {
-        if (Payment == null)
-            throw new InvalidOperationException("Payment not exist");
-        Payment = Payment.MarkAsPaid(transactionId);
+        LastModified = DateTime.UtcNow;
         Status = OrderStatus.Confirmed;
     }
 
     public void MarkPaymentFailed()
-    {
-        if (Payment == null) 
-            throw new InvalidOperationException("Payment not exist");
-        Payment = Payment.MarkAsFailed();
-        Status = OrderStatus.Confirmed;
+    { 
+        LastModified = DateTime.UtcNow;
+        Status = OrderStatus.Failed;
     }
 
     public void Cancel()

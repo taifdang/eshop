@@ -1,9 +1,8 @@
 ﻿using Application.Basket.Queries.GetCartList;
 using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces.Persistence;
+using Application.Common.Interfaces;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.ValueObject;
 using MediatR;
 
@@ -11,20 +10,17 @@ namespace Application.Order.Commands.CreateOrder;
 
 public record CreateOrderCommand(
     Guid CustomerId, 
-    Address ShippingAddress,
-    PaymentMethod PaymentMethod,
-    PaymentProvider? PaymentProvider = null,
-    string? PaymentUrl = null) : IRequest<Guid>;
+    Address ShippingAddress) : IRequest<Guid>;
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
 {
-    private readonly IRepository<Domain.Entities.Order> _orderRepo;
+    private readonly IOrderRepository _orderRepository;
     private readonly IMediator _mediator;
 
     public CreateOrderCommandHandler(
-        IRepository<Domain.Entities.Order> orderRepo,
+        IOrderRepository orderRepository,
         IMediator mediator)
     {
-        _orderRepo = orderRepo;
+        _orderRepository = orderRepository;
         _mediator = mediator;
     }
 
@@ -42,26 +38,31 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
 
         foreach (var basketItem in basket.Items)
         {
-            var productVariant = await _mediator.Send(new GetVariantByIdQuery(basketItem.ProductVariantId));
+            var variant = await _mediator.Send(new GetVariantByIdQuery(basketItem.ProductVariantId));
 
-            if (productVariant == null)
+            if (variant == null)
             {
                 throw new EntityNotFoundException();
             }
 
-            if (productVariant.Quantity < basketItem.Quantity)
+            if (variant.Quantity < basketItem.Quantity)
             {
                 throw new Exception("Not enough product variant quantity");
             }
 
+            var image = variant.Options
+                .Where(x => x.Image != null)
+                .Select(x => x.Image.Url)
+                .FirstOrDefault();
+
             var orderItem = new OrderItem
             {
-                ProductVariantId = productVariant.Id,     
-                ProductName = productVariant.ProductName,
-                VariantName = productVariant.Title,
-                UnitPrice = productVariant.Price,
+                VariantId = variant.Id,     
+                ProductName = variant.ProductName,
+                VariantTitle = variant.Title,
+                UnitPrice = variant.Price,
                 Quantity = basketItem.Quantity,
-                ImageUrl = productVariant.Image.Url
+                ImageUrl = image
             };
 
             orderItems.Add(orderItem);
@@ -69,32 +70,17 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             totalAmount += Money.Vnd(orderItem.TotalPrice);
         }
 
-        Payment payment = request.PaymentMethod switch
-        {
-            PaymentMethod.Cod => Payment.CreateCod(totalAmount),
-            PaymentMethod.Online => Payment.CreateOnline(request.PaymentProvider.Value, totalAmount, request.PaymentUrl),
-            _ => throw new Exception("Payment method not support")
-        };
+        
 
         var order = Domain.Entities.Order.Create(
             Guid.NewGuid(),
             request.CustomerId,
             request.ShippingAddress, 
             orderItems, 
-            totalAmount,
-            payment);
+            totalAmount);
 
-        await _orderRepo.AddAsync(order);
+        await _orderRepository.AddAsync(order);
 
         return order.Id;
     }
 }
-
-// event
-//var orderItemsAdded = _mapper.Map<List<OrderItemDto>>(orderItems);
-
-// Update product variant quanity
-// await _mediator.Send(new ReduceStockCommand(orderItemsAdded));
-
-// Clear the basket after creating the order
-//await _mediator.Send(new Basket.Commands.ClearBasket.ClearBasketCommand(request.CustomerId));

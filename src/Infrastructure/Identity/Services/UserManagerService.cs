@@ -1,5 +1,5 @@
-﻿using Application.Catalog.Products.Commands.DeleteFile;
-using Application.Common.Interfaces.Services;
+﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

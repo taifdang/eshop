@@ -1,6 +1,5 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces.Persistence;
-using Application.Common.Interfaces.Services;
+using Application.Common.Interfaces;
 using Infrastructure.Identity.Data;
 using Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
@@ -75,7 +74,7 @@ public class TokenService(
 
         //var claims = new[]
         //{
-        //    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        //    new Claim(ClaimTypes.NameIdentifier, user.OptionValueId.ToString()),
         //    new Claim(ClaimTypes.Name, user.UserName),
         //    new Claim(ClaimTypes.Email, user.Email),
         //    new Claim(ClaimTypes.Uri, user?.AvatarUrl ?? "default.png"),
@@ -99,19 +98,19 @@ public class TokenService(
 
         ////set result
         //result.Token = tokenResult;
-        //result.UserId = user.Id;
+        //result.UserId = user.OptionValueId;
         //result.Expire = expires;
 
         ////refresh token  
         //var refreshToken = new RefreshToken
         //{
         //    Token = tokenResult,
-        //    UserId = user.Id,
+        //    UserId = user.OptionValueId,
         //    Expires = expires,
         //    Created = DateTime.UtcNow
         //};
 
-        //var existToken = await _appIdentityDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.Id);
+        //var existToken = await _appIdentityDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.OptionValueId);
 
         //if (existToken == null)
         //{

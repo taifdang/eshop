@@ -11,8 +11,8 @@ public class ImageLookupDto
     {
         public Mapping()
         {
-            CreateMap<ProductImage, ImageLookupDto>()
-                .ForMember(d => d.Url, opt => opt.MapFrom(src => src.ImageUrl));
+            CreateMap<Image, ImageLookupDto>()
+                .ForMember(d => d.Url, opt => opt.MapFrom(src => src.BaseUrl + "/" + src.FileName));
         }
     }
 }

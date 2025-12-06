@@ -2,7 +2,7 @@
 
 public class OptionValueLookupDto
 {   
-    public string Title {  get; set; }
-    public Guid Id { get; set; }
+    public Guid OptionId {  get; set; }
+    public Guid OptionValueId { get; set; }
     public string Value { get; set; }
 }

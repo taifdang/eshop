@@ -5,7 +5,7 @@ public static class CombinationHelper
 {
     public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(IEnumerable<IEnumerable<T>> sequences)
     {
-        #region C1
+#region C1
         //if (!sequences.Any())
         //    yield break;
 
@@ -21,8 +21,8 @@ public static class CombinationHelper
 
         //foreach (var combination in result)
         //    yield return combination;
-        #endregion
-        #region C3
+#endregion
+#region C3
         IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
         return sequences.Aggregate(
           emptyProduct,
@@ -30,6 +30,6 @@ public static class CombinationHelper
             from accseq in accumulator
             from item in sequence
             select accseq.Concat(new[] { item }));
-        #endregion
+#endregion
     }
 }

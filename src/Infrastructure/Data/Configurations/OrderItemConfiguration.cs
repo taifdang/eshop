@@ -10,13 +10,13 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     {
         builder.ToTable(nameof(OrderItem));
 
-        // Composite primary key (OrderId + ProductVariantId)
-        builder.HasKey(oi => new { oi.OrderId, oi.ProductVariantId });
+        // Composite primary key (OrderId + VariantId)
+        builder.HasKey(oi => new { oi.OrderId, oi.VariantId });
 
         builder.Property(oi => oi.OrderId)
             .IsRequired();
 
-        builder.Property(oi => oi.ProductVariantId)
+        builder.Property(oi => oi.VariantId)
             .IsRequired();
 
         builder.Property(oi => oi.ProductName)
@@ -30,13 +30,13 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(oi => oi.Quantity)
             .IsRequired();
 
-        builder.HasIndex(oi => oi.ProductVariantId);
+        builder.HasIndex(oi => oi.VariantId);
         builder.HasIndex(oi => oi.OrderId);
 
         // Configure relationship with Order (optional, but explicit)
-        builder.HasOne<Order>()
-            .WithMany(o => o.Items)
-            .HasForeignKey(oi => oi.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne<Order>()
+        //    .WithMany(o => o.Items)
+        //    .HasForeignKey(oi => oi.OrderId)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

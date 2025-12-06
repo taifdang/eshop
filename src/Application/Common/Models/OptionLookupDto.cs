@@ -14,7 +14,7 @@ public class OptionLookupDto
         public Mapping()
         {
             CreateMap<OptionLookupDto, OptionValueLookupDto>()
-                .ForMember(d => d.Id , opt => opt.MapFrom(s => s.OptionValueId));
+                .ForMember(d => d.OptionValueId , opt => opt.MapFrom(s => s.OptionValueId));
         }
     }
 }

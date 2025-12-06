@@ -1,10 +1,11 @@
-﻿using Application.Catalog.Products.Specifications;
-using Application.Common.Exceptions;
-using Application.Common.Interfaces.Persistence;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
+using Application.Common.Models;
 using Application.Common.Utilities;
 using Ardalis.Specification;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.GenerateVariant;
 
@@ -12,18 +13,11 @@ public record GenerateVariantCommand(Guid ProductId, Dictionary<Guid, List<Guid>
 
 public class GenerateVariantCommandHandler : IRequestHandler<GenerateVariantCommand, Unit>
 {
-    private readonly IRepository<ProductVariant> _productVariantRepository;
-    private readonly IRepository<Product> _productRepository;
-    private readonly IRepository<OptionValue> _optionValueRepository;
+    private readonly IApplicationDbContext _dbContext;
 
-    public GenerateVariantCommandHandler(
-        IRepository<ProductVariant> productVariantRepository,
-        IRepository<Product> productRepository,
-        IRepository<OptionValue> optionValueRepository)
+    public GenerateVariantCommandHandler(IApplicationDbContext dbContext)
     {
-        _productVariantRepository = productVariantRepository;
-        _productRepository = productRepository;
-        _optionValueRepository = optionValueRepository;
+        _dbContext = dbContext;
     }
 
     public async Task<Unit> Handle(GenerateVariantCommand request, CancellationToken cancellationToken)
@@ -31,53 +25,68 @@ public class GenerateVariantCommandHandler : IRequestHandler<GenerateVariantComm
         if (request.OptionValueFilter == null || request.OptionValueFilter.Count == 0)
             throw new ArgumentException("No option values provided.");
 
-        var product = await _productRepository.GetByIdAsync(request.ProductId)
+        var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken)
             ?? throw new EntityNotFoundException(nameof(Product), request.ProductId);
 
         // Implementation for generating variants would go here
         var optionValues = request.OptionValueFilter.SelectMany(x => x.Value).ToList();
 
-        var optionValueSpec = new OptionValueSpec()
-            .WithOptionValues(optionValues)
-            .WithProjectionOf(new OptionValueProjectionSpec());
+        //var optionValueSpec = new OptionValueSpec()
+        //    .WithOptionValues(optionValues)
+        //    .WithProjectionOf(new OptionValueProjectionSpec());
 
-        var optionValueEntities = await _optionValueRepository.ListAsync(optionValueSpec, cancellationToken);
+        var query = _dbContext.OptionValues.AsQueryable();
+
+        query = query.Where(m => optionValues.Contains(m.Id));
+
+        var optionValueEntities = await query.Select(m => new OptionValueDto(m.Id, m.Value)).ToListAsync(cancellationToken);
 
         // Logic to create variants based on optionValueEntities would be implemented here
-        var optionValueDict = optionValueEntities.ToDictionary(x => x.Id, x => x.Value ?? x.Label );
+        var optionValueDict = optionValueEntities.ToDictionary(x => x.Id, x => x.Value);
 
         var combinations = CombinationHelper.CartesianProduct(request.OptionValueFilter.Values).ToList();
+
         if (combinations.Count == 0)
             throw new InvalidOperationException("No combinations generated.");
 
         const int batchSize = 20;
-        var batch = new List<ProductVariant>(batchSize);
-        foreach (var combo in combinations)
+        var batch = new List<Variant>(batchSize);
+
+        try
         {
-            var ids = combo.ToList();
-
-            var title = string.Join(" - ", ids.Select(id => optionValueDict[id]));
-
-            var variant = new ProductVariant
+            foreach (var combo in combinations)
             {
-                ProductId = product.Id,
-                Title = title,
-                Percent = 0,
-                Status = Domain.Enums.IntentoryStatus.InStock,
-                VariantOptionValues = ids.Select(id => new VariantOptionValue { OptionValueId = id }).ToList()
-            };
+                var ids = combo.ToList();
 
-            batch.Add(variant);
+                var title = string.Join(" - ", ids.Select(id => optionValueDict[id]));
 
-            if (batch.Count >= batchSize)
-            {
-                await _productVariantRepository.AddRangeAsync(batch, cancellationToken);
-                batch.Clear();
+                var variant = new Variant
+                {
+                    ProductId = product.Id,
+                    Title = title,
+                    VariantOptions = ids.Select(id => new VariantOption { OptionValueId = id }).ToList()
+                };
+
+                batch.Add(variant);
+
+                if (batch.Count >= batchSize)
+                {
+                    await _dbContext.Variants.AddRangeAsync(batch, cancellationToken);
+                    batch.Clear();
+                }
             }
-        }
 
-        if (batch.Count > 0)
-            await _productVariantRepository.AddRangeAsync(batch, cancellationToken);
+            if (batch.Count > 0)
+            {
+                await _dbContext.Variants.AddRangeAsync(batch, cancellationToken);
+            }
+               
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while generating variants.", ex);
+        }
 
         return Unit.Value;
     }
