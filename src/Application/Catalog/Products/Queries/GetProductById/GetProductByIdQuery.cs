@@ -27,7 +27,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
         // to show Price, sku, quantity, image...
 
         //var spec = new ProductSpec()
-        //    .ById(request.OptionValueId)
+        //    .ById(request.Id)
         //    .WithProjectionOf(new ProductItemProjectionSpec());
 
         var products = await _dbContext.Products
@@ -44,7 +44,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
                 Options = m.Options.Select(po => new ProductOptionDto
                 {
                     Title = po.Name,
-                    OptionValues = po.Values.Select(ov => new ProductOptionValueDto
+                    Values = po.Values.Select(ov => new OptionValueDto
                     {
                         Id = ov.Id,
                         Value = ov.Value,
@@ -64,13 +64,19 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
         products.Images = imageLookup.CommonImages;
 
         // variant image = option value image
-        products.Options = products.Options.Select(po => new ProductOptionDto
+        if(imageLookup.VariantImages.Count > 0)
         {
-            OptionValues = po.OptionValues.Select(x => new ProductOptionValueDto
+            foreach (var option in products.Options)
             {
-                Image = imageLookup.VariantImages.TryGetValue(x.Id, out var img) ? img : null,
-            }).ToList()
-        }).ToList();
+                foreach (var value in option.Values)
+                {
+                    if (imageLookup.VariantImages.TryGetValue(value.Id, out var img))
+                    {
+                        value.Image = img;
+                    }
+                }
+            }
+        }
 
         return products;
     }
@@ -96,13 +102,13 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
 //        Options = x.Options.Select(po => new OptionLookupDto 
 //        { 
 //            Name = po.Name,
-//            OptionValues = po.OptionValues.Select(v => v.Value).ToList()
+//            Values = po.Values.Select(v => v.Value).ToList()
 //        }).ToList(),
-//        OptionValues = x.Options.Select(po => new OptionValueDto
+//        Values = x.Options.Select(po => new OptionValueDto
 //        {
 //            Name = po.Name,
-//            OptionValues = po.OptionValues.Select(v => v.Value).ToList(),
-//            Options = po.OptionValues.Select(ov => new OptionValueImageDto
+//            Values = po.Values.Select(v => v.Value).ToList(),
+//            Options = po.Values.Select(ov => new OptionValueImageDto
 //            {
 //                Name = ov.Value,
 //                Label = ov.Label,

@@ -9,9 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\EventBus.InMemory\EventBus.InMemory.csproj" />
+    <ProjectReference Include="..\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\Outbox\Outbox.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
-    <ProjectReference Include="..\TransactionalOutbox\TransactionalOutbox.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,9 +34,6 @@
     <Folder Include="Identity\Dtos\" />
     <Folder Include="Identity\Queries\" />
     <Folder Include="Payment\" />
-    <Folder Include="Order\Commands\SetStockRejectedOrderStatus\" />
-    <Folder Include="Order\Commands\SetCompletedOrderStatus\" />
-    <Folder Include="Order\Commands\SetStockConfirmedOrderStatus\" />
   </ItemGroup>
 
 </Project>

@@ -17,26 +17,26 @@ namespace Application.Catalog.Products.Specifications;
     //    return this;
     //}
 
-    //public ProductImageSpec ById(Guid OptionValueId)
+    //public ProductImageSpec ById(Guid Id)
     //{
-    //    Query.Where(x => x.OptionValueId == OptionValueId);
+    //    Query.Where(x => x.Id == Id);
     //    return this;
     //}
-    //public ProductImageSpec ByOptionValueId(Guid? OptionValueId)
+    //public ProductImageSpec ByOptionValueId(Guid? Id)
     //{
-    //    if (OptionValueId.HasValue)
-    //        Query.Where(x => x.OptionValueId == OptionValueId.Value);
+    //    if (Id.HasValue)
+    //        Query.Where(x => x.Id == Id.Value);
     //    return this;
     //}
 
-    //public ProductImageSpec ApplyOrderingBy(Guid? OptionValueId)
+    //public ProductImageSpec ApplyOrderingBy(Guid? Id)
     //{
     //    Query
     //         .OrderBy(x =>
-    //              x.OptionValueId == OptionValueId ? 0 :
-    //              x.IsMain && x.OptionValueId == null ? 1 :
-    //              x.OptionValueId == null ? 2 : 3)
-    //        .ThenBy(x => x.OptionValueId);
+    //              x.Id == Id ? 0 :
+    //              x.IsMain && x.Id == null ? 1 :
+    //              x.Id == null ? 2 : 3)
+    //        .ThenBy(x => x.Id);
     //    return this;
     //}
 
@@ -52,10 +52,10 @@ namespace Application.Catalog.Products.Specifications;
     //    {
     //        LookupDto = new ImageLookupDto
     //        {
-    //            OptionValueId = x.OptionValueId,
+    //            Id = x.Id,
     //            Url = x.Url
     //        },
-    //        OptionValueId = x.OptionValueId
+    //        Id = x.Id
     //    });
 
     //    return this;
@@ -70,10 +70,10 @@ namespace Application.Catalog.Products.Specifications;
 //        {
 //            LookupDto = new ImageLookupDto
 //            {
-//                OptionValueId = x.OptionValueId,
+//                Id = x.Id,
 //                Url = x.Url
 //            },
-//            OptionValueId = x.OptionValueId
+//            Id = x.Id
 //        });
 //    }
 //}

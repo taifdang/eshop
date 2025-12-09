@@ -22,6 +22,6 @@ public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
         builder.HasOne(pi => pi.Image)
             .WithMany()
             .HasForeignKey(pi => pi.ImageId)
-            .OnDelete(DeleteBehavior.SetNull); // EF check constraint
+            .OnDelete(DeleteBehavior.Restrict); // EF check constraint
     }
 }

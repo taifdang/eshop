@@ -34,6 +34,6 @@ public class Identity
 
 public class BackgroundTaskOptions
 {
-    public int GracePeriodTime { get; set; }
-    public int CheckUpdateTime { get; set; }
+    public int GracePeriodTime { get; set; } = 1;
+    public int CheckUpdateTime { get; set; } = 30;
 }

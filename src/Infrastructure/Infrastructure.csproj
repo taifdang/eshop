@@ -32,6 +32,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\EventBus.InMemory\EventBus.InMemory.csproj" />
+    <ProjectReference Include="..\Outbox.EF\Outbox.EF.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 

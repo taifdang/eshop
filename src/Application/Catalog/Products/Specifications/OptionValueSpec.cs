@@ -15,8 +15,8 @@ namespace Application.Catalog.Products.Specifications;
     //    Query
     //       .Include(x => x.Option)
     //       .Where(x =>
-    //       (!optionValueId.HasValue || x.OptionValueId == optionValueId) &&
-    //       x.Option.OptionValueId == optionId);
+    //       (!optionValueId.HasValue || x.Id == optionValueId) &&
+    //       x.Option.Id == optionId);
 
     //    return this;
     //}
@@ -24,14 +24,14 @@ namespace Application.Catalog.Products.Specifications;
     //public OptionValueSpec ByOptionValueId(Guid? optionValueId)
     //{
     //    if(optionValueId.HasValue)
-    //        Query.Where(x => x.OptionValueId == optionValueId);
+    //        Query.Where(x => x.Id == optionValueId);
        
     //    return this;
     //}
 
     //public OptionValueSpec ByOptionId(Guid optionId)
     //{
-    //    Query.Where(x => x.ProductOption.OptionValueId == optionId);
+    //    Query.Where(x => x.ProductOption.Id == optionId);
 
     //    return this;
     //}
@@ -45,7 +45,7 @@ namespace Application.Catalog.Products.Specifications;
 
     //public OptionValueSpec WithOptionValues(List<Guid> optionValues)
     //{
-    //    Query.Where(x => optionValues.Contains(x.OptionValueId));
+    //    Query.Where(x => optionValues.Contains(x.Id));
 
     //    return this;
     //}
@@ -62,7 +62,7 @@ namespace Application.Catalog.Products.Specifications;
     //    Query
     //        .Where(x =>
     //            x.Option.ProductId == productId &&
-    //            x.OptionValueId == optionValueId &&
+    //            x.Id == optionValueId &&
     //            x.Option.AllowImage);
 
     //    return this;
@@ -74,6 +74,6 @@ namespace Application.Catalog.Products.Specifications;
 //{
 //    public OptionValueProjectionSpec()
 //    {
-//        Query.Select(x => new OptionValueDto(x.OptionValueId, x.Value, x.Label));
+//        Query.Select(x => new OptionValueDto(x.Id, x.Value, x.Label));
 //    }
 //}

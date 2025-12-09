@@ -1,7 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Utilities;
 using Infrastructure.Identity.Data;
-using Infrastructure.Identity.Models;
+using Infrastructure.Identity.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Shared.Constants;

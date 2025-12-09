@@ -1,4 +1,5 @@
-﻿using Shared.Jwt;
+﻿using Infrastructure.Services;
+using Shared.Jwt;
 using Shared.OpenApi;
 using Shared.Web;
 
@@ -6,7 +7,7 @@ namespace Api;
 
 public static class DependencyInjection
 {
-    public static WebApplicationBuilder AddServiceDefaults(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddServiceCollections(this WebApplicationBuilder builder)
     {
         builder.Services.AddJwt();
 
@@ -20,19 +21,21 @@ public static class DependencyInjection
         builder.Services.AddTransient<ICurrentUserProdvider, CurrentUserProvider>();
         builder.Services.AddScoped<ICookieService, CookieService>();
 
-        
-            //.AddJsonOptions(opt =>
-            //{
-            //    // HandleAsync reference loops
-            //    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            //    opt.JsonSerializerOptions.WriteIndented = true;
 
-            //});
+        //.AddJsonOptions(opt =>
+        //{
+        //    // HandleAsync reference loops
+        //    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        //    opt.JsonSerializerOptions.WriteIndented = true;
+
+        //});
+
+        builder.Services.AddHostedService<GracePeriodBackgroundService>();
 
         return builder;
     }
 
-    public static WebApplication UseServiceDefaults(this WebApplication app)
+    public static WebApplication UseServiceCollections(this WebApplication app)
     {  
         app.UseHttpsRedirection();
 

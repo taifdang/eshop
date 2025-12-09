@@ -25,6 +25,6 @@ public class OptionValueConfiguration : IEntityTypeConfiguration<OptionValue>
         builder.HasOne(x => x.Image)
             .WithMany()
             .HasForeignKey(x => x.ImageId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

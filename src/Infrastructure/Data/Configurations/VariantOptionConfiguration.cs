@@ -15,7 +15,7 @@ public class VariantOptionConfiguration : IEntityTypeConfiguration<VariantOption
         builder.HasIndex(ci => ci.OptionValueId);
         builder.HasIndex(ci => ci.VariantId);
 
-        builder.HasOne<OptionValue>()
+        builder.HasOne(x => x.OptionValue)
             .WithMany()
             .HasForeignKey(ci => ci.OptionValueId)
             .OnDelete(DeleteBehavior.Restrict);

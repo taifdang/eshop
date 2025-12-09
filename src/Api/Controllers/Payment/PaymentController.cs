@@ -1,6 +1,4 @@
-﻿using Application.Common.Interfaces;
-using Domain.Enums;
-using Infrastructure.ExternalServices;
+﻿using Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Web;
 
@@ -11,12 +9,10 @@ public class PaymentController : BaseController
 {
     private readonly PaymentService _paymentService;
 
-
     public PaymentController(PaymentService paymentService)
     {
         _paymentService = paymentService;
     }
-
 
     //[HttpPost("create")]
     //public async Task<IActionResult> CreatePayment(CreatePaymentRequest req)
@@ -29,7 +25,7 @@ public class PaymentController : BaseController
     //[HttpGet("callback/{provider}")]
     //public async Task<IActionResult> Callback(PaymentProvider provider)
     //{
-    //    var data = Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
+    //    var data = Requested.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
     //    var ok = await _paymentService.HandleCallbackAsync(provider, data);
     //    return ok ? Ok("success") : BadRequest("fail");
     //}

@@ -13,6 +13,10 @@ public class CustomersController(ICurrentUserProdvider currentUserProdvider) : B
     public async Task<IActionResult> GetCurrentCustomer()
     {
         var userId = _currentUserProdvider.GetCurrentUserId();
+
+        if(userId == null)
+            return Unauthorized();
+
         return Ok(await Mediator.Send(new GetCustomerByUserIdQuery(Guid.Parse(userId))));
     }
 }

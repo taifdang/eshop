@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Models;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +34,7 @@ public class ImageLookupService : IImageLookupService
               .Select(x => new ImageLookupDto
               {
                   Id = x.ImageId,
-                  Url = x.Image.BaseUrl + "/" + x.Image.FileName
+                  Url = x.Image.BaseUrl + x.Image.FileName
               })
               .ToListAsync(ct);
 
@@ -47,13 +48,14 @@ public class ImageLookupService : IImageLookupService
               .AsNoTracking()
               .Where(o => o.ProductId == productId && o.AllowImage)
               .SelectMany(x => x.Values)
-              .Where(v => v.ImageId != null && v.Image != null)
+              .Where(v => v.ImageId != null)
+              .Include(v => v.Image)
               .ToDictionaryAsync(
                 x => x.Id,
                 x => new ImageLookupDto
                 {
-                    Id = x.Image.Id,
-                    Url = x.Image.BaseUrl + "/" + x.Image.FileName
+                    Id = x.Image!.Id,
+                    Url = x.Image.BaseUrl + x.Image.FileName
                 });
 
             productImage.VariantImages = variantImages;  
@@ -66,13 +68,13 @@ public class ImageLookupService : IImageLookupService
         // * Only one option value has image
         //if (optionValueId.HasValue)
         //{
-        //    var variantImageDict = await _dbContext.OptionValues
-        //        .Where(x => x.OptionValueId == optionValueId.Value && x.Image != null)
+        //    var variantImageDict = await _dbContext.Values
+        //        .Where(x => x.Id == optionValueId.Value && x.Image != null)
         //        .ToDictionaryAsync(
-        //            x => x.OptionValueId,
+        //            x => x.Id,
         //            x => new ImageLookupDto 
         //            { 
-        //                OptionValueId = x.ImageId.Value, 
+        //                Id = x.ImageId.Value, 
         //                Url = x.Image.BaseUrl + "/" + x.Image.FileName 
         //            });
 
@@ -92,13 +94,58 @@ public class ImageLookupService : IImageLookupService
          .Where(o => o.ProductId == productId && o.AllowImage)
          .SelectMany(o => o.Values)
          .Where(v => v.Id == optionValueId.Value)
-         .Where(v => v.ImageId != null && v.Image != null)
+         .Where(v => v.ImageId != null)
+         .Include(v => v.Image)
          .Select(v => new ImageLookupDto
          {
              Id = v.ImageId!.Value,
-             Url = v.Image.BaseUrl + "/" + v.Image.FileName
+             Url = v.Image!.BaseUrl + v.Image.FileName
          })
          .ToDictionaryAsync(v => v.Id, v => v, ct);
+    }
+
+    public async Task<ImageLookupDto> GetVariantImageAndFallback(Guid productId, List<Guid>? optionValueIds = null, CancellationToken ct = default)
+    {
+        var result = new ImageLookupDto();
+
+        if(optionValueIds.Count > 0)
+        {
+            var variantImage = await _dbContext.OptionValues
+           .Where(x => optionValueIds.Contains(x.Id) && x.ImageId != null)
+           .Include(x => x.Image)
+           .Select(y => new ImageLookupDto
+           {
+               Id = y.ImageId!.Value,
+               Url = y.Image!.BaseUrl + y.Image.FileName
+           })
+           .FirstOrDefaultAsync();
+
+           if (variantImage is not null)
+           {
+                result = variantImage;
+           }
+        }
+        if(result is null || optionValueIds.Count == 0)
+        {
+            var fallbackImage = await _dbContext.ProductImages
+             .AsNoTracking()
+             .Where(x => x.ProductId == productId)
+             .Where(v => v.ImageId != null)
+             .Include(x => x.Image)
+             .OrderByDescending(m => m.IsMain)
+             .ThenBy(m => m.SortOrder)
+             .ThenBy(x => x.Id)
+             .Select(x => new ImageLookupDto
+             {
+                 Id = x.ImageId,
+                 Url = x.Image.BaseUrl + x.Image.FileName
+             })
+             .FirstOrDefaultAsync(ct);
+
+            result = fallbackImage;
+        }
+
+        return result ?? new();
     }
 }
 
@@ -106,9 +153,9 @@ public class ImageLookupService : IImageLookupService
 //{
 //    var spec = new ProductImageSpec()
 //        .ByProductId(cmd.ProductId)
-//        .ByOptionValueId(cmd.OptionValueId);
+//        .ByOptionValueId(cmd.Id);
 
-//    if (cmd.OptionValueId is null)
+//    if (cmd.Id is null)
 //    {
 //        var imgs = await _productImageRepo.ListAsync(spec);
 //        var main = imgs.Count(x => x.IsMain);
@@ -132,21 +179,21 @@ public class ImageLookupService : IImageLookupService
 //    .WithProjectionOf(new ProductImageProjectionSpec());   
 
 
-//var selectedVariantId = request.OptionValueId;
+//var selectedVariantId = request.Id;
 //    var orderedList = images
 //        .Select(img => new
 //        {
-//            Dto = new ImageLookupDto { OptionValueId = img.OptionValueId, Url = img.Url! },
-//            Priority = img.OptionValueId == selectedVariantId ? 100 : // variant
-//                       img.IsMain && img.OptionValueId == null ? 50 : // main
-//                       img.OptionValueId == null ? 20 : 0, // common
-//            PriorityOrder = img.OptionValueId == selectedVariantId ? 0 :
-//                           img.IsMain && img.OptionValueId == null ? 1 :
-//                           img.OptionValueId == null ? 2 : 3
+//            Dto = new ImageLookupDto { Id = img.Id, Url = img.Url! },
+//            Priority = img.Id == selectedVariantId ? 100 : // variant
+//                       img.IsMain && img.Id == null ? 50 : // main
+//                       img.Id == null ? 20 : 0, // common
+//            PriorityOrder = img.Id == selectedVariantId ? 0 :
+//                           img.IsMain && img.Id == null ? 1 :
+//                           img.Id == null ? 2 : 3
 //        })
 //        .OrderByDescending(x => x.Priority)
 //        .ThenBy(x => x.PriorityOrder)
-//        .ThenBy(x => x.Dto.OptionValueId)
+//        .ThenBy(x => x.Dto.Id)
 //        .Select(x => x.Dto)
 //        .ToList();
 

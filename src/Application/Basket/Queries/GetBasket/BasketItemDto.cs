@@ -5,5 +5,5 @@ public record BasketItemDto(
     string ProductName,
     string VariantName,
     decimal RegularPrice,
-    string ImageUrl,
+    string? ImageUrl,
     int Quantity);

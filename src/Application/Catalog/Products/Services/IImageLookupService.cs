@@ -13,6 +13,11 @@ public interface IImageLookupService
        Guid? optionValueId = null,
        CancellationToken ct = default);
 
+    Task<ImageLookupDto> GetVariantImageAndFallback(
+       Guid productId,
+       List<Guid>? optionValueId = null,
+       CancellationToken ct = default);
+
     //Task<bool> BeValidImageRules(
     //    UploadFileCommand cmd,
     //    CancellationToken ct);

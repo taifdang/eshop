@@ -10,9 +10,12 @@ public class ReserveStockSucceededIntegrationEvent : IntegrationEvent
 public class ReserveStockRejectedIntegrationEvent : IntegrationEvent
 {
     public Guid OrderId { get; set; }
+    public List<InvalidStockItem>? Items { get; set; }
 }
 
-public class ReserveStockFailedIntegrationEvent : IntegrationEvent
+public class InvalidStockItem
 {
-    public Guid OrderId { get; set; }
+    public Guid VariantId { get; set; } 
+    public int Requested { get; set; }
+    public int Available { get; set; }
 }

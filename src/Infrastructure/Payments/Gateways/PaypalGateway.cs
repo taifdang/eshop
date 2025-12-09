@@ -6,7 +6,7 @@ public class PaypalGateway : IPaymentProvider
 {
     public Task<PaymentResult> CreatePaymentAsync(CreatePaymentRequest request)
     {
-        var url = $"https://paypal.vn/pay?order={request.OrderId}";
+        var url = $"https://paypal.vn/pay?order={request.OrderNumber}";
         return Task.FromResult(new PaymentResult(url, DateTime.UtcNow.Ticks.ToString()));
     }
 

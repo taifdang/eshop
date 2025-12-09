@@ -14,7 +14,7 @@ namespace Application.Catalog.Products.Specifications;
 
 //    public ProductSpec ById(Guid productId)
 //    {
-//        Query.Where(x => x.OptionValueId == productId);
+//        Query.Where(x => x.Id == productId);
 
 //        return this;
 //    }
@@ -33,7 +33,7 @@ namespace Application.Catalog.Products.Specifications;
 //            take = int.MaxValue;
 //        }
 
-//        Query.OrderBy(x => x.OptionValueId).Skip(skip).Take(take);
+//        Query.OrderBy(x => x.Id).Skip(skip).Take(take);
 
 //        return this;
 //    }
@@ -45,15 +45,15 @@ namespace Application.Catalog.Products.Specifications;
 //    {
 //        Query.Select(x => new ProductListDto
 //        {
-//            OptionValueId = x.OptionValueId,
+//            Id = x.Id,
 //            OptionId = x.Name,
 //            Price = x.Variants.Min(pv => pv.Price),
 //            Category = x.Category.Name,
 //            Image = x.Images
-//                 .Where(c => c.IsMain && c.OptionValueId == null) // main image
+//                 .Where(c => c.IsMain && c.Id == null) // main image
 //                 .Select(pi => new ImageLookupDto
 //                 {
-//                     OptionValueId = pi.OptionValueId,
+//                     Id = pi.Id,
 //                     Url = pi.Url
 //                 })
 //                 .FirstOrDefault() ?? new(),
@@ -67,7 +67,7 @@ namespace Application.Catalog.Products.Specifications;
 //    {
 //        Query.Select(p => new ProductItemDto
 //        {
-//            OptionValueId = p.OptionValueId,
+//            Id = p.Id,
 //            OptionId = p.Name,
 //            MinPrice = p.Variants.Min(pv => pv.Price),
 //            MaxPrice = p.Variants.Max(pv => pv.Price),
@@ -78,9 +78,9 @@ namespace Application.Catalog.Products.Specifications;
 //            Options = p.Options.Select(po => new ProductOptionDto
 //            {
 //                OptionId = po.Name,
-//                OptionValues = po.Values.Select(ov => new ProductOptionValueDto
+//                Values = po.Values.Select(ov => new OptionValueDto
 //                {
-//                    OptionValueId = ov.OptionValueId,
+//                    Id = ov.Id,
 //                    Value = ov.Value,
 //                    Image = null
 //                }).ToList()

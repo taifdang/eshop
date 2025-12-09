@@ -1,5 +1,5 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Catalog.Products.Services;
+using Application.Common.Interfaces;
 using Ardalis.GuardClauses;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,16 +11,19 @@ public record GetVariantByIdQuery(Guid Id) : IRequest<VariantDto>;
 public class GetVariantByIdQueryHandler : IRequestHandler<GetVariantByIdQuery, VariantDto>
 {
     private readonly IApplicationDbContext _dbContext;
+    private readonly IImageLookupService _imageLookupService;
 
     public GetVariantByIdQueryHandler(
-        IApplicationDbContext dbContext)
+        IApplicationDbContext dbContext, 
+        IImageLookupService imageLookupService)
     {
         _dbContext = dbContext;
+        _imageLookupService = imageLookupService;
     }
     public async Task<VariantDto> Handle(GetVariantByIdQuery request, CancellationToken cancellationToken)
     {
         //var spec = new ProductVariantSpec()
-        //    .ByVariantId(request.OptionValueId)
+        //    .ByVariantId(request.Id)
         //    .WithProjectionOf(new ProductVariantProjectionSpec());
 
         var variant = await _dbContext.Variants
@@ -36,18 +39,23 @@ public class GetVariantByIdQueryHandler : IRequestHandler<GetVariantByIdQuery, V
                 Sku = x.Sku,
                 Options = x.VariantOptions.Select(y => new VariantOptionDto
                 {
-                    OptionValueId = y.OptionValueId,
-                    Value = y.OptionValue.Value,
-                    Image = new ImageLookupDto
-                    {
-                        Id = y.OptionValue.Image.Id,
-                        Url = y.OptionValue.Image.BaseUrl + "/" + y.OptionValue.Image.FileName
-                    }           
+                    Id = y.OptionValueId,
+                    Value = y.OptionValue.Value
                 }).ToList()
             })
             .FirstOrDefaultAsync();
 
         Guard.Against.NotFound(nameof(variant), variant);
+
+        // get option value
+        var optionValueIds = variant.Options.Select(x => x.Id).ToList();
+        // get image and fallback
+        var variantImage = await _imageLookupService.GetVariantImageAndFallback(variant.ProductId, optionValueIds);
+
+        if(variantImage != null)
+        {
+            variant.Image = variantImage;
+        }
 
         return variant;
     }
@@ -55,9 +63,9 @@ public class GetVariantByIdQueryHandler : IRequestHandler<GetVariantByIdQuery, V
 // linq order with priority 0 -> 1 -> 2
 //var image = await _context.Images
 //    .Where(x => x.ProductId == variant.ProductId)
-//    .OrderByDescending(x => x.OptionValueId == optionValueSeleted)
-//    .ThenByDescending(x => x.IsMain && x.OptionValueId == null)
-//    .ThenByDescending(x => x.OptionValueId == null)
-//    .ThenBy(x => x.OptionValueId)
-//    .Select(x => new ImageLookupDto { OptionValueId = x.OptionValueId, Url = x.Url })
+//    .OrderByDescending(x => x.Id == optionValueSeleted)
+//    .ThenByDescending(x => x.IsMain && x.Id == null)
+//    .ThenByDescending(x => x.Id == null)
+//    .ThenBy(x => x.Id)
+//    .Select(x => new ImageLookupDto { Id = x.Id, Url = x.Url })
 //    .FirstOrDefaultAsync();

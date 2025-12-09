@@ -26,6 +26,8 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
 
     public async Task<Guid> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
     {
+        // logic: get latest basket
+
         var userId = _currentUserProdvider.GetCurrentUserId();
 
         if (userId == null)
@@ -33,14 +35,17 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
         if (request.Quantity < 0)
             throw new ArgumentException("Quantity cannot be negative.");
 
-        // Directly call the GetCustomerByUserIdQuery handler instead of gRPC
+#if (!GrpcOrHttp)
+        // Directly call the mediatr handler instead of gRPC / http
         var customer = await _mediator.Send(new GetCustomerByUserIdQuery(Guid.Parse(userId)))
             ?? throw new EntityNotFoundException("Customer not found");
-
+#endif
         // Validate Variant exists
+#if (!GrpcOrHttp)
+        // Directly call the mediatr handler instead of gRPC / http
         var variant = await _mediator.Send(new GetVariantByIdQuery(request.Id))
                 ?? throw new EntityNotFoundException("Product variant not found");
-
+#endif
         // Variant quantity not enough
         if (request.Quantity > variant.Quantity)
         {
@@ -90,7 +95,9 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
 
         basket.LastModified = DateTime.UtcNow;
 
-        _dbContext.Baskets.Update(basket);
+#if (ConcurrencyConflict)
+        _dbContext.Baskets.Update(basket); //Scenario database conflict
+#endif
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return basket.Id;

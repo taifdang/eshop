@@ -1,9 +1,6 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-using Infrastructure.Identity.Data;
-using Infrastructure.Identity.Models;
+﻿using Application.Common.Interfaces;
+using Infrastructure.Identity.Entity;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Constants;
 using Shared.Models.Auth;
@@ -15,15 +12,12 @@ namespace Infrastructure.Identity.Services;
 
 public class TokenService(
     AppSettings appSettings, 
-    UserManager<ApplicationUser> userManager,
-    AppIdentityDbContext appIdentityDbContext,
-    IUnitOfWork unitOfWork) : ITokenService
+    UserManager<ApplicationUser> userManager) 
+    : ITokenService
 {
     private readonly AppSettings _appSettings = appSettings;
     private readonly Shared.Constants.Identity _jwt = appSettings.Identity;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly AppIdentityDbContext _appIdentityDbContext = appIdentityDbContext;
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<TokenResult> GenerateToken(string username, string[] scopes, CancellationToken cancellationToken)
     {
@@ -60,7 +54,6 @@ public class TokenService(
         var tokenResult = new JwtSecurityTokenHandler().WriteToken(token);
 
         result.Token = tokenResult;
-        result.UserId = user.Id;
         result.Expire = expires;
 
         return result;
@@ -74,7 +67,7 @@ public class TokenService(
 
         //var claims = new[]
         //{
-        //    new Claim(ClaimTypes.NameIdentifier, user.OptionValueId.ToString()),
+        //    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         //    new Claim(ClaimTypes.Name, user.UserName),
         //    new Claim(ClaimTypes.Email, user.Email),
         //    new Claim(ClaimTypes.Uri, user?.AvatarUrl ?? "default.png"),
@@ -98,19 +91,19 @@ public class TokenService(
 
         ////set result
         //result.Token = tokenResult;
-        //result.UserId = user.OptionValueId;
+        //result.UserId = user.Id;
         //result.Expire = expires;
 
         ////refresh token  
         //var refreshToken = new RefreshToken
         //{
         //    Token = tokenResult,
-        //    UserId = user.OptionValueId,
+        //    UserId = user.Id,
         //    Expires = expires,
         //    Created = DateTime.UtcNow
         //};
 
-        //var existToken = await _appIdentityDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.OptionValueId);
+        //var existToken = await _appIdentityDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.Id);
 
         //if (existToken == null)
         //{
@@ -135,7 +128,7 @@ public class TokenService(
         //           await _appIdentityDbContext.RefreshTokens.AddAsync(refreshToken);
         //       }, cancellationToken);
         //}
-        return result;
+        //return result;
     }
 
     public ClaimsPrincipal ValidateToken(string token)

@@ -64,13 +64,13 @@ namespace Application.Catalog.Products.Specifications;
 //            ProductName = x.Product.Name,
 //            Price = x.Price,
 //            Percent = x.Percent,
-//            Quantity = x.Quantity,
+//            Available = x.Available,
 //            Sku = x.Sku ?? "",
 //            Image = null,
 //            Options = x.VariantOptionValues.Select(y => new OptionLookupDto
 //            {
 //                Title = y.OptionValue.ProductOption.Name,
-//                OptionValueId = y.OptionValueId,
+//                Id = y.Id,
 //                Value = y.OptionValue.Value,
 //                IsImage = y.OptionValue.ProductOption.AllowImage
 //            }).ToList()
@@ -87,11 +87,11 @@ namespace Application.Catalog.Products.Specifications;
 //            Id = x.Id,
 //            Price = x.Price,
 //            Percent = x.Percent,
-//            Quantity = x.Quantity,
+//            Available = x.Available,
 //            Options = x.VariantOptionValues.Select(y => new OptionValueLookupDto
 //            {
 //                OptionId = y.OptionValue.ProductOption.Name,
-//                OptionValueId = y.OptionValueId,
+//                Id = y.Id,
 //                Value = y.OptionValue.Value
 //            })
 //             .OrderBy(o => o.Title)

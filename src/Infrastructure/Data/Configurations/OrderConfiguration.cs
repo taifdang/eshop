@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Domain.Enums;
 using Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,9 +22,20 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired()
             .HasConversion<string>(); // Store enum as string in database
 
-        builder.Property(o => o.TotalAmount)
-            .HasColumnType("decimal(18,2)")
-            .IsRequired();
+        builder.OwnsOne(
+           x => x.TotalAmount,
+           a =>
+           {
+               a.Property(p => p.Amount)
+                .HasColumnName(nameof(Money.Amount))
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+               a.Property(p => p.Currency)
+                .HasColumnName(nameof(Money.Currency))
+                .HasMaxLength(10)
+                .IsRequired();
+           });
 
         builder.OwnsOne(
             x => x.ShippingAddress,

@@ -46,10 +46,10 @@ public class GetListProductQueryHandler : IRequestHandler<GetListProductQuery, P
                 .Select(x => new ImageLookupDto
                 {
                     Id = x.Id,
-                    Url = x.Image.BaseUrl + "/" + x.Image.FileName
+                    Url = x.Image.BaseUrl + x.Image.FileName
                 })
                 .FirstOrDefault() ?? new()
-        }).ToListAsync(cancellationToken);
+        }).ToListAsync();
 
         return new PageList<ProductListDto>(
            productList!,

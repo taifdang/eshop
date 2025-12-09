@@ -6,7 +6,7 @@ public class VnPayGateway : IPaymentProvider
 {
     public Task<PaymentResult> CreatePaymentAsync(CreatePaymentRequest request)
     {
-        var url = $"https://vnpay.vn/pay?order={request.OrderId}";
+        var url = $"https://vnpay.vn/pay?order={request.OrderNumber}";
         return Task.FromResult(new PaymentResult(url, DateTime.UtcNow.Ticks.ToString()));
     }
 

@@ -20,7 +20,7 @@ namespace Application.Catalog.Products.Specifications;
 //    public ProductOptionSpec ByOptionId(Guid? optionId)
 //    {
 //        if(optionId.HasValue)
-//            Query.Where(x => x.OptionValueId == optionId.Value);
+//            Query.Where(x => x.Id == optionId.Value);
 
 //        return this;
 //    }

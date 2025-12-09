@@ -1,5 +1,5 @@
 ﻿using Application.Customer.Commands;
-using Infrastructure.Identity.Models;
+using Infrastructure.Identity.Entity;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

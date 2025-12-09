@@ -25,7 +25,7 @@ public class InMemoryEventBusReceiver(
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
 
-        if(!_subscriptions.EventTypes.TryGetValue(envelope.MessageTypeName, out var eventType))
+        if (!_subscriptions.EventTypes.TryGetValue(envelope.MessageTypeName, out var eventType))
         {
             _logger.LogWarning("No subscription for event: {EventName}", envelope.MessageTypeName);
             return;
@@ -34,17 +34,38 @@ public class InMemoryEventBusReceiver(
         // deserialize the event
         var integrationEvent = JsonSerializer.Deserialize(envelope.Message, eventType, _subscriptions.JsonOptions) as IntegrationEvent;
 
+        if(integrationEvent is null)
+        {
+            _logger.LogError("Deserialize event failed: {EventName}", envelope.MessageTypeName);
+        }
+
         foreach (var handler in scope.ServiceProvider.GetKeyedServices<IIntegrationEventHandler>(eventType))
         {
             try
             {
-                await handler.Handle(integrationEvent);
+                await handler.Handle(integrationEvent!);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error handling event: {EventName}", envelope.MessageTypeName);
             }
         }
+
+#if (genericType)
+        var handlerType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
+        var handlers = scope.ServiceProvider.GetServices(handlerType);
+        foreach (var handler in handlers)
+        {
+            try
+            {
+                await ((IIntegrationEventHandler)handler).Handle(integrationEvent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling event: {EventName}", envelope.MessageTypeName);
+            }
+        }
+#endif
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

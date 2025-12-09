@@ -1,15 +1,34 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
+using Outbox.Abstractions;
 using System.Data;
-using TransactionalOutbox.Abstractions;
 
 namespace Infrastructure.Data;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    private readonly ILogger<ApplicationDbContext> _logger;
+    private readonly IMediator _mediator;
+
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
+
+    public ApplicationDbContext(
+       DbContextOptions<ApplicationDbContext> options,
+       ILogger<ApplicationDbContext> logger,
+       IMediator mediator
+    ) : base(options)
+    {
+        _logger = logger;
+        _mediator = mediator;
+    }
+
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Image> Images => Set<Image>();
@@ -26,8 +45,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public IPollingOutboxMessageRepository OutboxPollingRepository => throw new Exception("OutboxForPollingRepository is not initialized.");
 
-    private IDbContextTransaction _currentTransaction;  
+    private IDbContextTransaction _currentTransaction;
 
+    //ref: https://code-maze.com/efcore-global-query-filters/
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -63,7 +83,30 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         // 1.Use interceptors for Auditable Entities
         // 2.Saving with auditable entities
 
-        return await base.SaveChangesAsync(cancellationToken);
+        try
+        {
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+        //ref: https://learn.microsoft.com/en-us/ef/core/saving/concurrency?tabs=data-annotations#resolving-concurrency-conflicts
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogWarning("Update concurrency conflict !!!");
+
+            foreach(var entry in ex.Entries)
+            {
+                var databaseValues = await entry.GetDatabaseValuesAsync();
+
+                if (databaseValues == null)
+                {
+                    _logger.LogError("The record no longer exists in the database, The record has been deleted by another user.");
+                    throw;
+                }
+                // Refresh the original values to bypass next concurrency check
+                entry.OriginalValues.SetValues(databaseValues);
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
+        }   
     }
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)

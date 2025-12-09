@@ -1,6 +1,5 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Models;
-using Ardalis.GuardClauses;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,7 +66,9 @@ public class GetVariantByOptionQueryHandler : IRequestHandler<GetVariantByOption
             .ToListAsync(); 
 
         if (!variants.Any())
-            Guard.Against.NotFound(nameof(variants), variants);
+        {
+            throw new Exception("Not found variant");
+        }         
 
         return new VariantItemListDto
         {

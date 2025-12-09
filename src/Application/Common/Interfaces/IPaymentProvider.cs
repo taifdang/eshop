@@ -12,8 +12,8 @@ public record PaymentResult(string PaymentUrl, string TransactionId);
 
 public record CreatePaymentRequest
 {
-    public Guid OrderId { get; init; }
-    public Money Amount { get; init; }
+    public long OrderNumber { get; init; }
+    public decimal Amount { get; init; }
     //public PaymentProvider Provider { get; init; }
     //public string ReturnUrl { get; init; } = null!;
     //public string IpnUrl { get; init; } = null!;

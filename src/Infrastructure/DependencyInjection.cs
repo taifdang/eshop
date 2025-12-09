@@ -1,17 +1,24 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Basket.EventHandlers;
+using Application.Catalog.Products.EventHandlers;
+using Application.Common.Interfaces;
+using Application.Order.IntegrationEventHandlers;
+using Contracts.IntegrationEvents;
+using EventBus;
+using EventBus.Abstractions;
+using EventBus.InMemory;
 using Infrastructure.Data;
 using Infrastructure.Data.Interceptors;
 using Infrastructure.Data.Repositories;
-using Infrastructure.Data.Seed;
 using Infrastructure.ExternalServices;
 using Infrastructure.Identity.Data;
-using Infrastructure.Identity.Data.Seed;
 using Infrastructure.Identity.Extensions;
 using Infrastructure.Identity.Services;
 using Infrastructure.Payments.Gateways;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Outbox.EF.Extensions;
 using Shared.Constants;
 using Shared.EFCore;
 using Shared.Web;
@@ -31,7 +38,14 @@ public static class DependencyInjection
         builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventIntercopter>();
 
         // DbContext
-        builder.AddCustomDbContext<ApplicationDbContext>();
+        //builder.AddCustomDbContext<ApplicationDbContext>();
+        // Inteceptors
+        builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
+        {
+            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+            options.UseSqlServer(appSettings.ConnectionStrings.DefaultConnection);
+            options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+        });
 
         // Identity
         builder.AddCustomDbContext<AppIdentityDbContext>();
@@ -62,8 +76,23 @@ public static class DependencyInjection
         //builder.Services.AddScoped<IDataSeeder, IdentityDataSeeder>();
         //builder.Services.AddScoped<IDataSeeder, CatalogDataSeeder>();
 
-        // Hosted Services
-        //builder.Services.AddHostedService<MessageBusConsumerBackgroundService<>();
+        // eventbus
+        if(builder.Environment.EnvironmentName == "test")
+        {
+            builder.Services.AddTransient<IEventPublisher, NullEventPublisher>();
+        }
+        else
+        {
+            builder.AddInMemoryEventBus()
+           .AddSubscription<OrderCreatedIntegrationEvent, OrderCreatedIntegrationEventHandler>()
+           .AddSubscription<StockReservationRequestedIntegrationEvent, StockReservationRequestedIntegrationEventHandler>()
+           .AddSubscription<GracePeriodConfirmedIntegrationEvent, GracePeriodConfirmedIntegrationEventHandler>()
+           .AddSubscription<PaymentSucceededIntegrationEvent, PaymentSucceededIntegrationEventHandler>()
+           .AddSubscription<PaymentRejectedIntegrationEvent, PaymentRejectedIntegrationEventHandler>()
+           .AddSubscription<ReserveStockRejectedIntegrationEvent, ReserveStockRejectedIntegrationEventHandler>()
+           .AddSubscription<ReserveStockSucceededIntegrationEvent, ReserveStockSucceededIntegrationEventHandler>();
+        }
+        builder.AddTransactionalOutbox();
 
         return builder;
     }

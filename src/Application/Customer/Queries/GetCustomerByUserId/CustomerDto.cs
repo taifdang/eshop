@@ -1,4 +1,6 @@
-﻿namespace Application.Customer.Queries.GetCustomerByUserId;
+﻿using AutoMapper;
+
+namespace Application.Customer.Queries.GetCustomerByUserId;
 
 public class CustomerDto 
 {
@@ -7,5 +9,14 @@ public class CustomerDto
     public string Email { get; init; }
     public string? Phone { get; init; }
     public string? Address { get; init; }
+
+    private class Mapping : Profile
+    {
+        public Mapping()
+        {
+            CreateMap<Domain.Entities.Customer, CustomerDto>()
+                .ForMember(x => x.Phone, y => y.MapFrom(src => src.PhoneNumber));          
+        }
+    }
 }
 

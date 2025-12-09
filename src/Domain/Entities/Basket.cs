@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+﻿using Domain.SeedWork;
 
 namespace Domain.Entities;
 

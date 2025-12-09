@@ -35,10 +35,12 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
             if (string.IsNullOrEmpty(userId)) 
                 throw new EntityNotFoundException("User not found");
 
-            // Directly call the GetCustomerByUserIdQuery handler instead of gRPC
+#if (!GrpcOrHttp)
+            // Directly call the mediatr handler instead of gRPC / http
             var customer = await _mediator.Send(new GetCustomerByUserIdQuery(Guid.Parse(userId)), cancellationToken)
-                ?? throw new EntityNotFoundException("Customer not found");
+               ?? throw new EntityNotFoundException("Customer not found");
             customerId = customer.Id;
+#endif
         }
         else
         {
@@ -63,12 +65,11 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
 
         foreach (var item in basket.Items)
         {
+#if (!GrpcOrHttp)
+            // Directly call the mediatr handler instead of gRPC / http
             var variant = await _mediator.Send(new GetVariantByIdQuery(item.VariantId));
-
-            var image = variant.Options
-                .Where(x => x.Image != null)
-                .Select(x => x.Image.Url)
-                .FirstOrDefault();
+#endif
+            var image = variant.Image.Url ?? string.Empty;
 
             var cartItem = basket.Items.First(x => x.VariantId == variant.Id);
             basketDto.Items.Add(new BasketItemDto(cartItem.VariantId, variant.ProductName ,variant.Title, variant.Price, image, cartItem.Quantity));

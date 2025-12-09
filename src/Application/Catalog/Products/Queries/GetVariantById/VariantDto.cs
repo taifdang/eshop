@@ -1,4 +1,6 @@
-﻿namespace Application.Catalog.Products.Queries.GetVariantById;
+﻿using Application.Common.Models;
+
+namespace Application.Catalog.Products.Queries.GetVariantById;
 
 public class VariantDto
 {
@@ -9,5 +11,6 @@ public class VariantDto
     public decimal Price { get; set; }
     public int Quantity { get; set; }
     public string Sku { get; set; }
+    public ImageLookupDto? Image { get; set; }
     public List<VariantOptionDto> Options { get; set; }
 }

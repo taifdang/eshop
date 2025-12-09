@@ -1,5 +1,6 @@
-﻿using Application.Common.Interfaces;
+﻿       using Application.Common.Interfaces;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories;
 
@@ -18,10 +19,22 @@ public class OrderRepository : IOrderRepository
     {
         await _context.Orders.AddAsync(order);
     }
-
-    public async Task<Order?> GetAsync(Guid id)
+    public async Task<Order?> GetByIdAsync(Guid id)
     {
         return await _context.Orders.FindAsync(id);
     }
+    public async Task<Order?> GetAsync(Guid id)
+    {                  
+        return await _context.Orders.Include(m => m.Items).Where(x => x.Id == id).FirstOrDefaultAsync();
+    }
 
+    public async Task<List<Order>?> GetListAsync()
+    {
+        return await _context.Orders.ToListAsync();
+    }
+
+    public async Task<Order?> GetByOrderNumber(long orderNumber)
+    {
+        return await _context.Orders.SingleOrDefaultAsync(x => x.OrderNumber == orderNumber);
+    }
 }

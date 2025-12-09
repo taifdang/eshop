@@ -46,11 +46,11 @@ public class OrderPaymentSucceededIntegrationEvent : IntegrationEvent
 public class StockReservationRequestedIntegrationEvent : IntegrationEvent
 {
     public Guid OrderId { get; set; }
-    public IReadOnlyList<OrderStockItem> Items { get; set; }
-
-    public class OrderStockItem
-    {
-        public Guid VariantId { get; set; }
-        public int Quantity { get; set; }
-    };
+    public IReadOnlyList<OrderStockItem>? Items { get; set; }  
 }
+
+public class OrderStockItem
+{
+    public Guid VariantId { get; set; }
+    public int Quantity { get; set; }
+};

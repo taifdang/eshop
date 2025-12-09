@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+﻿using Domain.SeedWork;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

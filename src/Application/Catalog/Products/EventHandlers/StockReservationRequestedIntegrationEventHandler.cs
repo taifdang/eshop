@@ -1,12 +1,11 @@
 ﻿using Application.Common.Interfaces;
 using Ardalis.GuardClauses;
 using Contracts.IntegrationEvents;
-using Domain.Events;
 using EventBus.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Outbox.Abstractions;
 using System.Text.Json;
-using TransactionalOutbox.Abstractions;
 
 namespace Application.Catalog.Products.EventHandlers;
 
@@ -31,7 +30,7 @@ public class StockReservationRequestedIntegrationEventHandler
     {
         Guard.Against.Null(request);
 
-        var failItems = new List<StockItems>();
+        var failItems = new List<InvalidStockItem>();
 
         foreach (var item in request.Items)
         {
@@ -41,12 +40,17 @@ public class StockReservationRequestedIntegrationEventHandler
 
             if (variant is null || variant.Quantity < item.Quantity)
             {
-                failItems.Add(new StockItems(item.VariantId, item.Quantity, 0));
+                failItems.Add(new InvalidStockItem
+                {
+                    VariantId = item.VariantId,
+                    Available = 0,
+                    Requested = item.Quantity,
+                });
             }
 
             else
             {
-                variant.ReduceStock(item.Quantity);
+                variant.ReserveStock(item.Quantity);
             }
         }
 
@@ -99,15 +103,21 @@ public class StockReservationRequestedIntegrationEventHandler
         {
             _logger.LogError(ex, "Error reserving stock for OrderId: {OrderId}", request.OrderId);
 
-            var integrationEvent = new ReserveStockFailedIntegrationEvent
+            var integrationEvent = new ReserveStockRejectedIntegrationEvent
             {
-                OrderId = request.OrderId
+                OrderId = request.OrderId,
+                Items = request.Items.Select(x => new InvalidStockItem
+                {
+                    VariantId = x.VariantId,
+                    Available = 0,
+                    Requested = x.Quantity
+                }).ToList()
             };
 
             await _pollingOutboxMessageRepository.AddAsync(new PollingOutboxMessage
             {
                 CreateDate = DateTime.UtcNow,
-                PayloadType = typeof(ReserveStockSucceededIntegrationEvent).FullName ?? throw new Exception($"Could not get fullname of type {integrationEvent.GetType()}"),
+                PayloadType = typeof(ReserveStockRejectedIntegrationEvent).FullName ?? throw new Exception($"Could not get fullname of type {integrationEvent.GetType()}"),
                 Payload = JsonSerializer.Serialize(integrationEvent),
                 ProcessedDate = null
             });

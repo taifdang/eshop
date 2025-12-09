@@ -16,7 +16,9 @@ public class InMemoryEventBusSender : IEventPublisher
 
     public async Task PublishAsync<TEvent>(TEvent @event) where TEvent : IntegrationEvent
     {
-        var message = new MessageEnvelope(@event.GetType(), JsonSerializer.Serialize(@event));
+        var json = JsonSerializer.Serialize(@event, @event.GetType());
+
+        var message = new MessageEnvelope(@event.GetType(), json);
 
         await _channel.Writer.WriteAsync(message);
     }

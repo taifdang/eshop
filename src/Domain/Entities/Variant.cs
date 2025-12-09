@@ -15,7 +15,7 @@ public class Variant
     public Product Product { get; set; }
     public List<VariantOption> VariantOptions { get; set; } = [];
 
-    public void ReduceStock(int quantity)
+    public void ReserveStock(int quantity)
     {
         if (Quantity < quantity)
             throw new ArgumentException("Not enough quantity", nameof(quantity));

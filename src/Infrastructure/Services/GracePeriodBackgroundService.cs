@@ -1,7 +1,8 @@
 ﻿using Contracts.IntegrationEvents;
-using Domain.Entities;
+using EventBus.Abstractions;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,10 +14,14 @@ namespace Infrastructure.Services;
 public class GracePeriodBackgroundService(
     ILogger<GracePeriodBackgroundService> logger,
     IOptions<BackgroundTaskOptions> options,
-    ApplicationDbContext dbcontext) : BackgroundService
+    IServiceScopeFactory serviceScopeFactory,
+    IEventPublisher eventPublisher
+    ) : BackgroundService
 {
     private readonly BackgroundTaskOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-    private readonly ApplicationDbContext _dbcontext = dbcontext;
+    //private readonly ApplicationDbContext _dbcontext = dbcontext;
+    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
+    private readonly IEventPublisher _eventPublisher = eventPublisher;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -26,36 +31,42 @@ public class GracePeriodBackgroundService(
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await CheckConfirmedGracePeriodOrders();
+            using var scope = _serviceScopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            await CheckConfirmedGracePeriodOrders(db, stoppingToken);
             await Task.Delay(delayTime, stoppingToken);
         }
 
         logger.LogInformation("GracePeriodBackgroundService is stopping");
     }
 
-    private async Task CheckConfirmedGracePeriodOrders()
+    private async Task CheckConfirmedGracePeriodOrders(ApplicationDbContext dbContext, CancellationToken ct)
     {
-        var orderIds = await GetConfirmedGracePeriodOrders();
+        var orderIds = await GetConfirmedGracePeriodOrders(dbContext, ct);
         foreach (var orderId in orderIds)
         {
             var @event = new GracePeriodConfirmedIntegrationEvent { OrderId = orderId };
 
             logger.LogInformation("Publishing integration event: {IntegrationEventId} - ({@IntegrationEvent})", @event.OrderId, @event);
 
-            await dbcontext.OutboxPollingRepository.SaveChangesAsync();
+            await _eventPublisher.PublishAsync(@event);
         }
     }
 
-    private async ValueTask<List<Guid>> GetConfirmedGracePeriodOrders()
+    private async ValueTask<List<Guid>> GetConfirmedGracePeriodOrders(ApplicationDbContext dbContext, CancellationToken ct)
     {
         try
         {
-            var ids = await _dbcontext.Set<Order>()
+            // logic: set locked edit order = processing status
+            var cutoff = DateTime.UtcNow - TimeSpan.FromMinutes(_options.GracePeriodTime);
+
+            var ids = await dbContext.Orders
                 .Where(x =>
-                    DateTime.UtcNow - x.OrderDate >= TimeSpan.FromMinutes(_options.GracePeriodTime) && 
-                    x.Status == Domain.Enums.OrderStatus.Submitted)
+                    x.OrderDate <= cutoff && 
+                    x.Status == Domain.Enums.OrderStatus.Pending)
                 .Select(x => x.Id)
-                .ToListAsync();
+                .ToListAsync(ct);
 
             return ids;
         }

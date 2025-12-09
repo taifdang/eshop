@@ -35,5 +35,11 @@ public class VariantConfiguration : IEntityTypeConfiguration<Variant>
             .WithOne()
             .HasForeignKey(vov => vov.VariantId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Product)
+            .WithMany(x => x.Variants)
+            .HasForeignKey(m => m.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using Infrastructure.Identity.Models;
+﻿using Infrastructure.Identity.Entity;
 
 namespace Infrastructure.Identity.Data.Seed;
 

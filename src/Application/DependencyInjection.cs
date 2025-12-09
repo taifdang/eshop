@@ -1,10 +1,8 @@
 ﻿using Application.Catalog.Products.Services;
 using Application.Common.Behaviors;
-using EventBus.InMemory;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using TransactionalOutbox.Extensions;
 
 namespace Application;
 
@@ -12,12 +10,13 @@ public static class DependencyInjection
 {
     public static WebApplicationBuilder AddApplication(this WebApplicationBuilder builder)
     {
+        // MediatR
         builder.Services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
         });
 
-        // Automapper
+        // AutoMapper
         builder.Services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
         // Behavior
@@ -27,10 +26,6 @@ public static class DependencyInjection
 
         // Service
         builder.Services.AddScoped<IImageLookupService, ImageLookupService>();
-
-        builder.Services.AddInMemoryEventBus();
-        // ?
-        builder.AddTransactionalOutbox();
 
         return builder;
     }

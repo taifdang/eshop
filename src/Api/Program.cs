@@ -6,13 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddApplication();
 builder.AddInfrastructure();
-builder.AddServiceDefaults();
+builder.AddServiceCollections();
+
 
 var app = builder.Build();
 
-
 app.UseInfrastructure();
-app.UseServiceDefaults();
+app.UseServiceCollections();
 
 app.Run();
 

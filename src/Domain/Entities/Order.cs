@@ -1,64 +1,87 @@
-﻿using Domain.Common;
-using Domain.Enums;
+﻿using Domain.Enums;
 using Domain.Events;
+using Domain.SeedWork;
 using Domain.ValueObject;
 
 namespace Domain.Entities;
 
 public class Order : Aggregate<Guid>
 {
+    public long OrderNumber { get; set; } // for payment
     public Guid CustomerId { get; init; }
     public OrderStatus Status { get; private set; }
-    public Money TotalAmount { get; init; } = default!;
+    public Money TotalAmount { get; private set; } = default!;
     public Address ShippingAddress { get; private set; } = default!;
     public string? CardBrand { get; set; }
     public string? TransactionId { get; set; }
-    public DateTime OrderDate { get; init; } = DateTime.Now;
+    public DateTime OrderDate { get; init; } = DateTime.UtcNow;
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 
-    public static Order Create(Guid orderId, Guid customerId, Address shippingAddress,
+    public static Order Create(Guid orderId, long OrderNumber, Guid customerId, Address shippingAddress,
         List<OrderItem> items, Money totalAmount)
     {
         var order = new Order 
         { 
             Id = orderId,
+            OrderNumber = OrderNumber,
             CustomerId = customerId,
             TotalAmount = totalAmount,
             ShippingAddress = shippingAddress,
             Items = items,
-            OrderDate = DateTime.Now,
+            OrderDate = DateTime.UtcNow,
             CreatedAt = DateTime.UtcNow
         };
         order.AddDomainEvent(new OrderCreatedDomainEvent(order.Id, customerId));
         return order;
     }
 
-    public void SetCompletedStatus(Guid orderId)
+    public void SetProcessingStatus()
+    {
+        Status = OrderStatus.Processing;
+    }
+
+    public void SetCompletedStatus()
     {
         Status = OrderStatus.Completed;
-        AddDomainEvent(new OrderCompletedDomainEvent(orderId));
+        AddDomainEvent(new OrderCompletedDomainEvent(Id));
     }
 
-    public void SetConfirmedStatus(Guid orderId)
+    public void SetConfirmedStatus()
     {
         Status = OrderStatus.Confirmed;
-        AddDomainEvent(new OrderStatusChangedToConfirmedDomainEvent(orderId));
+        AddDomainEvent(new OrderConfirmedDomainEvent(Id));
     }
 
-    public void MarkPaymentSuccess(string transactionId)
+    public void SetCancelledStatus()
     {
-        LastModified = DateTime.UtcNow;
-        Status = OrderStatus.Confirmed;
-    }
-
-    public void MarkPaymentFailed()
-    { 
-        LastModified = DateTime.UtcNow;
-        Status = OrderStatus.Failed;
-    }
-
-    public void Cancel()
-    {
+        if(Status == OrderStatus.Pending)
+        {
+            throw new Exception("Can't cancel while order processing");
+        }
+        // description / reason
         Status = OrderStatus.Cancelled;
+        AddDomainEvent(new OrderCancelledDomainEvent(Id));
+    }
+
+    public void SetRejectedStatusWhenStockRejected()
+    {
+        if (Status == OrderStatus.Pending)
+        {
+            throw new Exception("Can't cancel while order processing");
+        }
+        // description / reason
+        Status = OrderStatus.Rejected;
+        AddDomainEvent(new OrderRejectedDomainEvent(Id));
+    }
+
+    public void SetRejectedStatusWhenPaymentRejected()
+    {
+        if (Status == OrderStatus.Pending)
+        {
+            throw new Exception("Can't cancel while order processing");
+        }
+        // description / reason
+        Status = OrderStatus.Rejected;
+        AddDomainEvent(new OrderRejectedDomainEvent(Id));
     }
 }
