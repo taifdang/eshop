@@ -2,7 +2,6 @@
 
 # Clean Architecture
 
-
 # ERD
 ![image](https://github.com/user-attachments/assets/dce1247a-7065-4599-b95e-a5891649f988)
 
