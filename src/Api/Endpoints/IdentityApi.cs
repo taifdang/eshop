@@ -1,13 +1,12 @@
-﻿using Application.Identity.Commands.Logout;
+﻿using Api.Models.Requests;
+using Application.Common.Models;
+using Application.Identity.Commands.Logout;
 using Application.Identity.Commands.RefreshToken;
 using Application.Identity.Commands.RegisterUser;
 using Application.Identity.Queries.GetProfile;
 using Application.Identity.Queries.Login;
-using Contracts.Requests;
-using Contracts.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
 
@@ -76,7 +75,7 @@ public static class IdentityApi
                 return await mediator.Send(new GetProfileQuery(), cancellationToken);
             })
             .WithName("Profile")
-            .Produces<UserInfoResponse>()
+            .Produces<GetProfileResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         //group.MapPost("/change-password", null);
@@ -84,8 +83,6 @@ public static class IdentityApi
         //group.MapPost("/forget-password", null);
 
         //group.MapPost("/confirm-email", null);
-
-
 
         return group;
     }

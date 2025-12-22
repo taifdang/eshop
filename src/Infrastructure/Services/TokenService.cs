@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Contracts.Responses;
+using Application.Common.Models;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Constants;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,7 +18,7 @@ public class TokenService : ITokenService
         this.appSettings = appSettings;   
     }
 
-    public TokenResult GenerateToken(Guid userId, string name, string email)
+    public TokenResult GenerateToken(Guid userId, string name, string email, string[] roles)
     {
         var claims = new List<Claim>
         {
@@ -27,6 +27,11 @@ public class TokenService : ITokenService
             new Claim(ClaimTypes.Name, name),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.CreateVersion7().ToString())
         };
+
+        foreach(var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Identity.Key));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Contracts.Responses;
+using Application.Common.Models;
 using MediatR;
 
 namespace Application.Identity.Commands.RefreshToken;

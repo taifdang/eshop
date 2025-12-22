@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Customer.Commands;
 
-public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, Unit>
+public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, Guid>
 {
     private readonly IApplicationDbContext _dbContext;
 
@@ -12,7 +12,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
         _dbContext = dbContext;
     }
 
-    public async Task<Unit> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
         var customer = new Domain.Entities.Customer
         {
@@ -23,6 +23,6 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
         _dbContext.Customers.Add(customer);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return customer.Id;
     }
 }

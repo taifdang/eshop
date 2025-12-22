@@ -1,13 +1,12 @@
-﻿using Contracts.Requests;
-using Contracts.Responses;
+﻿using Application.Common.Models;
 
 namespace Application.Common.Interfaces;
 
 public interface IIdentityService
 {
-    Task<RegisterUserResult> Register(RegisterUserRequestDto request);
-    Task<TokenResult> Authenticate(LoginRequestDto request);
+    Task<RegisterUserResult> Register(RegisterUserRequest request);
+    Task<TokenResult> Authenticate(LoginRequest request);
     Task Logout();
     Task<TokenResult> RefreshToken();
-    Task<UserInfoResponse> GetProfile();
+    Task<GetProfileResult> GetProfile();
 }

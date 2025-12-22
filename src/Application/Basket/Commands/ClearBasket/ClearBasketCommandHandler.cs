@@ -1,35 +1,33 @@
 ﻿using Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Basket.Commands.ClearBasket;
 
-public class ClearBasketCommandHandler : IRequestHandler<ClearBasketCommand, Unit>
+public class ClearBasketCommandHandler : IRequestHandler<ClearBasketCommand, Guid>
 {
     private readonly IApplicationDbContext _dbContext;
-    private readonly ILogger<ClearBasketCommandHandler> _logger;
 
-    public ClearBasketCommandHandler(
-        IApplicationDbContext dbContext, 
-        ILogger<ClearBasketCommandHandler> logger)
+    public ClearBasketCommandHandler(IApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
-        _logger = logger;
     }
 
-    public async Task<Unit> Handle(ClearBasketCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(ClearBasketCommand request, CancellationToken cancellationToken)
     {
         var basket = _dbContext.Baskets
             .Include(m => m.Items)
             .FirstOrDefault(b => b.CustomerId == request.CustomerId);
 
-        if (basket != null)
+        if (basket is null)
         {
-            basket.ClearItems();
-            _dbContext.Baskets.Update(basket);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            throw new Exception("Not found basket");
         }
-        return Unit.Value;
+
+        basket.ClearItems();
+        _dbContext.Baskets.Update(basket);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return basket.Id;
     }
 }

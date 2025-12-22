@@ -1,0 +1,18 @@
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: aqua;
+}
+
+.btnPrimary {
+  background: #111;
+  color: #fff;
+}
+.btnOutline {
+  border: 1px solid #ddd;
+  background: #fff;
+}
+.gap8 { gap: 8px; }
+.gap16 { gap: 16px; }
+

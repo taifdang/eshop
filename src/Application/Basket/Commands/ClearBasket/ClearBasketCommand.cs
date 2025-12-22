@@ -2,4 +2,4 @@
 
 namespace Application.Basket.Commands.ClearBasket;
 
-public record ClearBasketCommand(Guid CustomerId) : IRequest<Unit>;
+public record ClearBasketCommand(Guid CustomerId) : IRequest<Guid>;

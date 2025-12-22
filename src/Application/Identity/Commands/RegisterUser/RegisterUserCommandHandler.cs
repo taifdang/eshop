@@ -1,6 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Contracts.Requests;
-using Contracts.Responses;
+using Application.Common.Models;
 using MediatR;
 
 namespace Application.Identity.Commands.RegisterUser;
@@ -16,6 +15,8 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
 
     public async Task<RegisterUserResult> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        return await _identityService.Register(new RegisterUserRequestDto(command.UserName, command.Email, command.Password));
+        var result = await _identityService.Register(new RegisterUserRequest(command.UserName, command.Email, command.Password));
+
+        return result;
     }
 }

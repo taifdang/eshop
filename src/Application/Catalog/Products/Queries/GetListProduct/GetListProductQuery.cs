@@ -17,6 +17,7 @@ public class GetListProductQueryHandler : IRequestHandler<GetListProductQuery, P
     }
     public async Task<PageList<ProductListDto>> Handle(GetListProductQuery request, CancellationToken cancellationToken)
     {
+        // logic : for admin, query or edit
         //var spec = new ProductSpec()
         //    .WithIsPublished()
         //    .ApplyPaging(request.PageIndex * request.PageSize, request.PageSize)
@@ -24,7 +25,7 @@ public class GetListProductQueryHandler : IRequestHandler<GetListProductQuery, P
         
         var query = _dbContext.Products.AsQueryable();
         // isActive filter
-        query = query.Where(p => p.IsActive);
+        //query = query.Where(p => p.IsActive);
         // paging
         var take = request.PageSize;
         var skip = request.PageIndex * request.PageSize;
@@ -38,7 +39,7 @@ public class GetListProductQueryHandler : IRequestHandler<GetListProductQuery, P
         {
             Id = x.Id,
             Title = x.Name,
-            Price = x.Variants.Min(v => v.Price),
+            Price = x.Variants.Select(v => (decimal?)v.Price).Min() ?? 0,
             Category = x.Category.Name,
             Image = x.Images
                 .OrderByDescending(x => x.IsMain)

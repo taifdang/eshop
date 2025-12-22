@@ -1,4 +1,6 @@
-﻿using Application.Catalog.Categories.Commands.CreateCategory;
+﻿using Api.Models.Requests;
+using Api.Models.Responses;
+using Application.Catalog.Categories.Commands.CreateCategory;
 using Application.Catalog.Categories.Queries.GetListCategory;
 using Application.Catalog.Products.Commands.BulkUpdateVariant;
 using Application.Catalog.Products.Commands.CreateOption;
@@ -13,15 +15,16 @@ using Application.Catalog.Products.Commands.DeleteVariant;
 using Application.Catalog.Products.Commands.GenerateVariant;
 using Application.Catalog.Products.Commands.UpdateProduct;
 using Application.Catalog.Products.Commands.UpdateVariant;
+using Application.Catalog.Products.Queries.GetAvailableProducts;
 using Application.Catalog.Products.Queries.GetListProduct;
 using Application.Catalog.Products.Queries.GetProductById;
 using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Catalog.Products.Queries.GetVariantByOption;
-using Application.Common.Models;
-using Contracts.Requests;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Constants;
 
 namespace Api.Endpoints;
 
@@ -48,11 +51,16 @@ public static class CatalogApi
         categoryGroupApi.MapPost("/", CreateCategory);
 
         // Product
-        productGroupApi.MapGet("/", GetListProduct);
+        productGroupApi.MapGet("/get-available", GetAvailableProducts);
+        productGroupApi.MapGet("/", GetListProduct)
+            .RequireAuthorization(IdentityConstant.Role.Admin);      
         productGroupApi.MapGet($"/{{id}}", GetProductById);
-        productGroupApi.MapPost("/", CreateProduct);
-        productGroupApi.MapPut("/", UpdateProduct);
-        productGroupApi.MapDelete($"/{{id}}", DeleteProduct);
+        productGroupApi.MapPost("/", CreateProduct)
+            .RequireAuthorization(IdentityConstant.Role.Admin);
+        productGroupApi.MapPut("/", UpdateProduct)
+            .RequireAuthorization(IdentityConstant.Role.Admin);
+        productGroupApi.MapDelete($"/{{id}}", DeleteProduct)
+            .RequireAuthorization(IdentityConstant.Role.Admin);
 
         // Variant
         productGroupApi.MapGet($"/variants/{{id}}", GetVariantById);
@@ -90,7 +98,7 @@ public static class CatalogApi
     }
 
     private static async Task<Results<Ok<Guid>, BadRequest>> CreateCategory(
-        IMediator mediator, [AsParameters] CreateCategoryRequest request, CancellationToken cancellationToken)
+        IMediator mediator, [AsParameters] CreateCategoryRequestDto request, CancellationToken cancellationToken)
     {
         var command = new CreateCategoryCommand(request.Title, request.UrlSlug);
 
@@ -101,12 +109,27 @@ public static class CatalogApi
     #endregion
 
     #region Product
-    private static async Task<Results<Ok<PageList<ProductListDto>>, BadRequest>> GetListProduct(
-       IMediator mediator, [AsParameters] PaginationRequest request, CancellationToken cancellationToken)
+    //?
+    private static async Task<Results<Ok<PaginatedResult<ProductListDto>>, BadRequest>> GetListProduct(
+       IMediator mediator, IMapper mapper, [AsParameters] PaginationRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetListProductQuery(request.PageIndex, request.PageSize), cancellationToken);
 
-        return TypedResults.Ok(result);
+        var response = new PaginatedResult<ProductListDto>(result.CurrentPage, result.PageSize,
+            result.TotalCount, result.TotalPage, result.Items);
+
+        return TypedResults.Ok(response);
+    }
+
+    private static async Task<Results<Ok<PaginatedResult<AvailableProductsDto>>, BadRequest>> GetAvailableProducts(
+       IMediator mediator, IMapper mapper, [AsParameters] PaginationRequest request, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetAvailableProductsQuery(request.PageIndex, request.PageSize), cancellationToken);
+
+        var response = new PaginatedResult<AvailableProductsDto>(result.CurrentPage, result.PageSize,
+            result.TotalCount, result.TotalPage, result.Items);
+
+        return TypedResults.Ok(response);
     }
 
     private static async Task<Results<Ok<ProductItemDto>, BadRequest>> GetProductById(
@@ -140,9 +163,7 @@ public static class CatalogApi
     private static async Task<Results<NoContent, BadRequest>> DeleteProduct(
        IMediator mediator, Guid id, CancellationToken cancellationToken)
     {
-        var command = new DeleteProductCommand(id);
-
-        await mediator.Send(command, cancellationToken);
+        await mediator.Send(new DeleteProductCommand(id), cancellationToken);
 
         return TypedResults.NoContent();
     }
@@ -152,9 +173,7 @@ public static class CatalogApi
     private static async Task<Results<Ok<VariantDto>, BadRequest>> GetVariantById(
        IMediator mediator, Guid id, CancellationToken cancellationToken)
     {
-        var command = new GetVariantByIdQuery(id);
-
-        var result = await mediator.Send(command, cancellationToken);
+        var result = await mediator.Send(new GetVariantByIdQuery(id), cancellationToken);
 
         return TypedResults.Ok(result);
     }
@@ -279,9 +298,7 @@ public static class CatalogApi
     private static async Task<Results<NoContent, BadRequest>> DeleteProductImage(
        IMediator mediator, Guid Id, Guid ProductId, CancellationToken cancellationToken)
     {
-        var command = new DeleteProductImageCommand(Id, ProductId);
-
-        await mediator.Send(command, cancellationToken);
+        await mediator.Send(new DeleteProductImageCommand(Id, ProductId), cancellationToken);
 
         return TypedResults.NoContent();
     }

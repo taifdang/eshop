@@ -1,0 +1,102 @@
+.navigation-container {
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    height: 84px;
+    font-size: 14px;
+    line-height: 16.8px;
+}
+.navigation{
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    height: 32px;
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.background-image {
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    width: 1040px;
+    min-height: 600px;
+    background-image: url("src/assets/images/smart-banner-no-text.png");
+}
+
+.auth-container {
+    display: flex;
+    justify-content: end;
+    width: 1040px;
+    height: auto;
+}
+
+.auth-with-form {
+    display: block;
+    background-color: rgb(255, 255, 255);
+    width: 400px;
+    height: auto;
+}
+
+.auth-with-form__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 30px;
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.auth-with-form__footer {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    margin-bottom: 30px;
+    color: rgb(204, 204, 204);
+}
+
+.auth-with-form__footer-link {
+    color: black;
+    text-decoration: underline;
+}
+
+.separate__spacing {
+    width: 100%;
+    border: 1px solid rgb(204, 204, 204);
+}
+
+.separate__title {
+    font-size: 14px;
+    padding: 0 16px;
+    color: rgb(204, 204, 204);
+}
+
+.social-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    width: 350px;
+    margin: 0 -5px;
+}
+
+.social-login__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(204, 204, 204);
+    height: 40px;
+    width: 165px;
+    pad: 0 8px 0 2px;
+    margin: 5px;
+}
+
+.social-login__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}

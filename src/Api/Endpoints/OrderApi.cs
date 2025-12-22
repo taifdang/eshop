@@ -1,8 +1,8 @@
-﻿using Application.Order.Commands.CancelOrder;
+﻿using Api.Models.Requests;
+using Application.Order.Commands.CancelOrder;
 using Application.Order.Commands.CreateOrder;
 using Application.Order.Queries.GetListOrder;
 using Application.Order.Queries.GetOrderById;
-using Contracts.Requests;
 using MediatR;
 
 namespace Api.Endpoints;
@@ -58,9 +58,9 @@ public static class OrderApi
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         group.MapPut("/",
-            async (IMediator mediator, Guid OrderId, CancellationToken cancellationToken) =>
+            async (IMediator mediator, Guid orderId, CancellationToken cancellationToken) =>
             {
-                var command = new CancelOrderCommand(OrderId);
+                var command = new CancelOrderCommand(orderId);
 
                 await mediator.Send(command, cancellationToken);
 

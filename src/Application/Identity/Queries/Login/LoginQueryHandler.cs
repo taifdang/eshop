@@ -1,6 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Contracts.Requests;
-using Contracts.Responses;
+using Application.Common.Models;
 using MediatR;
 
 namespace Application.Identity.Queries.Login;
@@ -16,6 +15,6 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, TokenResult>
 
     public async Task<TokenResult> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-        return await _identityService.Authenticate(new LoginRequestDto(request.UserName, request.Password));
+        return await _identityService.Authenticate(new LoginRequest(request.UserName, request.Password));
     }
 }

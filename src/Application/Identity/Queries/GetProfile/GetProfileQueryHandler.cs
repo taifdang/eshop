@@ -1,10 +1,10 @@
 ﻿using Application.Common.Interfaces;
-using Contracts.Responses;
+using Application.Common.Models;
 using MediatR;
 
 namespace Application.Identity.Queries.GetProfile;
 
-public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, UserInfoResponse>
+public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, GetProfileResult>
 {
     private readonly IIdentityService _identityService;
 
@@ -13,7 +13,7 @@ public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, UserInfoR
         _identityService = identityService;
     }
 
-    public async Task<UserInfoResponse> Handle(GetProfileQuery request, CancellationToken cancellationToken)
+    public async Task<GetProfileResult> Handle(GetProfileQuery request, CancellationToken cancellationToken)
     {
         return await _identityService.GetProfile();
     }

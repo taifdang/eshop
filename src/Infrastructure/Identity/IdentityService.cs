@@ -1,7 +1,6 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using Ardalis.GuardClauses;
-using Contracts.Requests;
-using Contracts.Responses;
 using Infrastructure.Identity.Data;
 using Infrastructure.Identity.Entity;
 using Microsoft.AspNetCore.Identity;
@@ -35,7 +34,7 @@ public class IdentityService : IIdentityService
         this.dbContext = dbContext;
         this.currentUserProvider = currentUserProvider;
     }
-    public async Task<RegisterUserResult> Register(RegisterUserRequestDto request)
+    public async Task<RegisterUserResult> Register(RegisterUserRequest request)
     {
         var applicationUser = new ApplicationUser
         {
@@ -60,7 +59,7 @@ public class IdentityService : IIdentityService
         return new RegisterUserResult(applicationUser.Id, applicationUser.UserName, applicationUser.Email);
     }
 
-    public async Task<TokenResult> Authenticate(LoginRequestDto request)
+    public async Task<TokenResult> Authenticate(LoginRequest request)
     {
         var user = await userManager.FindByNameAsync(request.UserName);
         Guard.Against.NotFound(request.UserName, user);
@@ -72,7 +71,9 @@ public class IdentityService : IIdentityService
             throw new Exception("Invalid check pass");
         }
 
-        var result = tokenService.GenerateToken(user.Id, user.UserName!, user.Email!);
+        var roles = await userManager.GetRolesAsync(user);
+
+        var result = tokenService.GenerateToken(user.Id, user.UserName!, user.Email!, roles.ToArray());
         var refreshToken = tokenService.GenerateRefereshToken();
 
         //save refresh token
@@ -145,7 +146,9 @@ public class IdentityService : IIdentityService
             throw new Exception("Not found user");
         }
 
-        var result = tokenService.GenerateToken(user.Id, user.UserName!, user.Email!);
+        var roles = await userManager.GetRolesAsync(user);
+
+        var result = tokenService.GenerateToken(user.Id, user.UserName!, user.Email!, roles.ToArray());
         var refreshToken = tokenService.GenerateRefereshToken();
 
         //save refresh token
@@ -164,7 +167,7 @@ public class IdentityService : IIdentityService
         return result;
     }
 
-    public async Task<UserInfoResponse> GetProfile()
+    public async Task<GetProfileResult> GetProfile()
     {
         var currentUser = currentUserProvider.GetCurrentUserId();
         if(!Guid.TryParse(currentUser, out Guid userId))
@@ -173,7 +176,7 @@ public class IdentityService : IIdentityService
         }
 
         var user = await userManager.Users
-            .Select(u => new UserInfoResponse
+            .Select(u => new GetProfileResult
             {
                 Id = u.Id,
                 UserName = u.UserName,

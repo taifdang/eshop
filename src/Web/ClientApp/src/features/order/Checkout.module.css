@@ -1,0 +1,409 @@
+.checkoutSection {
+    padding: 16px 0 10px 0;
+    height: 90px;
+    margin: 0 auto;
+    width: 1200px;
+}
+
+.checkoutHeaderMain {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkoutHeader {
+    position: relative;
+    top: -3px;
+}
+
+.checkoutBrand {
+    display: flex;
+    align-items: end;
+}
+
+.checkoutBrandName {
+    display: block;
+    height: 30px;
+    font-size: 20px;
+    line-height: 30px;
+    margin-left: 15px;
+    padding-left: 15px;
+    margin-bottom: 1px;
+    border-left: 1px solid;
+}
+
+/* ---------- SHIPPING ADDRESS ---------- */
+.shipping-address__separate {
+    height: 3px;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.8);
+    background-image:
+        repeating-linear-gradient(45deg, black 0 33px, #0000 0 41px, gray 0 74px, #0000 0 82px);
+    background-position-x: -30px;
+    background-size: 1160px 3px;
+}
+
+.shipping-address-section {
+    display: block;
+    padding: 28px 30px 24px 30px;
+    background-color: rgb(255, 255, 255);
+}
+
+.shipping-address__title-wrap {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0%;
+    font-size: 18px;
+    line-height: 21.6px;
+    margin-bottom: 20px;
+}
+
+.shipping-address__title {
+    font-size: 18px;
+    line-height: 21.6px;
+    font-weight: 400;
+}
+
+.shipping-address__content {
+    font-size: 16px;
+    line-height: 19.2px;
+}
+
+.shipping-address__button {
+    color: rgb(0, 85, 170);
+    font-size: 14px;
+    list-style: 21px;
+    font-weight: 500;
+}
+
+/* ---------- CHECKOUT CONTENT ---------- */
+
+.checkoutContent {
+    height: 74px;
+    padding: 24px 30px 0 30px;
+    background-color: white;
+    font-size: 14px;
+    line-height: 16.8px;
+}
+
+.checkoutContentContainer {
+    height: 30px;
+    width: 100%;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.col {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0%;
+}
+
+.colMain {
+    flex: 4 1 0%;
+    justify-content: flex-start;
+    min-width: 0;
+}
+
+.colSub {
+    flex: 2 1 0%;
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.headerText {
+    font-size: 18px;
+    line-height: 21.6px;
+    font-weight: 400;
+}
+
+.contentText {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+/* ---------- CHECKOUT CONTENT - ORDER ---------- */
+.orderListSection {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.orderList {
+    display: flex;
+    flex-direction: column;
+    padding: 25px 0;
+    gap: 15px;
+}
+
+/* ---------- CHECKOUT CONTENT - ORDER ITEM ---------- */
+.orderItem {
+    display: flex;
+    align-items: center;
+    margin: 0 30px;
+    min-height: 55px;
+}
+
+.orderItemName {
+    display: flex;
+    flex-direction: column;
+    margin: 0 15px;
+    flex: 1;
+    min-width: 0;
+}
+
+.orderItemVariant {
+    justify-content: flex-start;
+    min-width: 0;
+}
+
+.orderItemVariantTitle {
+    padding-left: 13px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+/* ---------- CHECKOUT CONTENT - ORDER TOTALS ---------- */
+.orderTotalSection {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+    border-top: 1px dashed rgba(0, 0, 0, 0.09);
+}
+
+.orderTotal {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.orderTotalTitle {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 16.8px;
+    font-weight: 400;
+}
+
+.orderTotalPrice {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 100px;
+    height: 40px;
+    padding: 0 25px 0 10px;
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 500;
+}
+
+/* ---------- CHECKOUT FOOTER ---------- */
+.checkoutFooterSection {
+    margin-bottom: 12px;
+    background-color: white;
+}
+
+.checkoutFooterWithPaymentSection {
+    margin-top: 20px;
+}
+
+.checkoutFooterWithPayment {
+    min-height: 90px;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+.checkoutFooterPaymentMethodTitle {
+    flex: 1 1 0%;
+    font-size: 18px;
+    line-height: 21.6px;
+    font-weight: 500;
+}
+
+.checkoutFooterPaymentButton {
+    margin-left: 60px;
+    color: rgb(0, 85, 170);
+}
+
+.checkoutFooter {
+    padding-top: 15px;
+    display: grid;
+    grid-template-columns: 895px 135px 150px;
+    column-gap: 10px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.09);
+}
+
+.checkoutFooterTitle {
+    grid-column-end: 3;
+    grid-column-start: 2;
+    font-size: 14px;
+    line-height: 16.8px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.checkoutFooterTotalPrice {
+    grid-column-end: 4;
+    grid-column-start: 3;
+    padding: 0 25px 0 10px;
+    height: 50px;
+    font-size: 28px;
+    line-height: 33.6px;
+    font-weight: 500;
+    color: black;
+}
+
+.checkoutFooterWithButtonOrder {
+    grid-column-end: 4;
+    grid-column-start: 1;
+    justify-content: flex-end;
+    min-height: 95px;
+    margin-top: 10px;
+    padding: 0 30px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.09);
+}
+
+.checkoutFooterButtonOrder {
+    box-sizing: border-box;
+    justify-content: center;
+    height: 40px;
+    width: 210px;
+    font-size: 16px;
+    line-height: 19.2px;
+    font-weight: 500;
+    background-color: black;
+    color: white;
+}
+
+/* ---------- SHIPPING ADDRESS MODAL ---------- */
+.shippingAddressModalSection {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px #0000008a;
+    border-radius: 2px;
+}
+
+.shippingAddressModal {
+    display: block;
+    padding: 24px;
+    width: 500px;
+}
+
+.shippingAddressModalTitle {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.modalFormContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding-top: 15px;
+    height: 300px;
+}
+
+.modalFormContent {
+    display: block;
+    flex: 1 1 0%;
+    padding-bottom: 66px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.modalFormContentTextField {
+    position: relative;
+    margin-top: 6px;
+    margin-bottom: 15px;
+    flex: 1 1 0%;
+}
+
+.modalFormContentTextFieldContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    border-radius: 2px;
+}
+
+.modalFormContentTextFieldLabel {
+    display: none;
+    position: absolute;
+    left: 10px;
+    top: -6px;
+    width: auto;
+    height: auto;
+    padding: 0 3px;
+    font-size: 12px;
+    line-height: 14.4px;
+    color: rgba(0, 0, 0, 0.4);
+    background-color: rgb(255, 255, 255);
+
+}
+
+.modalFormContentTextFieldContent:focus-within {
+    border: 1px solid rgba(0, 0, 0, 0.54);
+
+    .modalFormContentTextFieldLabel {
+        display: block;
+    }
+}
+
+.modalFormContentTextFieldInValid {
+    display: none;
+    padding: 8px 0 2px 0;
+    font: 12px;
+    line-height: 14.4px;
+    color: rgb(255, 66, 79);
+}
+
+.modalFormContentTextFieldInput {
+    display: block;
+    box-sizing: border-box;
+    flex: 1 1 0%;
+    height: 38px;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    line-height: normal;
+    color: rgb(34, 34, 34);
+}
+
+.modalFormContentTextFieldInput {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.modalFormButtonSection {
+    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 66px;
+    font-size: 14px;
+    line-height: 16.8px;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.modalFormButton {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    height: auto;
+    min-width: 140px;
+}
+
+.modalFormButtonSubmit {
+    background-color: black;
+    color: white;
+}
