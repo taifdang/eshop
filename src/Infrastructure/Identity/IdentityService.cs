@@ -76,12 +76,12 @@ public class IdentityService : IIdentityService
         var result = tokenService.GenerateToken(user.Id, user.UserName!, user.Email!, roles.ToArray());
         var refreshToken = tokenService.GenerateRefereshToken();
 
-        //save refresh token
+        //save refresh token: expires 30 days
         dbContext.RefreshTokens.Add(new RefreshToken
         {
             UserId = user.Id,
-            Token = result.Token,
-            Expires = result.Expire,
+            Token = refreshToken,
+            Expires = DateTime.UtcNow.AddDays(30),
             Created = DateTime.UtcNow
         });
         await dbContext.SaveChangesAsync();
@@ -115,6 +115,8 @@ public class IdentityService : IIdentityService
 
                 await dbContext.SaveChangesAsync();
             }
+
+            cookieService.Delete();
         }
 
         await signInManager.SignOutAsync();
@@ -122,11 +124,13 @@ public class IdentityService : IIdentityService
 
     public async Task<TokenResult> RefreshToken()
     {
-        var currentUser = currentUserProvider.GetCurrentUserId();
-        if (!Guid.TryParse(currentUser, out var userId))
-        {
-            throw new UnauthorizedAccessException("Invalid user ID");
-        }
+        //var currentUser = currentUserProvider.GetCurrentUserId();
+        //if (!Guid.TryParse(currentUser, out var userId))
+        //{
+        //    throw new UnauthorizedAccessException("Invalid user ID");
+        //}
+
+        var userId = Guid.Empty;
 
         var tokenInCookie = cookieService.Get();
 
@@ -137,10 +141,17 @@ public class IdentityService : IIdentityService
             if (lastToken != null && lastToken.IsActive)
             {
                 lastToken.Revoked = DateTime.UtcNow;
-            }
+                userId = lastToken.UserId;
+            }  
+        }
+
+        if(userId == Guid.Empty)
+        {
+            throw new Exception("Not found user with token in cookie");
         }
 
         var user = await userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
+
         if (user == null)
         {
             throw new Exception("Not found user");

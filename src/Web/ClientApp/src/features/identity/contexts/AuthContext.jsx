@@ -6,6 +6,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [accessToken, setAccessToken] = useState(null);
 
-  const isAuthenticated = !!accessToken;
-  return <></>;
+  return (
+    <AuthProvider value = {{accessToken, setAccessToken}}>
+      {children}
+    </AuthProvider>
+  );
 };
