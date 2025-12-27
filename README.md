@@ -17,7 +17,14 @@
 - Process push notification via email with Hangfire, MailKit
 - Authorication with JWT (access token,refresh token,revoke token via blacklist)
 - Use caching to speed up data retrieval and reduce system load
+
+# Structure of project
+
+<img width="600" height="600" alt="workflow_eshop" src="https://github.com/user-attachments/assets/0f9a7297-6e98-440f-8022-38522a251afc" />
+
+
 # Workflow
+
 -  User
 ![image](https://github.com/user-attachments/assets/5346eba3-543b-4f4d-a329-d4012e3b88d8)
 
