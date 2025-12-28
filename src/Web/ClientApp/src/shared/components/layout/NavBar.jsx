@@ -70,46 +70,45 @@ export function NavBar() {
                 {/* USER */}
                 {user ? (
                   <li style={{ padding: "0 10px" }}>
-                   <div className="flex items-center">
-                     <a href="/user" className="flex relative">
-                      <div
-                        className="flex items-center"
-                        style={{ padding: "5px 0" }}
-                      >
-                        <div>
-                          <img
-                            src={fallbackImage}
-                            alt=""
-                            className="user__avatar"
-                          />
-                        </div>
-                        <span style={{ padding: "0 10px" }}>
-                          {user?.userName || "guest"}
-                        </span>
+                    <div className="flex items-center">
+                      <a href="/user" className="flex relative">
                         <div
-                          className="block"
-                          style={{
-                            height: "13px",
-                            borderLeft: "1px solid black",
-                          }}
-                        ></div>
-                      </div>
-                    </a>
-                    <a
-                      onClick={() => logout()}
-                      className="flex relative"
-                      style={{ padding: "0 10px",cursor: "pointer" }}
-                    >
-                      Logout
-                    </a>
-                   </div>
+                          className="flex items-center"
+                          style={{ padding: "5px 0" }}
+                        >
+                          <div>
+                            <img
+                              src={fallbackImage}
+                              alt=""
+                              className="user__avatar"
+                            />
+                          </div>
+                          <span style={{ padding: "0 10px" }}>
+                            {user?.userName || "guest"}
+                          </span>
+                          <div
+                            className="block"
+                            style={{
+                              height: "13px",
+                              borderLeft: "1px solid black",
+                            }}
+                          ></div>
+                        </div>
+                      </a>
+                      <a
+                        onClick={() => logout()}
+                        className="flex relative"
+                        style={{ padding: "0 10px", cursor: "pointer" }}
+                      >
+                        Logout
+                      </a>
+                    </div>
                   </li>
                 ) : (
                   <>
                     {/* GUEST */}
                     <a
-                      //href="/"
-
+                      href="/signup"
                       className="flex relative"
                       style={{ padding: "0 10px" }}
                     >
