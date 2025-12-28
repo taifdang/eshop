@@ -26,7 +26,7 @@ public static class IdentityApi
     public static RouteGroupBuilder MapIdentityApi(this RouteGroupBuilder group)
     {
         group.MapPost("/register",
-            async (IMediator mediator, [AsParameters] RegisterUserRequestDto request, CancellationToken cancellationToken) =>
+            async (IMediator mediator, [FromBody] RegisterUserRequestDto request, CancellationToken cancellationToken) =>
             {
                 var command = new RegisterUserCommand(request.UserName, request.Email, request.Password);
                 await mediator.Send(command, cancellationToken);
@@ -79,7 +79,7 @@ public static class IdentityApi
             .WithName("Profile")
             .Produces<GetProfileResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .RequireAuthorization(IdentityConstant.Role.User);
+            .RequireAuthorization();
 
         //group.MapPost("/change-password", null);
 

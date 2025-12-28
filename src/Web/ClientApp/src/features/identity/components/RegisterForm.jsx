@@ -1,22 +1,38 @@
-export function RegisterForm({ showPassword, setShowPassword }) {
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { registerSchema } from "../utils/register.schema";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
-  
+export function RegisterForm({ showPassword, setShowPassword, setShowError }) {
+  const navigate = useNavigate();
+  const { signup } = useAuth();
+
+  // React hook form + zod (schema validation)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+    mode: "onSubmit",
+    reValidateMode: "onBlur",
+  });
+
+  const onRegisterSubmit = async (data) => {
+    const result = await signup(data.username, data.email, data.password);
+
+    if (result.success) {
+      navigate("/login");
+    } else {
+      setShowError(`${result.message} - ${new Date().toISOString()}`);
+    }
+  };
 
   return (
     <>
-      <form>
-        {/* -------- Email  -------- */}
-        <div style={{ marginBottom: "10px" }}>
-          <div className="text-field">
-            <input
-              className="text-field__input"
-              type="text"
-              maxLength="128"
-              placeholder="Email"
-            />
-          </div>
-          <div className="text-field__error">123</div>
-        </div>
+      <form onSubmit={handleSubmit(onRegisterSubmit)}>
         {/* -------- USERNAME  -------- */}
         <div style={{ marginBottom: "10px" }}>
           <div className="text-field">
@@ -25,9 +41,23 @@ export function RegisterForm({ showPassword, setShowPassword }) {
               type="text"
               maxLength="128"
               placeholder="Username"
+              {...register("username")}
             />
           </div>
-          <div className="text-field__error">123</div>
+          <div className="text-field__error">{errors.username?.message}</div>
+        </div>
+        {/* -------- Email  -------- */}
+        <div style={{ marginBottom: "10px" }}>
+          <div className="text-field">
+            <input
+              className="text-field__input"
+              type="text"
+              maxLength="128"
+              placeholder="Email"
+              {...register("email")}
+            />
+          </div>
+          <div className="text-field__error">{errors.email?.message}</div>
         </div>
         {/* -------- PASSWORD  -------- */}
         <div style={{ marginBottom: "10px" }}>
@@ -37,6 +67,7 @@ export function RegisterForm({ showPassword, setShowPassword }) {
               type={showPassword ? "text" : "password"}
               maxLength="16"
               placeholder="Password"
+              {...register("password")}
             />
             <button
               className="text-field__button"
@@ -56,9 +87,9 @@ export function RegisterForm({ showPassword, setShowPassword }) {
                   />
                   <path
                     fill="currentColor"
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M2 12c0 1.64.425 2.191 1.275 3.296C4.972 17.5 7.818 20 12 20s7.028-2.5 8.725-4.704C21.575 14.192 22 13.639 22 12c0-1.64-.425-2.191-1.275-3.296C19.028 6.5 16.182 4 12 4S4.972 6.5 3.275 8.704C2.425 9.81 2 10.361 2 12m10-3.75a3.75 3.75 0 1 0 0 7.5a3.75 3.75 0 0 0 0-7.5"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   />
                 </svg>
               ) : (
@@ -76,14 +107,14 @@ export function RegisterForm({ showPassword, setShowPassword }) {
               )}
             </button>
           </div>
-          <div className="text-field__error">Invalid password</div>
+          <div className="text-field__error">{errors.password?.message}</div>
         </div>
         <div style={{ height: "16px" }}></div>
         {/* -------- SUBMIT  -------- */}
         <button type="submit" className="form__button-submit">
           SIGN UP
         </button>
-      </form>     
+      </form>
     </>
   );
 }

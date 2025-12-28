@@ -93,32 +93,24 @@ public class IdentityService : IIdentityService
     }
 
     public async Task Logout()
-    {         
-        var currentUser = currentUserProvider.GetCurrentUserId();
-        if (!Guid.TryParse(currentUser, out var userId))
+    {
+
+        var tokenInCookie = cookieService.Get();
+
+        if (!string.IsNullOrEmpty(tokenInCookie))
         {
-            throw new UnauthorizedAccessException("Invalid user ID");
-        }
+            var tokenInDb = await dbContext.RefreshTokens.Where(x => x.Token == tokenInCookie).FirstOrDefaultAsync();
 
-        var refreshToken = cookieService.Get();
-
-        if (!string.IsNullOrEmpty(refreshToken))
-        {
-            // revoke refresh token
-            var IsToken = await dbContext.RefreshTokens
-                .Where(x => x.Token == refreshToken && x.UserId == userId)
-                .FirstOrDefaultAsync();
-
-            if (IsToken != null && IsToken.IsActive)
+            if(tokenInDb != null)
             {
-                IsToken.Revoked = DateTime.UtcNow;
-
+                tokenInDb.Revoked = DateTime.UtcNow;
                 await dbContext.SaveChangesAsync();
             }
 
             cookieService.Delete();
         }
 
+        // remove authentication cookie Identity
         await signInManager.SignOutAsync();
     }
 

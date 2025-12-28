@@ -7,7 +7,7 @@ export const loginRequest = (username, password) =>
     Password: password,
   });
 
-export const logoutRequest = () => api.post(`/api/v1/identity/logout`);
+export const logoutRequest = () => apiAuth.post(`/api/v1/identity/logout`);
 
 export const registerNewUser = (username, email, password) =>
   api.post(`/api/v1/identity/register`, {

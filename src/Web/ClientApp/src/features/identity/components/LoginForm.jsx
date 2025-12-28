@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 export function LoginForm({ showPassword, setShowPassword, setShowError }) {
   const navigate = useNavigate();
-  const { setUser, login } = useAuth();
+  const { login } = useAuth();
 
   // React hook form + zod (schema validation)
   const {
@@ -29,22 +29,6 @@ export function LoginForm({ showPassword, setShowPassword, setShowError }) {
     else{
       setShowError(`${result.message} - ${new Date().toISOString()}`)
     }
-
-    // try {
-    //   const res = await loginRequest(data.username, data.password);
-    //   //console.log(res.data);
-    //   if (res.status === 200) {
-    //     //window.location.href = "/"; // reload. lost token in memory
-    //     navigate("/");
-    //     tokenStorage.set(res.data.token);
-
-    //     setUser("have a user");
-
-    //     console.log(tokenStorage.get());
-    //   }
-    // } catch (err) {
-    //   setShowError(`Invalid input, create at: ${new Date().toISOString()}`);
-    // }
   };
 
   return (

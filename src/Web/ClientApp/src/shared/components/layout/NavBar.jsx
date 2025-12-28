@@ -1,15 +1,10 @@
 import fallbackImage from "@/assets/images/default.jpg";
 import { useAuth } from "@/features/identity/contexts/AuthContext";
-import { useQueryClient } from "@tanstack/react-query";
+import { profileStorage } from "../../storage/profile-storage";
 
 export function NavBar() {
   const { logout } = useAuth();
-
-  // const queryClient = useQueryClient();
-  // const user = queryClient.getQueryData(["profile"]);
-
-  const object = localStorage.getItem("profile");
-  const user = JSON.parse(object);
+  const user = profileStorage.get();
 
   return (
     <div className="bg-white">
@@ -103,7 +98,7 @@ export function NavBar() {
                     <a
                       onClick={() => logout()}
                       className="flex relative"
-                      style={{ padding: "0 10px" }}
+                      style={{ padding: "0 10px",cursor: "pointer" }}
                     >
                       Logout
                     </a>
