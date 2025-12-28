@@ -1,4 +1,9 @@
+import { useState } from "react";
+
 export default function CartItem() {
+
+  const [quantity, SetQuantity] = useState(1);
+
   return (
     <div className="product-item__container" role="listitem">
       <div className="flex items-center">
@@ -80,7 +85,8 @@ export default function CartItem() {
         <div className="col col-unit flex flex-col justify-center items-center">
           <div>
             {/* -------- IF HAVE SALE PRICE -------- */}
-            {/* <span
+            {/* 
+            <span
               style={{
                 marginLeft: "10px",
                 textDecoration: "line-through",
@@ -114,9 +120,8 @@ export default function CartItem() {
             <input
               aria-label="search-input"
               type="text"
-              name=""
-              id=""
-              value="1"
+              value={quantity}  
+              readOnly
               className="shop-button-quantity-input"
             />
             <button
