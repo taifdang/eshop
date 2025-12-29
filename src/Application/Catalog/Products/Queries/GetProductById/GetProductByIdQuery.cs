@@ -32,15 +32,22 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
 
         var products = await _dbContext.Products
             .AsNoTracking()
+            .AsSplitQuery()
             .Where(x => x.Id == request.Id)
             .Select(m => new ProductItemDto
             {
                 Id = m.Id,
                 Title = m.Name,
-                MinPrice = m.Variants.Any() ? m.Variants.Min(v => v.Price) : 0m,
-                MaxPrice = m.Variants.Any() ? m.Variants.Max(v => v.Price) : 0m,
+                //MinPrice = m.Variants.Any() ? m.Variants.Min(v => v.Price) : 0m,
+                //MaxPrice = m.Variants.Any() ? m.Variants.Max(v => v.Price) : 0m,
                 Description = m.Description ?? string.Empty,
                 Category = m.Category.Name,
+                VariantBrief = m.Variants.Select(v => new { v.Id, v.Price }).GroupBy(_ => 1).Select(g => new VariantBriefDto
+                {
+                    Id = g.Count() == 1 ? g.First().Id : null,
+                    MinPrice = g.Min(v => v.Price),
+                    MaxPrice = g.Max(v => v.Price),
+                }).SingleOrDefault(),
                 Options = m.Options.Select(po => new ProductOptionDto
                 {
                     Id = po.Id,
@@ -51,6 +58,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
                         Value = ov.Value,
                     }).ToList()
                 }).ToList(),
+
             })
             .FirstOrDefaultAsync();
 
