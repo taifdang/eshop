@@ -61,17 +61,23 @@ public class GetBasketQueryHandler : IRequestHandler<GetBasketQuery, BasketDto>
         }
 
         BasketDto basketDto = new BasketDto(basket.Id, customerId.Value, new List<BasketItemDto>(), (DateTime)basket.CreatedAt, basket.LastModified);
+        //sort items by VariantId to ensure consistent order
+        var items = basket.Items
+            .OrderBy(x => x.VariantId)
+            .ToList();
 
-        foreach (var item in basket.Items)
+        foreach (var item in items)
         {
 #if (!GrpcOrHttp)
             // Directly call the mediatr handler instead of gRPC / http
             var variant = await _mediator.Send(new GetVariantByIdQuery(item.VariantId));
 #endif
-            var image = variant.Image.Url ?? string.Empty;
+            //var image = variant.Image.Url ?? string.Empty;
 
-            var cartItem = basket.Items.First(x => x.VariantId == variant.Id);
-            basketDto.Items.Add(new BasketItemDto(cartItem.VariantId, variant.ProductName ,variant.Title, variant.Price, image, cartItem.Quantity));
+            //var cartItem = basket.Items.First(x => x.VariantId == variant.Id);
+            //basketDto.Items.Add(new BasketItemDto(cartItem.VariantId, variant.ProductName ,variant.Title, variant.Price, image, cartItem.Quantity));
+
+            basketDto.Items.Add(new BasketItemDto(item.VariantId, variant.ProductName, variant.Title, variant.Price, variant.Image.Url ?? string.Empty, item.Quantity));
         }
 
         return basketDto;

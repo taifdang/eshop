@@ -2,14 +2,12 @@ import { useState } from "react";
 import s from "./index.module.css";
 import clsx from "clsx";
 import fallbackImage from "@/assets/images/default.jpg";
-import { formatCurrency } from "../../../../shared/lib/currency";
+import { formatCurrency } from "@/shared/lib/currency";
 
-export default function BasketItem({ item }) {
+export default function BasketItem({ item, onUpdate }) {
   const [quantity, SetQuantity] = useState(1);
 
-  const totalPrice = (price, quantity) => {
-    return price * quantity;
-  };
+  const totalPrice = (price, quantity) => price * quantity;
 
   return (
     <>
@@ -77,7 +75,9 @@ export default function BasketItem({ item }) {
           >
             <div className={s["quantity-selector__button-wrapper"]}>
               <button
+                type="button"
                 aria-label="Decrease"
+                onClick={() => onUpdate(item.quantity - 1)}
                 className={s["quantity-selector__button"]}
               >
                 <svg
@@ -95,12 +95,14 @@ export default function BasketItem({ item }) {
               <input
                 aria-label="search-input"
                 type="text"
-                value="1"
+                value={item.quantity}
                 readOnly
                 className={s["quantity-selector__input"]}
               />
               <button
+                type="button"
                 aria-label="Increase"
+                onClick={() => onUpdate(item.quantity + 1)}
                 className={s["quantity-selector__button"]}
               >
                 <svg
@@ -125,7 +127,9 @@ export default function BasketItem({ item }) {
               s["table-col--total"]
             )}
           >
-            <span>{formatCurrency(totalPrice(item.regularPrice, item.quantity))}</span>
+            <span>
+              {formatCurrency(totalPrice(item.regularPrice, item.quantity))}
+            </span>
           </div>
           {/* actions */}
           <div
@@ -135,7 +139,13 @@ export default function BasketItem({ item }) {
               s["table-col--actions"]
             )}
           >
-            <button style={{ padding: "1px 6px" }}>Delete</button>
+            <button
+              type="button"
+              onClick={() => onUpdate(0)}
+              style={{ padding: "1px 6px" }}
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>

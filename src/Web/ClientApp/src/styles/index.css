@@ -1005,3 +1005,33 @@
 }
 
 /* ---------- Behavior action ---------- */
+
+
+/* wave */
+.dot-wave {
+  width: 8px;
+  height: 8px;
+  background-color: black;
+  border-radius: 9999px;
+  animation: wave 0.4s ease-in-out infinite;
+}
+
+.step-1 {
+  animation-delay: 0s;
+}
+.step-2 {
+  animation-delay: 0.15s;
+}
+.step-3 {
+  animation-delay: 0.3s;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
