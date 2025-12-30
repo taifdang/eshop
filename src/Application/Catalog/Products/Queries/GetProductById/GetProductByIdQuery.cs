@@ -42,9 +42,10 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
                 //MaxPrice = m.Variants.Any() ? m.Variants.Max(v => v.Price) : 0m,
                 Description = m.Description ?? string.Empty,
                 Category = m.Category.Name,
-                VariantBrief = m.Variants.Select(v => new { v.Id, v.Price }).GroupBy(_ => 1).Select(g => new VariantBriefDto
+                VariantBrief = m.Variants.Select(v => new { v.Id, v.Price, v.Quantity }).GroupBy(_ => 1).Select(g => new VariantBriefDto
                 {
                     Id = g.Count() == 1 ? g.First().Id : null,
+                    Quantity = g.Count() == 1 ? g.First().Quantity : 0,
                     MinPrice = g.Min(v => v.Price),
                     MaxPrice = g.Max(v => v.Price),
                 }).SingleOrDefault(),

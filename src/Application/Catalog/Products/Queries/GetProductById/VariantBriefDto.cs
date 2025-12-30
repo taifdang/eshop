@@ -4,6 +4,7 @@
     public class VariantBriefDto
     {
         public Guid? Id { get; set; }
+        public int Quantity { get; set; }
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
     }
