@@ -1,10 +1,12 @@
+import clsx from "clsx";
 import s from "./index.module.css";
 
-export function QuantitySelector({ quantity, available, onChange}) {
-  let quantityStatus;
-  if (!available) quantityStatus = "INSTOCK" // null: test
-  if(available === 0) quantityStatus = "OUT OF STOCK"
-  if(available) quantityStatus = `${available} pieces available`
+export function QuantitySelector({ available, quantity, onChange, onShow }) {
+  const handleStockStatus = (available) => {
+    if (!available) return "INSTOCK"; // for test
+    if (available === 0) return "OUT OF STOCK";
+    if (available) return `${available} pieces available`;
+  };
 
   return (
     <section className={s["quantity-selector__section"]}>
@@ -13,8 +15,14 @@ export function QuantitySelector({ quantity, available, onChange}) {
         <div style={{ marginRight: "15px" }}>
           <div className={s["quantity-selector__button-wrapper"]}>
             <button
+              type="button"
+              onClick={() => onChange(quantity - 1)}
+              disabled={quantity <= 1}
               aria-label="Decrease"
-              className={s["quantity-selector__button"]}
+              className={clsx(
+                s["quantity-selector__button"],
+                (onShow && quantity > 1) && s["active"]
+              )}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -31,12 +39,19 @@ export function QuantitySelector({ quantity, available, onChange}) {
             <input
               aria-label="search-input"
               type="text"
-              value="1"
+              value={quantity}
+              readOnly
               className={s["quantity-selector__input"]}
             />
             <button
+              type="button"
+              onClick={() => onChange(quantity + 1)}
+              disabled={quantity + 1 > available}
               aria-label="Increase"
-              className={s["quantity-selector__button"]}
+              className={clsx(
+                s["quantity-selector__button"],
+                onShow && s["active"]
+              )}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +67,9 @@ export function QuantitySelector({ quantity, available, onChange}) {
             </button>
           </div>
         </div>
-        <div className={s["quantity-selector__status"]}>{quantityStatus}</div>
+        <div className={s["quantity-selector__status"]}>
+          {handleStockStatus(available)}
+        </div>
       </div>
     </section>
   );

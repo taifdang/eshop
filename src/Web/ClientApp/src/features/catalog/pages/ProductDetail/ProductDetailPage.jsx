@@ -8,7 +8,7 @@ import { QuantitySelector } from "../../components/QuantiySelector/QuantitySelec
 import { Description } from "../../components/Description";
 import { PreviewProvider } from "../../contexts/PreviewContext";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchProductById,
   fetchVariantByOptions,
@@ -17,16 +17,34 @@ import {
 import { formatCurrency } from "@/shared/lib/currency";
 import fallbackImage from "@/assets/images/default.jpg";
 import { useDebounce } from "@/shared/hooks/useDebounce";
+import { updateBasket } from "../../../basket/services/basket-service";
 
 export function ProductDetailPage() {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const hasTrackedRef = useRef(false);
 
   const [selectedOptions, setSelectedOptions] = useState({});
   const [selectedImage, setSelectedImage] = useState(0);
   const [galleryIndex, setGalleryIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   // filter available quantity and options ???
+  const [variantId, setVariantId] = useState(null);
+  const canSetQuantity = variantId !== null;
+  const canAddToCart = variantId !== null;
+
+  const addToCart = useMutation({
+    mutationFn: ({ variantId, quantity }) => updateBasket(variantId, quantity),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["basket"] });
+    },
+  });
+
+  const handleAddToCart = () => {
+    if (variantId === null) return;
+    addToCart.mutate({ variantId: variantId, quantity: quantity });
+  };
 
   useEffect(() => {
     if (id && !hasTrackedRef.current) {
@@ -119,7 +137,20 @@ export function ProductDetailPage() {
   const priceText__delay = useDebounce(priceText, 500);
   const quantity__delay = useDebounce(isAvailable, 500);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (!product) return;
+    setVariantId(product.variantBrief?.id ?? null);
+  }, [product]);
+
+  useEffect(() => {
+    if (!variant) return;
+
+    if (variant.variants.length === 1) {
+      setVariantId(variant.variants[0].id);
+    } else {
+      setVariantId(null);
+    }
+  }, [variant]);
 
   if (isLoading) {
     return <></>;
@@ -162,7 +193,12 @@ export function ProductDetailPage() {
                       onChange={handleSelectOption}
                     />
                     {/* Quantity */}
-                    <QuantitySelector available={quantity__delay} />
+                    <QuantitySelector
+                      available={quantity__delay}
+                      quantity={quantity}
+                      onChange={setQuantity}
+                      onShow={canSetQuantity}
+                    />
                   </div>
                 </div>
                 {/* Action controls */}
@@ -170,7 +206,10 @@ export function ProductDetailPage() {
                   <div style={{ paddingLeft: "20px" }}>
                     <div className="flex">
                       {/* Add to cart */}
-                      <button className="purchase__button purchase__button-add-to-cart">
+                      <button
+                        onClick={() => handleAddToCart()}
+                        className="purchase__button purchase__button-add-to-cart"
+                      >
                         <span style={{ marginRight: "5px" }}>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

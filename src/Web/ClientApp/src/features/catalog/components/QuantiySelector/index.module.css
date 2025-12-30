@@ -38,7 +38,12 @@
     width: 32px;
 
     background: rgb(255, 255, 255);
-    color: rgb(117, 117, 117);
+    color: rgb(204, 204, 204);
+    /* color: black; */
+}
+
+.quantity-selector__button.active{
+     color: rgb(0, 0, 0.8);
 }
 
 .quantity-selector__input {
