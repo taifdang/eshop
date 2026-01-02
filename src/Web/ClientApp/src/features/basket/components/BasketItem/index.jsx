@@ -1,20 +1,25 @@
-import { useState } from "react";
 import s from "./index.module.css";
 import clsx from "clsx";
 import fallbackImage from "@/assets/images/default.jpg";
 import { formatCurrency } from "@/shared/lib/currency";
+import { Skeleton } from "./skeleton";
 
 export default function BasketItem({
   item,
   onUpdate,
   isUpdating,
-  showSkeleton,
   error,
   errorMessage,
 }) {
-  const [quantity, SetQuantity] = useState(1);
-
   const totalPrice = (price, quantity) => price * quantity;
+
+  if (isUpdating) {
+    return (
+      <>
+        <Skeleton />
+      </>
+    );
+  }
 
   return (
     <>
