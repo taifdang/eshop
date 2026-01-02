@@ -19,9 +19,9 @@
 - Use caching to speed up data retrieval and reduce system load
 
 # Structure of project
-
-<img width="600" height="600" alt="workflow_eshop" src="https://github.com/user-attachments/assets/0f9a7297-6e98-440f-8022-38522a251afc" />
-
+<div align = "center">
+  <img width="600" height="600" alt="workflow_eshop" src="https://github.com/user-attachments/assets/0f9a7297-6e98-440f-8022-38522a251afc" />
+</div>
 
 # Workflow
 
