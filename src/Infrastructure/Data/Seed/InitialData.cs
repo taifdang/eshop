@@ -20,7 +20,6 @@ public static class InitialData
         Categories = new List<Domain.Entities.Category>
         {
            new Domain.Entities.Category { Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db322230c8"), Name = "Shirt", UrlSlug = "shirt"},
-           new Domain.Entities.Category { Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db322230c9"), Name = "Pants", UrlSlug = "pants"}
         };
 
         // product
@@ -45,107 +44,7 @@ public static class InitialData
                 CategoryId = Categories.First().Id,
                 IsActive = true,
                 IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223010"),
-                Name = "T-Shirt Seed-1",
-                UrlSlug = "t-shirt-seed-1",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223011"),
-                Name = "T-Shirt Seed-2",
-                UrlSlug = "t-shirt-seed-2",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223012"),
-                Name = "T-Shirt Seed-3",
-                UrlSlug = "t-shirt-seed-3",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223013"),
-                Name = "T-Shirt Seed-4",
-                UrlSlug = "t-shirt-seed-4",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223014"),
-                Name = "T-Shirt Seed-5",
-                UrlSlug = "t-shirt-seed-5",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223015"),
-                Name = "T-Shirt Seed-6",
-                UrlSlug = "t-shirt-seed-6",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223016"),
-                Name = "T-Shirt Seed-7",
-                UrlSlug = "t-shirt-seed-7",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223017"),
-                Name = "T-Shirt Seed-8",
-                UrlSlug = "t-shirt-seed-8",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223018"),
-                Name = "T-Shirt Seed-9",
-                UrlSlug = "t-shirt-seed-9",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            },
-            new Domain.Entities.Product
-            {
-                Id = new Guid("3c5c0000-97c6-fc34-a0cb-08db32223019"),
-                Name = "T-Shirt Seed-10",
-                UrlSlug = "t-shirt-seed-10",
-                Description = "Lorem ipsum 2",
-                CategoryId = Categories.First().Id,
-                IsActive = true,
-                IsDeleted = false
-            }
+            },        
         };
 
         // *product option: product last() has option
@@ -397,88 +296,7 @@ public static class InitialData
                 IsActive = true,
                 IsDeleted = false,
             },
-            // Seed
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[2].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[3].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[4].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[5].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[6].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[7].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[8].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[9].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
-            new Domain.Entities.Variant
-            {
-                Id = Guid.CreateVersion7(),
-                ProductId = Products[10].Id,
-                Price = PriceRnd,
-                Quantity = QuantityRnd,
-                IsActive = true,
-                IsDeleted = false,
-            },
+            // Seed         
         };
     }
 }
