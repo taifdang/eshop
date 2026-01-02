@@ -14,10 +14,19 @@ import { profileStorage } from "@/shared/storage/profile-storage";
 export function BasketPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [quantity, setQuantity] = useState(0);
-  const [inputValue, setInputValue] = useState("0");
 
-  
+  // case: only reload with basket item
+  const [updatingItemId, setUpdatingItemId] = useState(null);
+  const [showSkeletonItemId, setShowSkeletonItemId] = useState(null);
+
+  const [showLoading, setShowLoading] = useState(false);
+
+  const [hasError, setHasError] = useState({
+    isError: false,
+    id: null,
+    message: "",
+  });
+
   const { data: basket, isFetching } = useQuery({
     queryKey: ["basket"],
     queryFn: () => fetchBasket().then((res) => res.data),
@@ -37,6 +46,7 @@ export function BasketPage() {
     onMutate: async ({ variantId, quantity }) => {
       const previousBasket = queryClient.getQueryData(["basket"]);
       queryClient.setQueryData(["basket"], (old) => {
+        if (!old) return old;
         // update array
         const updatedItems = old.items.map((item) =>
           item.productVariantId === variantId ? { ...item, quantity } : item
@@ -45,37 +55,62 @@ export function BasketPage() {
         const newItems = updatedItems.filter((item) => item.quantity > 0);
         return { ...old, items: newItems };
       });
+
       return { previousBasket };
     },
-    onSuccess: () => {
-      //queryClient.invalidateQueries({ queryKey: ["basket"] });
-      queryClient.setQueryData(["basket", basket]);
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries(["basket"]);
+    // },
+    onError: (err, variables, context) => {
+      setHasError({
+        isError: true,
+        id: variables.variantId,
+        message: "Invalid input",
+      });
+      queryClient.setQueryData(["basket"], context.previousBasket);
+      console.log(err);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["basket"]);
     },
   });
 
-  const updateBasketItem = (variantId, quantity) => {
-    try {
-      updateBasket(variantId, quantity);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const updateMutationBasketItem = useMutation({
+    mutationFn: ({ variantId, quantity }) => updateBasket(variantId, quantity),
 
-  // mutation price #1:
-  const mutationPrice = (item) => {
-    let result = 0;
-    if (!item) return result;
-    for (let i = 0; i < item.length; i++) {
-      result += item[i].regularPrice * item[i].quantity;
-    }
-    return result;
-  };
+    onMutate: async ({ variantId, quantity }) => {
+      setUpdatingItemId(variantId);
 
-  // useMemo(func, dependencies)
-  const totalPrice = useMemo(() => mutationPrice(basket.items), [basket.items]);
+      const previousBasket = queryClient.getQueryData(["basket"]);
 
-  // mutation price #2: reduce(func, initValue)
-  const totalResult = basket.items.reduce(
+      queryClient.setQueryData(["basket"], (old) => {
+        if (!old?.items) return old;
+
+        return {
+          ...old,
+          items: old.items
+            .map((item) =>
+              item.productVariantId === variantId ? { ...item, quantity } : item
+            )
+            .filter((item) => item.quantity > 0),
+        };
+      });
+
+      return { previousBasket };
+    },
+
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(["basket"], context.previousBasket);
+    },
+
+    onSettled: () => {
+      setUpdatingItemId(null);
+      queryClient.invalidateQueries(["basket"]);
+    },
+  });
+
+  // mutation price: reduce(func, initValue)
+  const totalResult = basket.items?.reduce(
     (sum, item) => (sum = sum + item.regularPrice * item.quantity),
     0
   );
@@ -90,8 +125,33 @@ export function BasketPage() {
   const handleCheckout = () => {
     navigate("/checkout");
   };
+  //#region only reload basket item
+  useEffect(() => {
+    let timer;
+    if (updatingItemId) {
+      timer = setTimeout(() => {
+        setShowSkeletonItemId(updatingItemId);
+      }, 1000);
+    } else {
+      setShowSkeletonItemId(null);
+    }
+    return () => clearTimeout(timer);
+  }, [updatingItemId]);
+  //#endregion
+  useEffect(() => {
+    let timer;
+    if (isFetching) {
+      setShowLoading(true);
+    } else {
+      timer = setTimeout(() => {
+        setShowLoading(false);
+      }, 300);
+    }
 
-  if (isFetching)
+    return () => clearTimeout(timer);
+  }, [isFetching]);
+
+  if (showLoading)
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-600 text-lg">
         <span className="ml-2 flex items-end gap-1">
@@ -191,6 +251,17 @@ export function BasketPage() {
                               <BasketItem
                                 key={item.id}
                                 item={item}
+                                error={
+                                  hasError.isError &&
+                                  hasError.id === item.productVariantId
+                                }
+                                errorMessage={hasError.message}
+                                // isUpdating={
+                                //   updatingItemId === item.productVariantId
+                                // }
+                                // showSkeleton={
+                                //   showSkeletonItemId === item.productVariantId
+                                // }
                                 onUpdate={(quantity) => {
                                   updateMutation.mutate({
                                     variantId: item.productVariantId,

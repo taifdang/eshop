@@ -4,7 +4,14 @@ import clsx from "clsx";
 import fallbackImage from "@/assets/images/default.jpg";
 import { formatCurrency } from "@/shared/lib/currency";
 
-export default function BasketItem({ item, onUpdate }) {
+export default function BasketItem({
+  item,
+  onUpdate,
+  isUpdating,
+  showSkeleton,
+  error,
+  errorMessage,
+}) {
   const [quantity, SetQuantity] = useState(1);
 
   const totalPrice = (price, quantity) => price * quantity;
@@ -68,7 +75,7 @@ export default function BasketItem({ item, onUpdate }) {
           {/* quantity */}
           <div
             className={clsx(
-              "flex items-center justify-center",
+              "flex relative items-center justify-center",
               s["table-col"],
               s["table-col--quantity"]
             )}
@@ -118,6 +125,8 @@ export default function BasketItem({ item, onUpdate }) {
                 </svg>
               </button>
             </div>
+            {/* polite: error */}
+            {error && <div className={s["police_text"]}>{errorMessage}</div>}
           </div>
           {/* total price */}
           <div
