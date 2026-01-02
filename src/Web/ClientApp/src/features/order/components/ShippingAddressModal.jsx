@@ -11,6 +11,7 @@ export default function ShippingAddressModal({
   onSetOpen,
   address,
   onSubmitAddress,
+  onCancel
 }) {
   // REACT HOOK FORM
   const {
@@ -100,7 +101,7 @@ export default function ShippingAddressModal({
               <div className={s.modalFormButtonSection}>
                 <button
                   className={s.modalFormButton}
-                  onClick={() => onSetOpen(false)}
+                  onClick={() => onCancel()}
                 >
                   Cancel
                 </button>

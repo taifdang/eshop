@@ -3,10 +3,13 @@ import CheckoutHeader from "../components/CheckoutHeader";
 import ShippingAdress from "../components/ShippingAddress";
 import CheckoutMain from "../components/CheckoutMain";
 import CheckoutFooter from "../components/CheckoutFooter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import s from "../Checkout.module.css";
 import clsx from "clsx";
 import Checkout from "@/shared/components/Checkout";
+import { useQuery } from "@tanstack/react-query";
+import { fetchBasket } from "../../basket/services/basket-service";
+import { formatCurrency } from "../../../shared/lib/currency";
 
 export default function CheckoutPage() {
   //* VARIABLES
@@ -27,6 +30,35 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymnetMethod] = useState(PAYMENT_PROVIDERS[0].id);
   const [shippingAddress, setShippingAddress] = useState(initialAddress);
 
+  const [formValidated, setFormValidated] = useState(false);
+
+  // get basket item, set init data
+  const { data: basket } = useQuery({
+    queryKey: ["basket"],
+    queryFn: () => fetchBasket().then((res) => res.data),
+    retry: false,
+    refetchOnWindowFocus: false,
+    initialData: {
+      id: "",
+      customerId: "",
+      items: [],
+      createdAt: new Date().toDateString(),
+      lastModified: null,
+    },
+  });
+  // mutation price: reduce(func, initValue)
+  const totalResult = basket.items?.reduce(
+    (sum, item) => (sum = sum + item.regularPrice * item.quantity),
+    0
+  );
+
+  //
+  useEffect(() => {
+    if (!formValidated) {
+      setOpen(true); //open modal
+    }
+  }, []);
+
   return (
     <div>
       <NavBar />
@@ -45,11 +77,13 @@ export default function CheckoutPage() {
             isOpen={open}
             onSetOpen={setOpen}
             address={shippingAddress}
+            status={formValidated}
+            onSetStatus={setFormValidated}
             onSubmitAddress={setShippingAddress}
           />
           {/* ================= MAIN CONTENT ================= */}
           <div style={{ marginTop: "12px", backgroundColor: "white" }}>
-            <CheckoutMain />
+            <CheckoutMain items={basket?.items} />
           </div>
           {/* ================= FOOTER ================= */}
           <div className={s.checkoutFooterSection}>
@@ -66,7 +100,7 @@ export default function CheckoutPage() {
                 Total Payment
               </h3>
               <div className={clsx(s.row, s.checkoutFooterTotalPrice)}>
-                231.499₫
+                {formatCurrency(totalResult)}
               </div>
               <div className={clsx(s.row, s.checkoutFooterWithButtonOrder)}>
                 <div></div>

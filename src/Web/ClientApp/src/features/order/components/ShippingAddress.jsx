@@ -2,18 +2,32 @@ import Modal from "@/shared/components/Modal";
 import s from "../Checkout.module.css";
 import clsx from "clsx";
 import ShippingAddressModal from "./ShippingAddressModal";
+import { useNavigate } from "react-router-dom";
 
 export default function ShippingAdress({
   isOpen,
   onSetOpen,
   address,
   onSubmitAddress,
+  status,
+  onSetStatus
 }) {
-  // FUNCTIONS
+  const navigate = useNavigate();
+
+  // function
   const onSubmit = (data) => {
     onSetOpen(false);
     onSubmitAddress(data);
+    onSetStatus(true);
     console.log(JSON.stringify(data));
+  };
+
+  const handleCancel = () => {
+    if (status) {
+      onSetOpen(false);
+    } else {
+      navigate("/cart");
+    }
   };
 
   const { fullname, phoneNumber, city, zipCode, street } = address;
@@ -77,6 +91,7 @@ export default function ShippingAdress({
           onSetOpen={onSetOpen}
           address={address}
           onSubmitAddress={onSubmit}
+          onCancel={handleCancel}
         />
       </Modal>
     </>

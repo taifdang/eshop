@@ -1,7 +1,11 @@
 import clsx from "clsx";
 import s from "../Checkout.module.css";
 import OrderItem from "./OrderItem";
-export default function CheckoutMain() {
+import { formatCurrency } from "../../../shared/lib/currency";
+export default function CheckoutMain({ items }) {
+
+  const totalResult = items?.reduce((sum, item) => (sum = sum + item.regularPrice * item.quantity),0)
+
   return (
     <div>
       {/* HEADER */}
@@ -20,19 +24,25 @@ export default function CheckoutMain() {
       <div className={s.orderListSection}>
         {/* ORDER ITEMS */}
         <div className={s.orderList}>
-          <OrderItem />
-          <OrderItem />
-          <OrderItem />
-          <OrderItem />
-          <OrderItem />
+          {!items ? (
+            <>null</>
+          ) : (
+            <>
+              {items.map((item) => (
+                <>
+                  <OrderItem key={item.id} item={item} />
+                </>
+              ))}
+            </>
+          )}
         </div>
         {/* ORDER TOTALS */}
         <div className={s.orderTotalSection}>
           <div className={s.orderTotal}>
             <h3 className={s.orderTotalTitle}>
-              <div>Order Total (0 Items):</div>
+              <div>Order Total ({items.length} Items):</div>
             </h3>
-            <div className={s.orderTotalPrice}>0₫</div>
+            <div className={s.orderTotalPrice}>{formatCurrency(totalResult)}</div>
           </div>
         </div>
       </div>
