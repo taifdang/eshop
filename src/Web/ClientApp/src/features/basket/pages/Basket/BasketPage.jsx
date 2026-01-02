@@ -216,7 +216,7 @@ export function BasketPage() {
                   <section className={s["table-content__section"]}>
                     {/* Title */}
                     <div className={s["table-content__title"]}>
-                      <span>Items: 0</span>
+                      <span>Items: {showItemLoading ? "0" : basket.items.length}</span>
                     </div>
                     {/* CartItem */}
                     <div>
