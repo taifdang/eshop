@@ -4,6 +4,7 @@ using Application.Order.Commands.CreateOrder;
 using Application.Order.Queries.GetListOrder;
 using Application.Order.Queries.GetOrderById;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Endpoints;
 
@@ -44,7 +45,7 @@ public static class OrderApi
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         group.MapPost("/",
-            async (IMediator mediator, [AsParameters] CreateOrderRequestDto request, CancellationToken cancellationToken) =>
+            async (IMediator mediator, [FromBody] CreateOrderRequestDto request, CancellationToken cancellationToken) =>
             {
                 var command = new CreateOrderCommand(request.CustomerId, request.Street, request.City, request.ZipCode);
 
