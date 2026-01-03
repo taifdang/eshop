@@ -33,7 +33,6 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             throw new Exception("Basket is empty. Cannot create order.");
 
         var orderItems = new List<OrderItem>();
-        //decimal totalAmount = 0;
         Money totalAmount = Money.InitValue();
 
         foreach (var basketItem in basket.Items)
@@ -52,20 +51,17 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
                 throw new Exception("Not enough product variant quantity");
             }
 
-            var image = variant.Image.Url ?? string.Empty;
-
             var orderItem = new OrderItem
             {
                 VariantId = variant.Id,
                 ProductName = variant.ProductName,
-                VariantTitle = variant.Title,
+                VariantTitle = variant.Title ?? string.Empty,
                 UnitPrice = variant.Price,
                 Quantity = basketItem.Quantity,
-                ImageUrl = image
+                ImageUrl = variant.Image?.Url ?? string.Empty
             };
 
             orderItems.Add(orderItem);
-            //totalAmount += orderItem.TotalPrice;
             totalAmount += Money.Vnd(orderItem.TotalPrice);
         }
 
