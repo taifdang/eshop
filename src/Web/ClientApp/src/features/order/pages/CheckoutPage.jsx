@@ -7,11 +7,14 @@ import { useEffect, useState } from "react";
 import s from "../Checkout.module.css";
 import clsx from "clsx";
 import Checkout from "@/shared/components/Checkout";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchBasket } from "../../basket/services/basket-service";
-import { formatCurrency } from "../../../shared/lib/currency";
+import { formatCurrency } from "@/shared/lib/currency";
+import { profileStorage } from "@/shared/storage/profile-storage";
+import { placeOrder } from "../services/order-service";
 
 export default function CheckoutPage() {
+
   //* VARIABLES
   const PAYMENT_PROVIDERS = [
     { id: "cod", label: "Cash on Delivery" },
@@ -24,6 +27,7 @@ export default function CheckoutPage() {
     zipCode: "",
     street: "",
   };
+
 
   //* HOOKS
   const [open, setOpen] = useState(false);
@@ -58,6 +62,31 @@ export default function CheckoutPage() {
       setOpen(true); //open modal
     }
   }, []);
+
+  const hasEmptyField = Object.values(shippingAddress).some(value => !value || value.trim() === "")
+
+  const mutationPlaceOrder = useMutation({
+    mutationFn: ({ customerId, street, city, zipCode }) =>
+      placeOrder(customerId, street, city, zipCode),
+    onSuccess: () => {
+      console.log("order success");
+    },
+    onError: (err) => {
+      console.log("order error: ", err);
+    },
+  });
+
+  const handlePlaceOrder = async () => {
+    if (hasEmptyField) return;
+    if(basket.customerId === "");
+
+    mutationPlaceOrder.mutate({
+      customerId: basket.customerId,
+      street: shippingAddress.street,
+      city: shippingAddress.city,
+      zipCode: shippingAddress.zipCode,
+    });
+  };
 
   return (
     <div>
@@ -104,7 +133,12 @@ export default function CheckoutPage() {
               </div>
               <div className={clsx(s.row, s.checkoutFooterWithButtonOrder)}>
                 <div></div>
-                <button className={s.checkoutFooterButtonOrder}>
+                <button
+                  onClick={() => {
+                    handlePlaceOrder();
+                  }}
+                  className={s.checkoutFooterButtonOrder}
+                >
                   Place Order
                 </button>
               </div>
