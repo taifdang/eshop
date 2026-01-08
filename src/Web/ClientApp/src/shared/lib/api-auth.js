@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { tokenStorage } from "../storage/token-storage";
 
 export const apiAuth = axios.create({
-  baseURL: "/",
+  baseURL: import.meta.env.VITE_BACKEND_API,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

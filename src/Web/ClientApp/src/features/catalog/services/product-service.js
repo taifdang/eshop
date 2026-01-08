@@ -2,7 +2,7 @@ import { api } from "@/shared/lib/api-client";
 
 export const fetchProducts = (page = 1, size = 10) =>
   api.get(
-    `api/v1/catalog/products/get-available/?PageSize=${size}&PageIndex=${page}`
+    `/api/v1/catalog/products/get-available/?PageSize=${size}&PageIndex=${page}`
   );
 
 export const fetchProductById = (id) =>

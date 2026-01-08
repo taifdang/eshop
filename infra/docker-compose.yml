@@ -1,0 +1,108 @@
+name: eshop
+
+services:
+  #---------------------------------------------------------
+  # SECTION: postgres
+  #---------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: eshop-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shopdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - eshop-network
+    command: 
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_prepared_transactions=10"
+
+  #---------------------------------------------------------
+  # SECTION: pgweb
+  #---------------------------------------------------------
+  pgweb:
+    image: sosedoff/pgweb:latest
+    container_name: eshop-pgweb
+    environment:
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/shopdb?sslmode=disable"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    networks:
+      - eshop-network
+
+  #---------------------------------------------------------
+  # SECTION: api
+  # ref: https://learn.microsoft.com/en-us/aspnet/core/security/docker-compose-https?view=aspnetcore-10.0
+  #---------------------------------------------------------
+  api:
+    build:
+      context: ../src
+      dockerfile: Api/Dockerfile
+    container_name: eshop-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker   
+      ASPNETCORE_URLS: http://+:80
+      # ASPNETCORE_HTTP_PORT: 6005
+      # ASPNETCORE_HTTPS_PORT: 5005
+      # ASPNETCORE_Kestrel__Certificates__Default__Password: password
+      # ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+      ConnectionStrings__shopdb: "Host=postgres;Port=5432;Database=shopdb;Username=postgres;Password=postgres;"
+    expose:
+      - "80"
+    volumes:
+      #- ~/.aspnet/https:/https:ro
+      - dataprotection-keys:/root/.aspnet/DataProtection-Keys
+    depends_on:
+      - postgres
+    networks:
+      - eshop-network
+
+  #---------------------------------------------------------
+  # SECTION: frontend (reactjs, vite)
+  #---------------------------------------------------------
+  frontend:
+    build:
+      context: ../src/Web/ClientApp
+      dockerfile: Dockerfile
+    container_name: eshop-frontend
+    # expose port 80 to the internal network; nginx will serve on host:80
+    expose:
+      - "80"
+    depends_on:
+      - api
+    networks:
+      - eshop-network
+
+  #---------------------------------------------------------
+  # SECTION: nginx reverse proxy
+  #---------------------------------------------------------
+  nginx:
+    image: nginx:stable-alpine
+    container_name: eshop-nginx
+    depends_on:
+      - api
+      - frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - eshop-network
+
+volumes:
+  dataprotection-keys:
+  postgres-data:
+    driver: local
+
+networks:
+  eshop-network:
+    driver: bridge

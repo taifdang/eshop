@@ -9,18 +9,19 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
-    server: {
-      port: parseInt(env.VITE_PORT),
-      proxy: {
-        "/api": {
-          target:
-            process.env.services__apiservice__https__0 ||
-            process.env.services__apiservice__http__0,
-          changeOrigin: true,
-          // rewrite: (path) => path.replace(/^\/api/, "api"),
-          secure: false,
-        },
-      },
+    server: {   
+      port: parseInt(env.VITE_PORT ?? "3000"),
+      host: true,
+      // proxy for development
+      // proxy: {
+      //   "/api": {
+      //     target:
+      //       process.env.services__apiservice__https__0 ||
+      //       process.env.services__apiservice__http__0  || "http://api:80",
+      //     changeOrigin: true,     
+      //     secure: false,
+      //   },
+      // },
     },
     build: {
       outDir: "dist",

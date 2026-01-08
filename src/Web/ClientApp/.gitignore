@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 # No track file env
 *.env
+*.env.*

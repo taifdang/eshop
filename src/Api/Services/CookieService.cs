@@ -8,23 +8,19 @@ public class CookieService(IHttpContextAccessor httpContextAccessor) : ICookieSe
 
     public string Get()
     {
-        //var token = _httpContextAccessor.HttpContext?.Request.Cookies["refreshToken"];
-        //return string.IsNullOrEmpty(token)
-        //    ? throw new Exception("not exist token")
-        //    : token;
         return _httpContextAccessor.HttpContext?.Request.Cookies["refreshToken"] ?? string.Empty;
     }
-
-
+    // SameSite = SameSiteMode.None, Secure = true when cross-site
     public void Set(string token) => _httpContextAccessor.HttpContext?.Response.Cookies.Append(
             "refreshToken",
             token,
             new CookieOptions
             {
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                HttpOnly = true,
-                MaxAge = TimeSpan.FromDays(30)
+                SameSite = SameSiteMode.Lax, //SameSite
+                Secure = false,
+                HttpOnly = false,
+                IsEssential = true,
+                Expires = DateTime.UtcNow.AddDays(30)
             });
 
     public void Delete() => _httpContextAccessor.HttpContext?.Response.Cookies.Delete("refreshToken");
