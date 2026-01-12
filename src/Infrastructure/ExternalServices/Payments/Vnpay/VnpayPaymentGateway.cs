@@ -251,7 +251,7 @@ public class VnpayPaymentGateway : IPaymentGateway
             {"vnp_CurrCode", _vnpOption.CurrCode},
             // warn: when use behind proxy, this ip will be proxy ip, not client ip
             // need to get real client ip from header
-            {"vnp_IpAddr", _currentIPAddressProvider.GetCurrentIPAddress() ?? ""}, 
+            {"vnp_IpAddr", _currentIPAddressProvider.GetCurrentIPAddress() ?? ""},
             {"vnp_Locale", _vnpOption.Locale},
             {"vnp_OrderInfo", $"Payment for {OrderNumber.ToString()} with amount {Amount.ToString()}"},
             {"vnp_OrderType", _vnpOption.OrderType},

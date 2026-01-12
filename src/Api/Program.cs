@@ -9,18 +9,19 @@ builder.AddServiceDefaults();
 
 builder.AddApplicationServices();
 builder.AddInfrastructure();
-builder.AddWebServices();
+builder.AddWebDependencies();
 
 var app = builder.Build();
 
 app.UseInfrastructure();
-app.UseWebServices();
+app.UseWebDependencies();
 
 app.MapCatalogApi();
 app.MapBasketApi();
 app.MapOrderApi();
 app.MapCustomerApi();
 app.MapIdentityApi();
+app.MapPaymentApi();
 
 app.Run();
 

@@ -80,6 +80,8 @@ public static class DependencyInjection
         builder.Services.AddScoped<IPaymentGateway, VnpayPaymentGateway>();
         builder.Services.AddScoped<IPaymentGatewayFactory, PaymentGatewayFactory>();
 
+        builder.Services.AddScoped<VnpayPaymentGateway>();
+
         // Identity
         builder.Services.AddScoped<IIdentityService, IdentityService>();
 

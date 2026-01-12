@@ -8,7 +8,7 @@ namespace Api;
 
 public static class DependencyInjection
 {
-    public static WebApplicationBuilder AddWebServices(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddWebDependencies(this WebApplicationBuilder builder)
     {
 #if (crossDomainUsingCors)
         var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins");
@@ -57,7 +57,7 @@ public static class DependencyInjection
         return builder;
     }
 
-    public static WebApplication UseWebServices(this WebApplication app)
+    public static WebApplication UseWebDependencies(this WebApplication app)
     {
         //app.UseHttpsRedirection();
         app.UseForwardedHeaders(new ForwardedHeadersOptions
