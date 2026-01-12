@@ -73,7 +73,7 @@ public static class InitialData
                Image = new Domain.Entities.Image
                {
                    Id = Guid.CreateVersion7(),
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/black1.jpg",
                    AllText = $"seo all text - {Products.Last().Id}"
                }
@@ -86,7 +86,7 @@ public static class InitialData
                Image = new Domain.Entities.Image
                {
                    Id = Guid.CreateVersion7(),
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/white1.jpg",                
                    AllText = $"seo all text - {Products.Last().Id}"
                }
@@ -115,7 +115,7 @@ public static class InitialData
                ProductId = Products.First().Id,
                Image = new Domain.Entities.Image
                {
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/brown2.jpg",
                    AllText = $"seo all text - {Products.First().Id}"
                },
@@ -129,7 +129,7 @@ public static class InitialData
                ProductId = Products.First().Id,
                Image = new Domain.Entities.Image
                {
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/brown1.jpg",
                    AllText = $"seo all text - {Products.First().Id}"
                },
@@ -144,7 +144,7 @@ public static class InitialData
                ProductId = Products.Last().Id,
                Image = new Domain.Entities.Image
                {
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/black1.jpg",
                    AllText = $"seo all text - {Products.Last().Id}"
                },
@@ -158,7 +158,7 @@ public static class InitialData
                ProductId = Products.Last().Id,
                Image = new Domain.Entities.Image
                {
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/white1.jpg",
                    AllText = $"seo all text - {Products.Last().Id}"
                },
@@ -171,7 +171,7 @@ public static class InitialData
                ProductId = Products.Last().Id,
                Image = new Domain.Entities.Image
                {
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/white2.jpg",
                    AllText = $"seo all text - {Products.Last().Id}"
                },
@@ -184,7 +184,7 @@ public static class InitialData
                ProductId = Products.Last().Id,
                Image = new Domain.Entities.Image
                {
-                   BaseUrl = "https://localhost:7129",
+                   BaseUrl = "https://localhost:5005",
                    FileName = "/image/black2.jpg",
                    AllText = $"seo all text - {Products.Last().Id}"
                },

@@ -6,7 +6,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 builder.AddDockerComposeEnvironment("env");
 
-var postgres = builder.AddPostgres("postgres").WithDataVolume().WithLifetime(ContainerLifetime.Persistent);
+var postgres = builder.AddPostgres("postgres").WithLifetime(ContainerLifetime.Persistent).WithPgWeb();
 
 if (builder.ExecutionContext.IsPublishMode)
 {
