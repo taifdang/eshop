@@ -1,11 +1,13 @@
-import s from "./index.module.css";
+import s from "./ProductDetailPage.module.css";
 import { useState, useEffect, useRef, useMemo } from "react";
-import ImagePreview from "../../components/ImagePreview";
-import Gallery from "../../components/Gallery";
-import { Info } from "../../components/Info";
-import { OptionSelector } from "../../components/OptionSelector/OptionSelector";
-import { QuantitySelector } from "../../components/QuantiySelector/QuantitySelector";
-import { Description } from "../../components/Description";
+import {
+  ImagePreview,
+  ImageGallery,
+  ProductInfo,
+  OptionSelector,
+  QuantitySelector,
+  Description,
+} from "../../components";
 import { PreviewProvider } from "../../contexts/PreviewContext";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -247,7 +249,7 @@ export function ProductDetailPage() {
                   {/* Display image preview */}
                   <ImagePreview />
                   {/* Gallery image*/}
-                  <Gallery
+                  <ImageGallery
                     images={product.images}
                     limit={gallery__limit}
                     galleryIndex={galleryIndex}
@@ -260,7 +262,7 @@ export function ProductDetailPage() {
               {/* Right */}
               <div className={s["detail__section--right"]}>
                 {/* PriceBox(regular price, price, discount/percent) */}
-                <Info price={displayPrice} name={product.title} />
+                <ProductInfo price={displayPrice} name={product.title} />
                 {/* Configuration behavior */}
                 <div
                   className={clsx(

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import s from "./index.module.css";
+import s from "./QuantitySelector.module.css";
 
 export function QuantitySelector({
   stock,

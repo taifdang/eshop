@@ -1,4 +1,4 @@
-import s from "./index.module.css";
+import s from "./ProductDescription.module.css";
 
 export function Description({ category, description }) {
   return (

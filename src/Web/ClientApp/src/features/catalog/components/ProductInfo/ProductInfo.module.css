@@ -1,0 +1,45 @@
+/* BEM-style styles for ProductInfo (block: product-info) */
+.product-info__title {
+  font-size: 20px;
+  line-height: 36px;
+  font-weight: 500;
+  font-family: Arial, sans-serif;
+  max-width: 665px;
+  overflow-wrap: break-word;
+}
+
+.product-info__price-container {
+  margin-top: 10px;
+}
+
+.product-info__card {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 20px;
+  background-color: rgb(248, 249, 250);
+}
+
+.product-info__section {
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.product-info__amount {
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.product-info__regular {
+  margin-left: 10px;
+  text-decoration: line-through;
+  color: var(--color-gray-600);
+}
+
+.product-info__discount {
+  margin-left: 10px;
+  font-size: 12px;
+  padding: 2px 4px;
+  background-color: black;
+  color: white;
+}

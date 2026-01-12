@@ -1,5 +1,5 @@
 import { usePreview } from "../../contexts/PreviewContext";
-import s from "./index.module.css";
+import s from "./OptionSelector.module.css";
 import clsx from "clsx";
 import fallbackImage from "@/assets/images/default.jpg";
 

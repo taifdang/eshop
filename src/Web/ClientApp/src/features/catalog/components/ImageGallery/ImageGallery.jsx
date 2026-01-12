@@ -1,11 +1,11 @@
 import { usePreview } from "../../contexts/PreviewContext";
-import s from "./gallery.module.css";
+import s from "./ImageGallery.module.css";
 import clsx from "clsx";
 
 import arrowLeft from "@/assets/images/arrow_left.svg";
 import arrowRight from "@/assets/images/arrow_right.svg";
 
-const Gallery = ({
+const ImageGallery = ({
   images = [],
   limit,
   galleryIndex,
@@ -81,4 +81,4 @@ const Gallery = ({
   );
 };
 
-export default Gallery;
+export default ImageGallery;
