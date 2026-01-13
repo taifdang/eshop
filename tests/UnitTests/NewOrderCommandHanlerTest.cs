@@ -28,7 +28,7 @@ public class NewOrderCommandHanlerTest
     {
         // Arrange
         var customerId = Guid.NewGuid();
-        var command = new CreateOrderCommand(customerId, "Street567", "City123", "12345");
+        var command = new CreateOrderCommand(customerId, Domain.Enums.PaymentMethod.COD, null, "Street567", "City123", "12345");
 
         var variantId = Guid.NewGuid();
         var basket = new BasketDto(
@@ -81,6 +81,8 @@ public class NewOrderCommandHanlerTest
         // Assert   
         _orderRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Order>()), Times.Once);
         _orderRepositoryMock.Verify(u => u.UnitOfWork.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-        Assert.NotEqual(Guid.Empty, result);
+         
+        //Assert.NotEqual(Guid.Empty, result);
+        Assert.NotNull(result);
     }
 }

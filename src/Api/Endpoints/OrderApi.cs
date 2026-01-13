@@ -1,4 +1,5 @@
 ﻿using Api.Models.Requests;
+using Application.Common.Models;
 using Application.Order.Commands.CancelOrder;
 using Application.Order.Commands.CreateOrder;
 using Application.Order.Queries.GetListOrder;
@@ -47,7 +48,7 @@ public static class OrderApi
         group.MapPost("/",
             async (IMediator mediator, [FromBody] CreateOrderRequestDto request, CancellationToken cancellationToken) =>
             {
-                var command = new CreateOrderCommand(request.CustomerId, request.Street, request.City, request.ZipCode);
+                var command = new CreateOrderCommand(request.CustomerId, request.Method, request.Provider, request.Street, request.City, request.ZipCode);
 
                 var result = await mediator.Send(command, cancellationToken);
 
@@ -55,7 +56,7 @@ public static class OrderApi
             })
             .RequireAuthorization()
             .WithName("CreateOrder")
-            .Produces<Guid>(StatusCodes.Status201Created)
+            .Produces<CreateOrderResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         group.MapPut("/",

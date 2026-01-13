@@ -22,6 +22,14 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired()
             .HasConversion<string>(); // Store enum as string in database
 
+        builder.Property(o => o.PaymentMethod)
+            .IsRequired()
+            .HasConversion<string>();
+
+        builder.Property(o => o.PaymentProvider)
+            .IsRequired()
+            .HasConversion<string>();
+
         builder.OwnsOne(
            x => x.TotalAmount,
            a =>

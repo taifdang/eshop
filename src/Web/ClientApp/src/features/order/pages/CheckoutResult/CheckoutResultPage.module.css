@@ -25,9 +25,7 @@
     box-shadow: 0 -4px 8px -4px rgba(0, 0, 0, 0.25);
 }
 
-.box__icon {
-    
-}
+.box__icon {}
 
 .box__icon--confirm {
     color: #00BFA5;
@@ -72,4 +70,64 @@
 .box__button-text {
     font-size: 16px;
     font-weight: 700;
+}
+
+
+.w4p-container {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.w4p-wrapper {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    flex: 1 1 0%;
+    justify-content: center;
+}
+
+.w4p-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 300px;
+    height: auto;
+    padding: 20px;
+
+    background-color: rgb(255, 255, 255);
+    border-radius: 2px;
+    box-shadow: 0 -4px 8px -4px rgba(0, 0, 0, 0.25);
+}
+
+.w4p__button {
+    background-color: black;
+    color: white;
+    flex: 1;
+    width: 100%;
+    margin: 0 5px;
+    padding: 10px 0;
+    border-radius: 2px;
+}
+
+.w4p-box__title {
+    font-size: 20px;
+    font-weight: 700;
+    width: 100%;
+}
+
+.w4p-box__subtitle {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    justify-content: center;
+
+    padding-bottom: 10px;
+    margin: 10px;
+
+    font-size: 16px;
+    font-weight: 400;
+    width: 400px;
+    border-bottom: 1px solid black;
 }

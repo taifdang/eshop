@@ -1,3 +1,11 @@
-﻿namespace Api.Models.Requests;
+﻿using Domain.Enums;
 
-public record CreateOrderRequestDto(Guid CustomerId, string Street, string City, string ZipCode);
+namespace Api.Models.Requests;
+
+public record CreateOrderRequestDto(
+    Guid CustomerId,
+    PaymentMethod Method,
+    PaymentProvider Provider,
+    string Street, 
+    string City, 
+    string ZipCode);

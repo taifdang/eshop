@@ -29,7 +29,7 @@ internal class TransactionalOutboxPollingService : BackgroundService
                     await service.ProcessOutboxMessagesAsync(cancellationToken);
                 }
 
-                await Task.Delay(30000, cancellationToken);
+                await Task.Delay(5000, cancellationToken);
             }
             catch (Exception ex)
             {

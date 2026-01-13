@@ -2,13 +2,15 @@
 using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.ValueObject;
 using MediatR;
 
 namespace Application.Order.Commands.CreateOrder;
 
-public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResult>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IMediator _mediator;
@@ -21,7 +23,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
         _mediator = mediator;
     }
 
-    public async Task<Guid> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
+    public async Task<CreateOrderResult> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
 #if (!GrpcOrHttp)
         // Directly call the mediatr handler instead of gRPC
@@ -65,17 +67,33 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
             totalAmount += Money.Vnd(orderItem.TotalPrice);
         }
 
+        if (command.Method == PaymentMethod.COD && command.Provider != null)
+            throw new Exception("COD does not use provider");
+
+        if (command.Method == PaymentMethod.Online && command.Provider == null)
+            throw new Exception("Online payment requires provider");
+
         var order = Domain.Entities.Order.Create(
             Guid.NewGuid(),
             DateTime.UtcNow.Ticks,
             command.CustomerId,
             Address.Of(command.Street, command.City, command.ZipCode),
             orderItems,
-            totalAmount);
+            totalAmount,
+            command.Method,
+            command.Provider);
 
         await _orderRepository.AddAsync(order);
         await _orderRepository.UnitOfWork.SaveChangesAsync();
 
-        return order.Id;
+        return new CreateOrderResult
+        {
+            OrderId = order.Id,
+            OrderNumber = order.OrderNumber,
+            Amount = order.TotalAmount.Amount,
+            CustomerId = order.CustomerId,
+            PaymentMethod = order.PaymentMethod,
+            PaymentProvider = order.PaymentProvider,
+        };
     }
 }

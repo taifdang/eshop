@@ -1,5 +1,13 @@
-﻿using MediatR;
+﻿using Application.Common.Models;
+using Domain.Enums;
+using MediatR;
 
 namespace Application.Order.Commands.CreateOrder;
 
-public record CreateOrderCommand(Guid CustomerId, string Street, string City, string ZipCode) : IRequest<Guid>;
+public record CreateOrderCommand(
+    Guid CustomerId,
+    PaymentMethod Method, 
+    PaymentProvider? Provider,
+    string Street,
+    string City, 
+    string ZipCode) : IRequest<CreateOrderResult>;

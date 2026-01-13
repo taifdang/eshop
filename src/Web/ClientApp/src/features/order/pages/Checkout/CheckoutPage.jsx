@@ -22,16 +22,17 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const handleOrderSuccess = () => {
-    navigate("/order/result?status=confirm");
+    navigate("checkout/result?status=confirm");
   };
   const handleOrderFailure = () => {
-    navigate("/order/result?status=failure");
+    navigate("checkout/result?status=failure");
   };
 
   //* VARIABLES
   const PAYMENT_PROVIDERS = [
-    { id: "cod", label: "Cash on Delivery" },
-    { id: "vnpay", label: "VnPay" },
+    { id: "cod", label: "Cash on Delivery", status:"" },
+    { id: "vnpay", label: "VnPay", status:"" },
+    { id: "stripe", label: "Stripe", status:"" },
   ];
   const initialAddress = {
     fullname: "",
@@ -108,7 +109,7 @@ export default function CheckoutPage() {
     <div>
       <NavBar />
       <div>
-        {/* ================= HEADER================= */}
+        {/* HEADER */}
         <div className="bg-white" style={{ marginBottom: "12px" }}>
           <CheckoutHeader />
         </div>
@@ -117,7 +118,7 @@ export default function CheckoutPage() {
           className="container-wrapper mx-auto"
           style={{ fontSize: "14px", lineHeight: "16.8px" }}
         >
-          {/* -------- SHIPPING ADDRESS -------- */}
+          {/* SHIPPING ADDRESS*/}
           <ShippingAdress
             isOpen={open}
             onSetOpen={setOpen}
@@ -126,12 +127,12 @@ export default function CheckoutPage() {
             onSetStatus={setFormValidated}
             onSubmitAddress={setShippingAddress}
           />
-          {/* ================= CHECKOUT CONTENT ================= */}
+          {/* CHECKOUT CONTENT */}
           <div style={{ marginTop: "12px", backgroundColor: "white" }}>
             <CheckoutContent items={basket?.items} />
           </div>
           <div className={s["checkout-section__footer"]}>
-            {/* ================= PAYMENT SECTION =================  */}
+            {/* PAYMENT SECTION  */}
             <div className={s["checkout-footer-with-payment-section"]}>
               {/* this section is global component, it's can use in other page */}
               <PaymentProvider
@@ -141,13 +142,28 @@ export default function CheckoutPage() {
               />
             </div>
             <div className={s["checkout-footer"]}>
-              <h3 className={clsx(s["checkout-footer-grid-per-row"], s["checkout-footer__title"])}>
+              <h3
+                className={clsx(
+                  s["checkout-footer-grid-per-row"],
+                  s["checkout-footer__title"]
+                )}
+              >
                 Total Payment
               </h3>
-              <div className={clsx(s["checkout-footer-grid-per-row"], s["checkout-footer-total-price"])}>
+              <div
+                className={clsx(
+                  s["checkout-footer-grid-per-row"],
+                  s["checkout-footer-total-price"]
+                )}
+              >
                 {formatCurrency(totalResult)}
               </div>
-              <div className={clsx(s["checkout-footer-grid-per-row"], s["checkout-footer-with-button-order"])}>
+              <div
+                className={clsx(
+                  s["checkout-footer-grid-per-row"],
+                  s["checkout-footer-with-button-order"]
+                )}
+              >
                 <div></div>
                 <button
                   onClick={() => {
