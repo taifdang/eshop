@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Enums;
+using Infrastructure.ExternalServices.Payments.Stripe;
 using Infrastructure.ExternalServices.Payments.Vnpay;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,7 @@ public class PaymentGatewayFactory : IPaymentGatewayFactory
         return provider switch
         {
             PaymentProvider.Vnpay => _serviceProvider.GetRequiredService<VnpayPaymentGateway>(),
+            PaymentProvider.Stripe => _serviceProvider.GetRequiredService<StripePaymentGateway>(),
             //PaymentProvider.Paypal => _serviceProvider.GetRequiredService<PaypalPaymentGateway>(), //not implemention
             _ => throw new NotSupportedException()
         };

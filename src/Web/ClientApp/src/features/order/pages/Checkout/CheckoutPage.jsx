@@ -16,13 +16,42 @@ import { useNavigate } from "react-router-dom";
 
 import { fetchBasket } from "../../../basket/services/basket-service";
 import { formatCurrency } from "@/shared/lib/currency";
-import { placeOrder } from "../../services/order-service";
+import { placeOrder, createPaymentUrl } from "../../services/order-service";
 import Modal from "@/shared/components/Modal";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
 
-  const handleOrderSuccess = () => {
+  const handleOrderSuccess = async (res) => {
+    console.log("order response:", res);
+    // If online payment selected (method === 2) and provider is not 0, create payment URL and redirect
+    if (paymentProvider?.method === 2 && paymentProvider?.provider !== 0) {
+      try {
+        const orderNumber = res?.orderNumber;
+        const amount = res?.amount || 0;
+
+        const resp = await createPaymentUrl(
+          orderNumber,
+          amount,
+          res?.paymentProvider
+        );
+
+        var payment = resp?.data;
+
+        if (!payment.status) {
+          setIsValid(true);
+          console.log("error:", payment.error);
+        }
+        const paymentUrl = payment?.data || "";
+        if (paymentUrl) {
+          window.location.href = paymentUrl;
+        }
+      } catch (err) {
+        setIsValid(true);
+        console.error("createPaymentUrl error:", err);
+      }
+    }
+
     navigate("/checkout/result?status=confirm");
   };
   const handleOrderFailure = () => {
@@ -94,8 +123,8 @@ export default function CheckoutPage() {
   const mutationPlaceOrder = useMutation({
     mutationFn: ({ customerId, method, provider, street, city, zipCode }) =>
       placeOrder(customerId, method, provider, street, city, zipCode),
-    onSuccess: () => {
-      handleOrderSuccess();
+    onSuccess: (res) => {
+      handleOrderSuccess(res.data);
       console.log("order success");
     },
     onError: (err) => {

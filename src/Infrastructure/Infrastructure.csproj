@@ -29,6 +29,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Stripe.net" Version="50.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,7 +41,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-    <Folder Include="ExternalServices\Payments\Stripe\" />
     <Folder Include="Identity\Data\Migrations\" />
   </ItemGroup>
 

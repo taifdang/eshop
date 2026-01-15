@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Outbox.EF.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class dbinitial : Migration
+    public partial class Initial_Outbox_ : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

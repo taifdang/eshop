@@ -1,3 +1,3 @@
-﻿add-migration db-initial -Context OutboxDbContext -Project Outbox.EF -StartupProject Api  -o Infrastructure\Migrations
+﻿add-migration Initial_Outbox_ -Context OutboxDbContext -Project Outbox.EF -StartupProject Api  -o Infrastructure\Migrations
 
 update-database -Context OutboxDbContext

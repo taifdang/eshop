@@ -1,4 +1,4 @@
-﻿add-migration db-initial -Context ApplicationDbContext -Project Infrastructure -StartupProject Api  -o Data\Migrations
+﻿add-migration Initial_ShopDB -Context ApplicationDbContext -Project Infrastructure -StartupProject Api  -o Data\Migrations
 
 update-database -Context ApplicationDbContext
 

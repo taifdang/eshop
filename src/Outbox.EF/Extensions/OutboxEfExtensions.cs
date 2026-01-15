@@ -1,5 +1,6 @@
 ﻿using EventBus.InMemory;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Outbox.Abstractions;
@@ -19,7 +20,9 @@ public static class OutboxEfExtensions
             options.UseSqlServer("Server=LAPTOP-J20BGGNG\\SQLEXPRESS;Database=ecommerce_db;Trusted_Connection=true; MultipleActiveResultSets=true; TrustServerCertificate=True");
         });
 #endif
-        builder.AddNpgsqlDbContext<OutboxDbContext>("shopdb");
+
+        builder.AddNpgsqlDbContext<OutboxDbContext>("shopdb", 
+            configureDbContextOptions: x => x.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
         builder.Services.AddScoped<IOutboxMessageProcessor, OutboxMessageProcessor>();
         builder.Services.AddScoped<IPollingOutboxMessageRepository, PollingOutboxMessageRepository>();
         builder.Services.AddSingleton<PollingOutboxMessageRepositoryOptions>();

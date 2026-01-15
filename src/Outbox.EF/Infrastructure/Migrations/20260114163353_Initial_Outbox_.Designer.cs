@@ -12,8 +12,8 @@ using Outbox.EF.Infrastructure.Data;
 namespace Outbox.EF.Infrastructure.Migrations
 {
     [DbContext(typeof(OutboxDbContext))]
-    [Migration("20251226133558_db-initial")]
-    partial class dbinitial
+    [Migration("20260114163353_Initial_Outbox_")]
+    partial class Initial_Outbox_
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

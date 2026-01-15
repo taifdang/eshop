@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shared.Constants;
@@ -17,14 +19,8 @@ public static class Extentions
         builder.Services.AddDbContext<TContext>(
             (sp, options) =>
             {
-                string? connectionString =
-                    sp.GetRequiredService<ConnectionStrings>().DefaultConnection
-                    ?? builder.Configuration?.GetSection("ConnectionStrings:DefaultConnection").ToString();
-
-                if (connectionString != null)
-                {
-                    throw new Exception("Emptyy connection");
-                }
+                string? connectionString = sp.GetRequiredService<ConnectionStrings>().DefaultConnection
+                    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
                 ArgumentException.ThrowIfNullOrEmpty(connectionString);
 
@@ -32,6 +28,10 @@ public static class Extentions
                 {
                     dbOptions.MigrationsAssembly(typeof(TContext).Assembly.GetName().Name);
                 });
+
+                // Suppress warnings for pending model changes
+                options.ConfigureWarnings(
+                    w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
 
             });
 
@@ -56,54 +56,31 @@ public static class Extentions
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<TContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<TContext>>(); 
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<TContext>>();
 
-        try
+        var strategy = context.Database.CreateExecutionStrategy();
+
+        await strategy.ExecuteAsync(async () =>
         {
-            logger.LogInformation("Checking database connection and pending migrations for {Context}...", typeof(TContext).Name);
-            
-            // Ensure database is created
-            await context.Database.EnsureCreatedAsync();
-            
             var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
 
-            if(pendingMigrations.Any())
+            if (pendingMigrations.Any())
             {
-                logger.LogInformation("Applying {Count} pending migrations for {Context}...", pendingMigrations.Count(), typeof(TContext).Name);
+                logger.LogInformation("Applying {Count} pending migrations...", pendingMigrations.Count());
 
                 await context.Database.MigrateAsync();
-                logger.LogInformation("Migrations applied successfully for {Context}.", typeof(TContext).Name);
+
+                logger.LogInformation("Database migrations applied successfully.");
             }
-            else
-            {
-                logger.LogInformation("No pending migrations for {Context}.", typeof(TContext).Name);
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occurred while migrating the database for {Context}.", typeof(TContext).Name);
-            throw;
-        }
+        });
     }
 
     private static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
 
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<ISeedManager>>();
-        
-        try
-        {
-            var seedersManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
-            
-            logger.LogInformation("Starting database seeding...");
-            await seedersManager.ExecuteSeedAsync();
-            logger.LogInformation("Database seeding completed successfully.");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occurred while seeding the database.");
-            throw;
-        }
+        var seedersManager = scope.ServiceProvider.GetRequiredService<ISeedManager>();
+
+        await seedersManager.ExecuteSeedAsync();
     }
 }

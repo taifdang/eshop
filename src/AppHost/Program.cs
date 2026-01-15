@@ -6,7 +6,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 builder.AddDockerComposeEnvironment("env");
 
-var postgres = builder.AddPostgres("postgres").WithLifetime(ContainerLifetime.Persistent).WithPgWeb();
+var postgres = builder.AddPostgres("postgres").WithPgWeb();
 
 if (builder.ExecutionContext.IsPublishMode)
 {
@@ -44,6 +44,8 @@ var apiService = builder.AddProject<Projects.Api>("apiservice")
 var reactVite = builder.AddViteApp("webfrontend", "../Web/ClientApp")
     .WithReference(apiService)
     .WaitFor(apiService)
-    .WithEnvironment("BROWSER", "none");
+    .WithEndpoint("http", e => e.Port = 3000) // fixed port for frontend
+    .WithEnvironment("BROWSER", "none")
+    .WithUrl("", "UI");
 
 builder.Build().Run();

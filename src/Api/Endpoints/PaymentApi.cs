@@ -12,7 +12,7 @@ public static class PaymentApi
 {
     public static IEndpointRouteBuilder MapPaymentApi(this IEndpointRouteBuilder builder)
     {
-        builder.MapGroup("/payment")
+        builder.MapGroup("api/v1/payment")
             .MapPaymentApi()
             .WithTags("Payment Api");
 

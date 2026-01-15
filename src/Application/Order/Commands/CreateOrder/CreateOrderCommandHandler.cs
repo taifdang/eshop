@@ -3,6 +3,7 @@ using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Models;
+using Application.Common.Utilities;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.ValueObject;
@@ -73,9 +74,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
         if (command.Method == PaymentMethod.Online && command.Provider == PaymentProvider.Unknown)
             throw new Exception("Online payment requires provider");
 
+        var orderNumber = TimeHepler.GetCurrentTimeTicks();
+
         var order = Domain.Entities.Order.Create(
             Guid.NewGuid(),
-            DateTime.UtcNow.Ticks,
+            orderNumber,
             command.CustomerId,
             Address.Of(command.Street, command.City, command.ZipCode),
             orderItems,

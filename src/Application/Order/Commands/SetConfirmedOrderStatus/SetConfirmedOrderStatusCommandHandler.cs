@@ -21,6 +21,9 @@ public class SetConfirmedOrderStatusCommandHandler : IRequestHandler<SetConfirme
             return false;
         }
 
+        order.CardBrand = command.CardBrand;
+        order.TransactionId = command.TransactionId;
+
         order.SetConfirmedStatus();
 
         return await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);

@@ -14,6 +14,7 @@ using Infrastructure.Data.Seed;
 using Infrastructure.ExternalServices.Notifications.Email;
 using Infrastructure.ExternalServices.Payments;
 using Infrastructure.ExternalServices.Payments.Vnpay;
+using Infrastructure.ExternalServices.Payments.Stripe;
 using Infrastructure.ExternalServices.Storage;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Data;
@@ -40,6 +41,7 @@ public static class DependencyInjection
         // Get Configuration
         var appSettings = builder.Configuration.GetOptions<AppSettings>();
         builder.Services.Configure<VnpayOptions>(builder.Configuration.GetSection("VnpayConf"));
+        builder.Services.Configure<StripeOptions>(builder.Configuration.GetSection("StripeConf"));
 
         builder.Services.AddSingleton(appSettings);
 
@@ -61,7 +63,8 @@ public static class DependencyInjection
             options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         });
 
-        builder.AddNpgsqlDbContext<AppIdentityDbContext>("shopdb");
+        builder.AddNpgsqlDbContext<AppIdentityDbContext>("shopdb",
+            configureDbContextOptions: x => x.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
         builder.AddCustomIdentity();
 
@@ -77,10 +80,16 @@ public static class DependencyInjection
         builder.Services.AddTransient<IEmailService, SmtpEmailSender>();
         builder.Services.AddScoped<IFileService, LocalStorage>();
                
+        // default IPaymentGateway registration points to Vnpay (legacy). Keep explicit registration for both gateways.
         builder.Services.AddScoped<IPaymentGateway, VnpayPaymentGateway>();
+        builder.Services.AddScoped<IPaymentGateway, StripePaymentGateway>();
         builder.Services.AddScoped<IPaymentGatewayFactory, PaymentGatewayFactory>();
 
+        // register Vnpay implementation explicitly
         builder.Services.AddScoped<VnpayPaymentGateway>();
+
+        // bind Stripe options and gateway
+        builder.Services.AddScoped<StripePaymentGateway>();
 
         // Identity
         builder.Services.AddScoped<IIdentityService, IdentityService>();

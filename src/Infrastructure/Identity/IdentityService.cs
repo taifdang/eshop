@@ -124,11 +124,13 @@ public class IdentityService : IIdentityService
 
         var tokenInCookie = cookieService.Get();
 
-        if (string.IsNullOrEmpty(tokenInCookie)) throw new Exception("Not found cookie in client");
+        if (string.IsNullOrEmpty(tokenInCookie)) return null!;
+        //throw new Exception("Not found cookie in client")
 
         var tokenInDb = await dbContext.RefreshTokens.Where(x => x.Token == tokenInCookie).FirstOrDefaultAsync();
 
-        if (tokenInDb is null) throw new Exception("Not found token in db");
+        if (tokenInDb is null) return null!;
+        //throw new Exception("Not found token in db");
 
         if (tokenInDb.Expires <= DateTime.UtcNow) throw new Exception("Refresh token is expired");
 

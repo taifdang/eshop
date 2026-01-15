@@ -1,5 +1,4 @@
-﻿using Domain.Enums;
-
+﻿
 namespace Application.Common.Models;
 
 public class CreatePaymentUrlRequest
