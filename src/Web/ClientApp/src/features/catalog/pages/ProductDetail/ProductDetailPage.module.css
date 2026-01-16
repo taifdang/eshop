@@ -60,6 +60,7 @@
     line-height: 16.8px;
     font-weight: 400;
     background-color: rgba(0, 0, 0, 0.5);
-    color: rgba(0, 191, 165);
+    /* color: rgba(0, 191, 165); */
+    color: black;
     border-radius: 2px;
 }

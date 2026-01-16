@@ -231,7 +231,7 @@ export function ProductDetailPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsSuccess(false);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [isSuccess]);

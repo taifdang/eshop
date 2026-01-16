@@ -1,7 +1,8 @@
 import clsx from "clsx";
-import s from "./index.module.css";
+import s from "./BasketItem.module.css";
+import { Skeleton } from "@/shared/components/LoadingSkeleton";
 
-export const Skeleton = () => {
+export const BasketItemSkeleton = () => {
   return (
     <>
       <div className={s["basket-item"]} role="listitem">
@@ -17,14 +18,9 @@ export const Skeleton = () => {
           <div
             className={clsx("flex", s["table-col"], s["table-col--product"])}
           >
-            <div className={clsx(s["product__image"], "skeleton")}></div>
+            <Skeleton className={s["product__image"]} />
             <div className={s["product__info"]}>
-              <div
-                className={clsx(
-                  "line-clamp-2 skeleton skeleton-text",
-                  s["product__title"]
-                )}
-              ></div>
+              <Skeleton className={"card-text"} />
             </div>
           </div>
           {/* produc-variant */}
@@ -35,11 +31,8 @@ export const Skeleton = () => {
               s["table-col--variant"]
             )}
           >
-            <div className="skeleton skeleton-text skeleton-text__body"></div>
-            <div
-              className="skeleton skeleton-text"
-              style={{ marginTop: "5px" }}
-            ></div>
+            <Skeleton className="card-text card-body" />
+            <Skeleton className="card-text card-body mt-[5px]" />
           </div>
           {/* price */}
           <div
@@ -49,22 +42,11 @@ export const Skeleton = () => {
               s["table-col--unit"]
             )}
           >
-            <span className="skeleton skeleton-text skeleton-text__body"></span>
+            <Skeleton className="card-text card-body" />
           </div>
           {/* quantity */}
-          <div
-            className={clsx(
-              "flex relative items-center justify-center",
-              s["table-col"],
-              s["table-col--quantity"]
-            )}
-          >
-            <div
-              className={clsx(
-                "skeleton skeleton-input",
-                s[""]
-              )}
-            ></div>
+          <div className={clsx(s["table-col"], s["table-col--quantity"])}>
+            <Skeleton className="card-input" />
           </div>
           {/* total price */}
           <div
@@ -74,7 +56,7 @@ export const Skeleton = () => {
               s["table-col--total"]
             )}
           >
-            <span className="skeleton skeleton-text skeleton-text__body"></span>
+            <Skeleton className="card-text card-body" />
           </div>
           {/* actions */}
           <div
@@ -84,10 +66,7 @@ export const Skeleton = () => {
               s["table-col--actions"]
             )}
           >
-            <button
-              type="button"
-              className="skeleton skeleton-text__body skeleton-button"
-            ></button>
+            <Skeleton className="card-body card-button" />
           </div>
         </div>
       </div>

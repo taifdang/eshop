@@ -1,15 +1,17 @@
 import { NavBar } from "@/shared/components/layout/NavBar";
-import { CartHeader } from "../../components/CartHeader";
-import s from "./index.module.css";
+import s from "./BasketPage.module.css";
 import clsx from "clsx";
-import BasketItem from "../../components/BasketItem";
+
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchBasket, updateBasket } from "../../services/basket-service";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/shared/lib/currency";
-import CartEmpty from "../../components/CartEmpty";
 import { profileStorage } from "@/shared/storage/profile-storage";
+
+import { BasketItem, BasketEmpty, BasketHeader } from "../../components";
+import Modal from "@/shared/components/Modal";
+import { PageLoadingSkeleton } from "@/shared/components/LoadingSkeleton";
 
 export function BasketPage() {
   const navigate = useNavigate();
@@ -22,6 +24,13 @@ export function BasketPage() {
     isError: false,
     id: null,
     message: "",
+  });
+
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState({
+    variantId: null,
+    productName: "",
+    variantName: "",
   });
 
   const {
@@ -96,6 +105,40 @@ export function BasketPage() {
     0
   );
 
+  const handleUpdateBasket = (variantId, quantity) => {
+    if (quantity === 0) {
+      setConfirmDelete(true);
+
+      const variant = basket.items.find(
+        (item) => item.productVariantId === variantId
+      );
+      if (!variant) return;
+
+      setPendingDelete({
+        variantId: variant.productVariantId,
+        productName: variant.productName,
+        variantName: variant.variantName,
+      });
+
+      return;
+    }
+
+    updateMutation.mutate({ variantId, quantity });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!pendingDelete) return;
+
+    updateMutation.mutate({ variantId: pendingDelete.variantId, quantity: 0 });
+
+    setConfirmDelete(false);
+    setPendingDelete({
+      variantId: null,
+      productName: "",
+      variantName: "",
+    });
+  };
+
   // authentication
   useEffect(() => {
     if (profileStorage.get() === null || undefined) {
@@ -131,26 +174,18 @@ export function BasketPage() {
   }, [isFetched]);
 
   if (isFirstLoad || showLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen text-gray-600 text-lg">
-        <span className="ml-2 flex items-end gap-1">
-          <span className="dot-wave step-1" />
-          <span className="dot-wave step-2" />
-          <span className="dot-wave step-3" />
-        </span>
-      </div>
-    );
+    return <PageLoadingSkeleton />;
   }
 
   return (
     <div>
       <NavBar />
       <div>
-        <CartHeader />
-        <div className="mx-auto w-[1200px]">
+        <BasketHeader />
+        <div className="mx-auto container-wrapper">
           {basket && basket.items.length === 0 ? (
             <>
-              <CartEmpty />
+              <BasketEmpty />
             </>
           ) : (
             <>
@@ -216,7 +251,9 @@ export function BasketPage() {
                   <section className={s["table-content__section"]}>
                     {/* Title */}
                     <div className={s["table-content__title"]}>
-                      <span>Items: {showItemLoading ? "0" : basket.items.length}</span>
+                      <span>
+                        Items: {showItemLoading ? "0" : basket.items.length}
+                      </span>
                     </div>
                     {/* CartItem */}
                     <div>
@@ -241,12 +278,12 @@ export function BasketPage() {
                                   updateMutation.variables?.variantId ===
                                     item.productVariantId
                                 }
-                                onUpdate={(quantity) =>
-                                  updateMutation.mutate({
-                                    variantId: item.productVariantId,
-                                    quantity,
-                                  })
-                                }
+                                onUpdate={(quantity) => {
+                                  handleUpdateBasket(
+                                    item.productVariantId,
+                                    quantity
+                                  );
+                                }}
                               />
                               {index < basket.items.length - 1 && (
                                 <div
@@ -334,6 +371,53 @@ export function BasketPage() {
           )}
         </div>
       </div>
+      {/* Modal when remove basket item */}
+      <Modal
+        open={confirmDelete}
+        onClose={() => {
+          setConfirmDelete(false);
+        }}
+      >
+        <div className="bg-white p-6 rounded-[2px] flex flex-col w-[500px]">
+          <h2 className="text-[20px] pb-[40px]">
+            Do you want to remove this item?
+          </h2>
+          <div className="text-[16px]">
+            <span>{pendingDelete.productName} </span>
+            {pendingDelete.variantName && (
+              <span>({pendingDelete.variantName})</span>
+            )}
+          </div>
+          <div className="flex w-full pt-[60px]">
+            <button
+              style={{
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: "2px",
+              }}
+              className=" flex-1 m-1 h-[40px]"
+              onClick={() => {
+                handleConfirmDelete();
+              }}
+            >
+              Yes
+            </button>
+            <button
+              style={{
+                border: "1px solid rgb(204, 204, 204)",
+                color: "black",
+                borderRadius: "2px",
+              }}
+              className="bg-blue-500 flex-1 m-1 "
+              onClick={() => {
+                setConfirmDelete(false);
+              }}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

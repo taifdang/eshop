@@ -1,0 +1,30 @@
+.container {
+  background-color: rgb(255,255,255);
+}
+
+.container-wrapper {
+  width: 1200px;
+  padding: 16px 0 10px 0;
+  height: 90px;
+}
+
+.basket__header {
+  position: relative;
+  top: -3px;
+}
+
+.basket__logo {
+  display: flex;
+  align-items: end;
+}
+
+.basket__title {
+  display: block;
+  height: 30px;
+  font-size: 20px;
+  line-height: 30px;
+  margin-left: 15px;
+  padding-left: 15px;
+  margin-bottom: 1px;
+  border-left: 1px solid;
+}

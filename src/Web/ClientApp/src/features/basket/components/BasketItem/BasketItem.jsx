@@ -1,8 +1,8 @@
-import s from "./index.module.css";
+import s from "./BasketItem.module.css";
 import clsx from "clsx";
 import fallbackImage from "@/assets/images/default.jpg";
 import { formatCurrency } from "@/shared/lib/currency";
-import { Skeleton } from "./skeleton";
+import { BasketItemSkeleton } from "./BasketItemSkeleton";
 
 export default function BasketItem({
   item,
@@ -12,11 +12,11 @@ export default function BasketItem({
   errorMessage,
 }) {
   const totalPrice = (price, quantity) => price * quantity;
-
+  
   if (isUpdating) {
     return (
       <>
-        <Skeleton />
+        <BasketItemSkeleton />
       </>
     );
   }
@@ -74,7 +74,6 @@ export default function BasketItem({
               s["table-col--unit"]
             )}
           >
-            {/* <span className={s["product__price"]}>105.000₫</span> */}
             <span>{formatCurrency(item.regularPrice)}</span>
           </div>
           {/* quantity */}
