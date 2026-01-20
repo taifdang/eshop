@@ -31,6 +31,7 @@ using Outbox.EF.Infrastructure.Data;
 using Shared.Constants;
 using Shared.Web;
 using DatabaseMigrationHelpers;
+using Infrastructure.HealthCheck;
 
 namespace Infrastructure;
 //ref: https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-9.0&tabs=visual-studio
@@ -116,6 +117,8 @@ public static class DependencyInjection
 
     public static WebApplication UseInfrastructure(this WebApplication app)
     {
+        //app.UseCustomHealthCheck();
+
         return app;
     }
 

@@ -7,17 +7,17 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Shared.Constants;
 
-namespace ServiceDefaults.HealthCheck;
+namespace Infrastructure.HealthCheck;
 
 public static class Extensions
 {
-    private const string HealthEndpoint = "/health";
+    private const string HealthEndpoint = "/healthz";
     private const string AliveEndpoint = "/alive";
 
     public static IHostApplicationBuilder AddCustomHealthCheck(this IHostApplicationBuilder builder)
     {
         var healthOptions = builder.Configuration.GetSection("HealthOptions").Get<HealthOptions>()!;
-       
+
         if (healthOptions.Enabled)
         {
             var appOptions = builder.Configuration.GetSection("AppOptions").Get<AppOptions>()!;
@@ -34,9 +34,6 @@ public static class Extensions
                 cfg.AddHealthCheckEndpoint($"Self Check - {appOptions.Name}", HealthEndpoint);
             }).AddInMemoryStorage();
         }
-
-        builder.Services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
         return builder;
     }
@@ -58,9 +55,9 @@ public static class Extensions
             });
         }
 
-        if(healthOptions.Enabled)
-        {
-           app.MapHealthChecksUI(opt => opt.UIPath = "/health-ui");
+        if (healthOptions.Enabled)
+        {          
+            app.MapHealthChecksUI(opt => opt.UIPath = "/health-ui");
         }
 
         return app;

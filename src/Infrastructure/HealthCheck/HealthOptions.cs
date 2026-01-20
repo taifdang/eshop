@@ -1,4 +1,4 @@
-﻿namespace ServiceDefaults.HealthCheck;
+﻿namespace Infrastructure.HealthCheck;
 
 public class HealthOptions
 {

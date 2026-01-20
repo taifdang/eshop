@@ -2,10 +2,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 namespace DatabaseMigrationHelpers;
 
 public static class MigrateDbContextExtensions
 {
+    public const string ActitvitySourceName = "Migrations";
+    private static readonly ActivitySource ActivitySource = new(ActitvitySourceName);
+
     public static async Task<IHost> MigrationDbContextAsync<TContext>(
         this IHost host,
         CancellationToken cancellationToken = default)
@@ -17,6 +21,9 @@ public static class MigrateDbContextExtensions
 
         if (context is not null)
         {
+            using var activity = ActivitySource.StartActivity($"Migrating {typeof(TContext).Name}", ActivityKind.Client);
+            activity?.SetTag("migration", "efcore");
+
             try
             {
                 await MigrationAsync(context, logger);
@@ -38,7 +45,8 @@ public static class MigrateDbContextExtensions
 
             }
             catch (Exception ex)
-            {
+            {                
+                activity?.AddException(ex);
                 logger.LogError(ex, "An error occurred while migrating the database used on context {DbContextName}", typeof(TContext).Name);
                 throw;
             }

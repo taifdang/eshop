@@ -42,7 +42,7 @@ public class ValueObjectTests
     [Theory]
     [InlineData(-10, "VND")]
     [InlineData(100, "")]
-    [InlineData(50, null)]
+    [InlineData(50, "")]
     public void Of_InvalidParameters_ShouldThrowArgumentException(decimal amount, string currency)
     {
         Assert.Throws<ArgumentException>(() => Money.Of(amount, currency));

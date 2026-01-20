@@ -1,6 +1,7 @@
 ﻿using Api.Extensions;
 using Api.Services;
 using Application.Common.Interfaces;
+using Infrastructure.HealthCheck;
 using Microsoft.AspNetCore.HttpOverrides;
 using ServiceDefaults.OpenApi;
 
@@ -36,6 +37,8 @@ public static class DependencyInjection
         });
 
         builder.Services.AddJwt();
+
+        //builder.AddCustomHealthCheck();
 
         builder.Services.AddEndpointsApiExplorer();
 
@@ -74,8 +77,8 @@ public static class DependencyInjection
 
         app.UseAuthentication();
         app.UseAuthorization();
-       
-        app.UseServiceDefaults();
+
+        app.MapDefaultEndpoints();
 
         app.MapGet("/", x => x.Response.WriteAsync("server listening ..."));
 
