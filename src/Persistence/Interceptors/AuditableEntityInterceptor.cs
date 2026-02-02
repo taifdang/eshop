@@ -1,4 +1,4 @@
-using Application.Common.Interfaces;
+using Application.Abstractions;
 using Domain.SeedWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -8,11 +8,9 @@ namespace Persistence.Interceptors;
 // ref: https://learn.microsoft.com/en-us/ef/core/logging-events-diagnostics/interceptors
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
-    private readonly ICurrentUserProvider _currentUser;
-
     public AuditableEntityInterceptor(ICurrentUserProvider currentUser)
     {
-        _currentUser = currentUser;
+
     }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -40,26 +38,21 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
             foreach (var entry in context.ChangeTracker.Entries<IAggregate>())
             {
                 var isAuditable = entry.Entity.GetType().IsAssignableTo(typeof(IAggregate));
-                var userId = _currentUser.GetCurrentUserId();
 
                 if (isAuditable)
                 {
                     switch (entry.State)
                     {
                         case EntityState.Added:
-                            entry.Entity.CreatedBy = userId;
                             entry.Entity.CreatedAt = DateTime.UtcNow;
                             break;
                         case EntityState.Modified:
-                            entry.Entity.LastModifiedBy = userId;
-                            entry.Entity.LastModified = DateTime.UtcNow;
+                            entry.Entity.UpdatedAt = DateTime.UtcNow;
                             entry.Entity.Version++;
                             break;
                         case EntityState.Deleted:
                             entry.State = EntityState.Modified;
-                            entry.Entity.LastModifiedBy = userId;
-                            entry.Entity.LastModified = DateTime.UtcNow;
-                            entry.Entity.IsDeleted = true;
+                            entry.Entity.UpdatedAt = DateTime.UtcNow;
                             entry.Entity.Version++;
                             break;
                     }

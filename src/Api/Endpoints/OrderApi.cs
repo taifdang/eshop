@@ -1,7 +1,7 @@
 ﻿using Api.Models.Requests;
-using Application.Common.Models;
 using Application.Order.Commands.CancelOrder;
 using Application.Order.Commands.CreateOrder;
+using Application.Order.Dtos;
 using Application.Order.Queries.GetListOrder;
 using Application.Order.Queries.GetOrderById;
 using Application.Order.Queries.GetOrderByOrderNumber;

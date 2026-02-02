@@ -1,27 +1,35 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using MediatR;
 
 namespace Application.Catalog.Products.Commands.ActiveProduct;
 
 public class ActiveProductCommandHandler : IRequestHandler<ActiveProductCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
 
-    public ActiveProductCommandHandler(IApplicationDbContext dbContext)
+    public ActiveProductCommandHandler(IProductService productService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
     }
 
     public async Task<Unit> Handle(ActiveProductCommand request, CancellationToken cancellationToken)
     {
-        var product = _dbContext.Products.Find(request.ProductId);
+        var product = await _productService.GetByIdAsync(request.ProductId);
         if (product == null)
         {
-            throw new Exception($"Product with ID {request.ProductId} not found.");
+            throw new InvalidOperationException($"Product with ID {request.ProductId} not found.");
         }
-        product.IsActive = request.IsActive;
-        _dbContext.Products.Update(product);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        if (request.IsActive)
+        {
+            product.Activate();
+        }
+        else
+        {
+            product.Deactivate();
+        }
+
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

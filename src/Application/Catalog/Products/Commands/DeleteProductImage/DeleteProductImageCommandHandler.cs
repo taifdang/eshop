@@ -1,39 +1,40 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Catalog.Products.Services;
+using Application.Common.Interfaces;
 using Ardalis.GuardClauses;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.DeleteProductImage;
 
 public class DeleteProductImageCommandHandler : IRequestHandler<DeleteProductImageCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
     private readonly IFileService _storageService;
 
     public DeleteProductImageCommandHandler(
-        IApplicationDbContext dbContext, 
+        IProductService productService, 
         IFileService storageService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
         _storageService = storageService;
     }
 
     public async Task<Unit> Handle(DeleteProductImageCommand request, CancellationToken cancellationToken)
     {
-        var productImage = await _dbContext.ProductImages
-               .FirstOrDefaultAsync(x => x.Id == request.Id && x.ProductId == request.ProductId);
+        var product = await _productService.GetByIdAsync(request.ProductId, cancellationToken);
+        Guard.Against.NotFound(request.ProductId, product);
 
+        var productImage = product.Images.FirstOrDefault(x => x.Id == request.Id);
         Guard.Against.NotFound(request.Id, productImage);
 
-        // remove image
+        // remove image from storage
         if (productImage.Image != null)
         {
             await _storageService.DeleteFileAsync(new DeleteFileRequest { FileName = productImage.Image.FileName });
         }
 
-        _dbContext.ProductImages.Remove(productImage);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        product.RemoveImage(request.Id);
+
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

@@ -1,10 +1,11 @@
-﻿using Application.Basket.Queries.GetBasket;
+﻿using Application.Abstractions;
+using Application.Basket.Dtos;
 using Application.Basket.Queries.GetCartList;
 using Application.Catalog.Products.Queries.GetVariantById;
-using Application.Common.Interfaces;
-using Application.Common.Models;
+using Application.Common.Dtos;
 using Application.Order.Commands.CreateOrder;
 using Domain.Entities;
+using Domain.Repositories;
 using MediatR;
 using Moq;
 
@@ -15,12 +16,14 @@ public class NewOrderCommandHanlerTest
     private readonly Mock<IOrderRepository> _orderRepositoryMock;
     private readonly Mock<IMediator> _mediator;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+    private readonly Mock<IDateTimeProvider> _currentTime;
 
     public NewOrderCommandHanlerTest()
     {
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _mediator = new Mock<IMediator>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
+        _currentTime = new Mock<IDateTimeProvider>();
     }
 
     [Fact]
@@ -50,7 +53,7 @@ public class NewOrderCommandHanlerTest
          );
 
         _mediator
-            .Setup(m => m.Send(It.IsAny<GetBasketQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<GetBasketQueryByCustomer>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(basket);
 
         var variant = new VariantDto
@@ -75,7 +78,7 @@ public class NewOrderCommandHanlerTest
         _orderRepositoryMock.Setup(r => r.UnitOfWork).Returns(_unitOfWorkMock.Object);
 
         // Act
-        var handler = new CreateOrderCommandHandler(_orderRepositoryMock.Object, _mediator.Object);
+        var handler = new CreateOrderCommandHandler(_orderRepositoryMock.Object, _mediator.Object, _currentTime.Object);
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert   

@@ -7,8 +7,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchBasket, updateBasket } from "../../services/basket-service";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/shared/lib/currency";
-import { profileStorage } from "@/shared/storage/profile-storage";
-
 import { BasketItem, BasketEmpty, BasketHeader } from "../../components";
 import Modal from "@/shared/components/Modal";
 import { PageLoadingSkeleton } from "@/shared/components/LoadingSkeleton";
@@ -140,11 +138,11 @@ export function BasketPage() {
   };
 
   // authentication
-  useEffect(() => {
-    if (profileStorage.get() === null || undefined) {
-      navigate("/login");
-    }
-  }, [basket]);
+  // useEffect(() => {
+  //   if (profileStorage.get() === null || undefined) {
+  //     navigate("/login");
+  //   }
+  // }, [basket]);
 
   // checkout func
   const handleCheckout = () => {

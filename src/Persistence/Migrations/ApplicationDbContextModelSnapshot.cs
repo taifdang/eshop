@@ -17,7 +17,7 @@ namespace Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -31,20 +31,11 @@ namespace Persistence.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
 
                     b.Property<long>("Version")
                         .IsConcurrencyToken()
@@ -83,15 +74,24 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("UrlSlug")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -108,6 +108,9 @@ namespace Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -121,8 +124,14 @@ namespace Persistence.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("character varying(13)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -164,16 +173,25 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("ImageId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("OptionId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -196,20 +214,8 @@ namespace Persistence.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
@@ -231,6 +237,9 @@ namespace Persistence.Migrations
 
                     b.Property<string>("TransactionId")
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("Version")
                         .IsConcurrencyToken()
@@ -292,7 +301,7 @@ namespace Persistence.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -311,13 +320,16 @@ namespace Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UrlSlug")
                         .IsRequired()
                         .HasMaxLength(3000)
                         .HasColumnType("character varying(3000)");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -364,6 +376,9 @@ namespace Persistence.Migrations
                     b.Property<bool>("AllowImage")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -371,6 +386,12 @@ namespace Persistence.Migrations
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -387,7 +408,7 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsActive")
@@ -413,8 +434,11 @@ namespace Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 

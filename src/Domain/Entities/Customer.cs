@@ -1,8 +1,10 @@
-﻿namespace Domain.Entities;
+﻿using Domain.SeedWork;
 
-public class Customer
+namespace Domain.Entities;
+
+public class Customer : Entity<Guid>
 {
-    public Guid Id { get; set; }
+    //public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public string? FullName { get; set; }
     public string Email { get; set; } = default!;

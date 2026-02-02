@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Error";
+    ViewData["Page"] = "Error";
+}
+
+<div class="page-with-auth-form">
+    <div class="d-flex w-100 justify-content-center align-items-center" style="min-height: 70vh;">
+        <div class="rounded-1 bg-white h-auto" style="width: 500px;">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="padding: 40px 30px;">
+                <div class="mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(255, 66, 79, 0.1);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+                        <path fill="rgb(255, 66, 79)" d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.47 2 2 6.5 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 18a8 8 0 0 1-8-8a8 8 0 0 1 8-8a8 8 0 0 1 8 8a8 8 0 0 1-8 8"/>
+                    </svg>
+                </div>
+                
+                <div class="fs-4 fw-semibold text-center mb-2">Oops! Something went wrong</div>
+                
+                <div class="text-center mb-4" style="color: rgb(107, 114, 128); font-size: 14px;">
+                    An unexpected error has occurred. Please try again later.
+                </div>
+                
+                @if (ViewData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger w-100 mb-3" style="font-size: 13px; padding: 12px; border-radius: 4px;">
+                        @ViewData["ErrorMessage"]
+                    </div>
+                }
+                 <a href="/" class="btn btn-dark " style="height: 40px; width: 300px ; border-radius: 2px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                    OK
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

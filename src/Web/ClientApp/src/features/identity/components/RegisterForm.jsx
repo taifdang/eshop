@@ -4,6 +4,10 @@ import { registerSchema } from "../utils/register.schema";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
+// OLD: This component is deprecated in BFF architecture
+// Registration is typically handled by the identity provider
+// Users should register through the identity provider's registration flow
+
 export function RegisterForm({ showPassword, setShowPassword, setShowError }) {
   const navigate = useNavigate();
   const { signup } = useAuth();

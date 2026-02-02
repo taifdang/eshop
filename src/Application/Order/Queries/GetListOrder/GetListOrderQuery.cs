@@ -1,7 +1,9 @@
-﻿using Application.Common.Interfaces;
+﻿using Domain.Repositories;
 using Application.Customer.Queries.GetCustomerByUserId;
 using AutoMapper;
 using MediatR;
+using Application.Order.Dtos;
+using Application.Abstractions;
 
 namespace Application.Order.Queries.GetListOrder;
 

@@ -1,4 +1,4 @@
-using Application.Common.Interfaces;
+using Application.Abstractions;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
-
 
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Product> Products => Set<Product>();

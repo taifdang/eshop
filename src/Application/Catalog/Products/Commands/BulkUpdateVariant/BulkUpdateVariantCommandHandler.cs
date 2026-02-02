@@ -1,34 +1,31 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using Ardalis.GuardClauses;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.BulkUpdateVariant;
 
 public class BulkUpdateVariantCommandHandler : IRequestHandler<BulkUpdateVariantCommand, Guid>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
 
-    public BulkUpdateVariantCommandHandler(IApplicationDbContext dbContext)
+    public BulkUpdateVariantCommandHandler(IProductService productService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
     }
 
     public async Task<Guid> Handle(BulkUpdateVariantCommand request, CancellationToken cancellationToken)
     {
-        var variants = await _dbContext.Variants.Where(x => x.ProductId == request.ProductId).ToListAsync();
-        Guard.Against.NotFound(request.ProductId, variants);
+        var product = await _productService.GetByIdAsync(request.ProductId, cancellationToken);
+        Guard.Against.NotFound(request.ProductId, product);
 
-        foreach (var v in variants)
-        {
-            if (request.Price.HasValue) v.Price = request.Price.Value;
-            if (request.Quantity.HasValue) v.Quantity = request.Quantity.Value;
-            if (!string.IsNullOrWhiteSpace(request.Sku)) v.Sku = request.Sku;
-            if (request.IsActive != v.IsActive) v.IsActive = request.IsActive;
-        }
+        product.BulkUpdateVariants(
+            price: request.Price,
+            quantity: request.Quantity,
+            sku: request.Sku,
+            isActive: request.IsActive
+        );
 
-        _dbContext.Variants.UpdateRange(variants);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return request.ProductId;
     }

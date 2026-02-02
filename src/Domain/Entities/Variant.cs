@@ -1,15 +1,17 @@
-﻿namespace Domain.Entities;
+﻿using Domain.SeedWork;
 
-public class Variant
+namespace Domain.Entities;
+
+public class Variant : Entity<Guid>
 {
-    public Guid Id { get; set; }
+    //public Guid Id { get; set; }
     public Guid ProductId { get; set; }
     public string? Sku { get; set; }
     public string? Title { get; set; }
     public decimal Price { get; set; }
     public int Quantity { get; set; }   
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    //public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    //public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; }
     public bool IsDeleted { get; set; }
     public Product Product { get; set; }
@@ -22,4 +24,5 @@ public class Variant
 
         Quantity -= quantity;
     }
+
 }

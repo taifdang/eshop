@@ -1,7 +1,8 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Categories.Dtos;
 using AutoMapper;
+using Domain.Entities;
+using Domain.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Categories.Queries.GetListCategory;
 
@@ -9,19 +10,21 @@ public record GetListCategoryQuery : IRequest<List<CategoryDto>>;
 
 public class GetListCategoryQueryHandler : IRequestHandler<GetListCategoryQuery, List<CategoryDto>>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IRepository<Category, Guid> _repository;
     private readonly IMapper _mapper;
+
     public GetListCategoryQueryHandler(
-        IApplicationDbContext dbContext,
-        IMapper mapper)
+        IMapper mapper,
+        IRepository<Category, Guid> repository)
     {
-        _dbContext = dbContext;
         _mapper = mapper;
+        _repository = repository;
     }
 
     public async Task<List<CategoryDto>> Handle(GetListCategoryQuery request, CancellationToken cancellationToken)
     {
-        var categories = await _dbContext.Categories.ToListAsync();
+        var categories = await _repository.ToListAsync(_repository.GetQueryableSet());
+
         return _mapper.Map<List<CategoryDto>>(categories);
     }
 }

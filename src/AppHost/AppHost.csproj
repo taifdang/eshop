@@ -12,15 +12,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.Docker" Version="13.0.0-preview.1.25560.3" />
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.0.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.0.2" />
+    <PackageReference Include="Aspire.Hosting.Docker" Version="13.0.2-preview.1.25603.5" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.0.2" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.0.2" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Api\Api.csproj" />
+    <ProjectReference Include="..\Bff\Bff.csproj" />
     <ProjectReference Include="..\IdentityService\IdentityService.csproj" />
   </ItemGroup>
 

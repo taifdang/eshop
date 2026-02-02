@@ -2,13 +2,25 @@ import fallbackImage from "@/assets/images/default.jpg";
 import { useAuth } from "@/features/identity/contexts/AuthContext";
 import { profileStorage } from "../../storage/profile-storage";
 import { useQueryClient } from "@tanstack/react-query";
+import { logout } from "../../../features/identity/services/user-service";
 
 export function NavBar() {
-  const { logout } = useAuth();
-  const queryClient = useQueryClient();
+  //const { logout } = useAuth();
+  
   const user = profileStorage.get();
+  const queryClient = useQueryClient();
 
-  const cart = queryClient.getQueryData("basket");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      profileStorage.clear();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  
+  //const cart = queryClient.getQueryData("basket");
   
   return (
     <div className="bg-white">
@@ -99,8 +111,18 @@ export function NavBar() {
                           ></div>
                         </div>
                       </a>
+                      {/* OLD: onClick logout with local navigation
                       <a
                         onClick={() => logout()}
+                        className="flex relative"
+                        style={{ padding: "0 10px", cursor: "pointer" }}
+                      >
+                        Logout
+                      </a>
+                      */}
+                      {/* NEW: BFF logout endpoint */}
+                      <a
+                        onClick={() => { handleLogout(); }}
                         className="flex relative"
                         style={{ padding: "0 10px", cursor: "pointer" }}
                       >
@@ -111,6 +133,7 @@ export function NavBar() {
                 ) : (
                   <>
                     {/* GUEST */}
+                    {/* OLD: Local signup and login routes
                     <a
                       href="/signup"
                       className="flex relative"
@@ -124,6 +147,15 @@ export function NavBar() {
                     ></div>
                     <a
                       href="/login"
+                      className="flex items-center relative"
+                      style={{ padding: "0 10px" }}
+                    >
+                      Login
+                    </a>
+                    */}
+                    {/* NEW: BFF login endpoint - signup typically handled by identity provider */}
+                    <a
+                      href={`https://localhost:5002/bff/login?returnUrl=/`}
                       className="flex items-center relative"
                       style={{ padding: "0 10px" }}
                     >

@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using Domain.Entities;
 using MediatR;
 
@@ -6,11 +6,11 @@ namespace Application.Catalog.Products.Commands.CreateProduct;
 
 public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Guid>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IProductService _productService;
 
-    public CreateProductCommandHandler(IApplicationDbContext context)
+    public CreateProductCommandHandler(IProductService productService)
     {
-        _context = context;
+        _productService = productService;
     }
 
     public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -25,8 +25,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
             IsDeleted = false
         };
 
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _productService.AddAsync(product, cancellationToken);
 
         return product.Id;
     }

@@ -1,12 +1,9 @@
 ﻿namespace Domain.SeedWork;
 
-public abstract class Entity<T> : IEntity<T>
+public abstract class Entity<TKey> : IEntity<TKey>
 {
-    public T Id { get; set; }
+    public TKey Id { get; set; }
     public DateTime? CreatedAt { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTime? LastModified { get; set; }
-    public string? LastModifiedBy { get; set; }
-    public bool IsDeleted { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public long Version { get; set; }
 }

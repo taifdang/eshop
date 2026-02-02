@@ -1,5 +1,6 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Common.Dtos;
+using Domain.Entities;
+using Domain.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,28 +10,28 @@ public record GetVariantByOptionQuery(Guid ProductId, List<Guid> OptionValueMap)
 
 public class GetVariantByOptionQueryHandler : IRequestHandler<GetVariantByOptionQuery, VariantItemListDto>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IReadRepository<ProductOption, Guid> _productOptionReadRepository;
+    private readonly IReadRepository<Variant, Guid> _variantReadRepository;
 
-    public GetVariantByOptionQueryHandler(IApplicationDbContext dbContext)
+    public GetVariantByOptionQueryHandler(
+        IReadRepository<Variant, Guid> variantReadRepository, 
+        IReadRepository<ProductOption, Guid> productOptionReadRepository)
     {
-        _dbContext = dbContext;
+        _variantReadRepository = variantReadRepository;
+        _productOptionReadRepository = productOptionReadRepository;
     }
 
     public async Task<VariantItemListDto> Handle(GetVariantByOptionQuery request, CancellationToken cancellationToken)
     {
-        var optionCount = await _dbContext.ProducOptions
+        var optionCount = await _productOptionReadRepository
+            .GetQueryableSet()
             .Where(x => x.ProductId == request.ProductId)
             .CountAsync();
 
         // boolean
         var exact = request.OptionValueMap.Count == optionCount;
 
-        //var variantSpec = new ProductVariantSpec()
-        //    .ByProductId(request.ProductId)
-        //    .FilterByOptions(request.OptionValueMap, exact)
-        //    .WithProjectionOf(new ProductVariantItemProjectionSpec());
-
-        var query = _dbContext.Variants.AsQueryable();
+        var query = _variantReadRepository.GetQueryableSet();
 
         // filter by productId
         query = query.Where(x => x.ProductId == request.ProductId);

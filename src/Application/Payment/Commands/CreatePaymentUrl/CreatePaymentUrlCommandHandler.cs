@@ -1,5 +1,5 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Abstractions;
+using Domain.Repositories;
 using MediatR;
 
 namespace Application.Payment.Commands.CreatePaymentUrl;
@@ -7,27 +7,27 @@ namespace Application.Payment.Commands.CreatePaymentUrl;
 public class CreatePaymentUrlCommandHandler : IRequestHandler<CreatePaymentUrlCommand, CreatePaymentUrlResult>
 {
     private readonly IPaymentGatewayFactory _factory;
-    private readonly IApplicationDbContext _context;
+    private readonly IReadRepository<Domain.Entities.Order, Guid> _readRepository;
 
     public CreatePaymentUrlCommandHandler(
         IPaymentGatewayFactory factory,
-        IApplicationDbContext context)
+        IReadRepository<Domain.Entities.Order, Guid> readRepository)
     {
         _factory = factory;
-        _context = context;
+        _readRepository = readRepository;
     }
 
-    public Task<CreatePaymentUrlResult> Handle(CreatePaymentUrlCommand request, CancellationToken cancellationToken)
+    public async Task<CreatePaymentUrlResult> Handle(CreatePaymentUrlCommand request, CancellationToken cancellationToken)
     {
         // warn: 
         var gateway = _factory.Resolve(request.Provider);
 
         // get order from db
-        var orderEntity = _context.Orders.FirstOrDefault(o => o.OrderNumber == request.OrderNumber);
+        var orderEntity = await _readRepository.FirstOrDefaultAsync(_readRepository.GetQueryableSet().Where(o => o.OrderNumber == request.OrderNumber));
 
         if (orderEntity == null)
         {
-            return Task.FromResult(new CreatePaymentUrlResult
+            return await Task.FromResult(new CreatePaymentUrlResult
             {
                 Status = false,
                 Error = "Order not found"
@@ -36,7 +36,7 @@ public class CreatePaymentUrlCommandHandler : IRequestHandler<CreatePaymentUrlCo
 
         if (orderEntity.TotalAmount.Amount != request.Amount)
         {
-            return Task.FromResult(new CreatePaymentUrlResult
+            return await Task.FromResult(new CreatePaymentUrlResult
             {
                 Status = false,
                 Error = "Invalid amount"
@@ -46,14 +46,14 @@ public class CreatePaymentUrlCommandHandler : IRequestHandler<CreatePaymentUrlCo
         // if order is already completed, no need to process again
         if (orderEntity.Status == Domain.Enums.OrderStatus.Completed)
         {
-            return Task.FromResult(new CreatePaymentUrlResult
+            return await Task.FromResult(new CreatePaymentUrlResult
             {
                 Status = false,
                 Error = "Order already processed"
             });
         }
 
-        return gateway.CreatePaymentUrl(new CreatePaymentUrlRequest
+        return await gateway.CreatePaymentUrl(new CreatePaymentUrlRequest
         {
             OrderNumber = request.OrderNumber,
             Amount = request.Amount,

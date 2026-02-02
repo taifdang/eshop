@@ -1,6 +1,7 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Abstractions;
+using Application.Payment.Dtos;
 using Contracts.IntegrationEvents;
+using Domain.Repositories;
 using MediatR;
 using Outbox.Abstractions;
 using System.Text.Json;
@@ -10,26 +11,26 @@ namespace Application.Payment.Commands.VerifyPaymentIpn;
 public class VerifyPaymentIpnCommandHandler : IRequestHandler<VerifyPaymentIpnCommand, IpnResult>
 {
     private readonly IPaymentGatewayFactory _factory;
-    private readonly IApplicationDbContext _context;
+    private readonly IReadRepository<Domain.Entities.Order, Guid> _readRepository;
     private readonly IPollingOutboxMessageRepository _outboxRepository;
 
     public VerifyPaymentIpnCommandHandler(
         IPaymentGatewayFactory factory,
-        IApplicationDbContext context,
+        IReadRepository<Domain.Entities.Order, Guid> readRepository,
         IPollingOutboxMessageRepository outboxRepository)
     {
         _factory = factory;
-        _context = context;
+        _readRepository = readRepository;
         _outboxRepository = outboxRepository;
     }
-    public Task<IpnResult> Handle(VerifyPaymentIpnCommand request, CancellationToken cancellationToken)
+    public async Task<IpnResult> Handle(VerifyPaymentIpnCommand request, CancellationToken cancellationToken)
     {
         var gateway = _factory.Resolve(request.Provider);
         var result = gateway.VerifyIpnCallback(request.Parameters);
 
         if(result.IsNullEvent)
         {
-            return Task.FromResult(new IpnResult
+            return await Task.FromResult(new IpnResult
             {
                 RspCode = "99",
                 Message = "System error",
@@ -38,7 +39,7 @@ public class VerifyPaymentIpnCommandHandler : IRequestHandler<VerifyPaymentIpnCo
 
         if (!result.CheckSignature)
         {
-            return Task.FromResult(new IpnResult
+            return await Task.FromResult(new IpnResult
             {
                 RspCode = "97",
                 Message = "Invalid signature",
@@ -46,11 +47,11 @@ public class VerifyPaymentIpnCommandHandler : IRequestHandler<VerifyPaymentIpnCo
         }
 
         // get order from db
-        var orderEntity = _context.Orders.FirstOrDefault(o => o.OrderNumber == result.OrderNumber);
+        var orderEntity = await _readRepository.FirstOrDefaultAsync(_readRepository.GetQueryableSet().Where(o => o.OrderNumber == result.OrderNumber));
 
         if (orderEntity == null)
         {
-            return Task.FromResult(new IpnResult
+            return await Task.FromResult(new IpnResult
             {
                 RspCode = "01",
                 Message = "Order not found",
@@ -59,7 +60,7 @@ public class VerifyPaymentIpnCommandHandler : IRequestHandler<VerifyPaymentIpnCo
 
         if (orderEntity.TotalAmount.Amount != result.Amount)
         {
-            return Task.FromResult(new IpnResult
+            return await Task.FromResult(new IpnResult
             {
                 RspCode = "04",
                 Message = "Invalid amount",
@@ -69,7 +70,7 @@ public class VerifyPaymentIpnCommandHandler : IRequestHandler<VerifyPaymentIpnCo
         // if order is already completed, no need to process again
         if (orderEntity.Status == Domain.Enums.OrderStatus.Completed)
         {
-            return Task.FromResult(new IpnResult
+            return await Task.FromResult(new IpnResult
             {
                 RspCode = "02",
                 Message = "Order already processed",
@@ -93,7 +94,7 @@ public class VerifyPaymentIpnCommandHandler : IRequestHandler<VerifyPaymentIpnCo
                 ProcessedDate = null
             };
 
-            _outboxRepository.AddAsync(message);
+            await _outboxRepository.AddAsync(message);
         }
         else
         {
@@ -113,12 +114,12 @@ public class VerifyPaymentIpnCommandHandler : IRequestHandler<VerifyPaymentIpnCo
                 ProcessedDate = null
             };
 
-            _outboxRepository.AddAsync(message);
+            await _outboxRepository.AddAsync(message);
         }
 
-        _outboxRepository.SaveChangesAsync();
+        await _outboxRepository.SaveChangesAsync();
 
-        return Task.FromResult(new IpnResult
+        return await Task.FromResult(new IpnResult
         {
             RspCode = "00",
             Message = "Confirm Success",

@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Common.Dtos;
 
 namespace Application.Catalog.Products.Queries.GetListProduct;
 

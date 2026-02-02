@@ -1,28 +1,26 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using Ardalis.GuardClauses;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.DeleteOption;
 
 public class DeleteOptionCommandHandler : IRequestHandler<DeleteOptionCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
 
-    public DeleteOptionCommandHandler(IApplicationDbContext dbContext)
+    public DeleteOptionCommandHandler(IProductService productService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
     }
 
     public async Task<Unit> Handle(DeleteOptionCommand request, CancellationToken cancellationToken)
     {
-        var productOption = await _dbContext.ProducOptions
-            .FirstOrDefaultAsync(x => x.Id == request.OptionId && x.ProductId == request.ProductId);
+        var product = await _productService.GetByIdAsync(request.ProductId, cancellationToken);
+        Guard.Against.NotFound(request.ProductId, product);
 
-        Guard.Against.NotFound(request.OptionId, productOption);
+        product.RemoveOption(request.OptionId);
 
-        _dbContext.ProducOptions.Remove(productOption);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

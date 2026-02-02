@@ -1,14 +1,10 @@
 ﻿namespace Domain.SeedWork;
 
-public interface IEntity<T> : IEntity
+public interface IEntity<T> : IHasKey<T>, IEntity
 {
-    public T Id { get; set; }
+    
 }
-public interface IEntity : IVersion
+public interface IEntity : ITrackable
 {
-    public DateTime? CreatedAt { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTime? LastModified { get; set; }
-    public string? LastModifiedBy { get; set; }
-    public bool IsDeleted { get; set; }
+   
 }

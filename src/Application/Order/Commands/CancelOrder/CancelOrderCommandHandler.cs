@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Domain.Repositories;
 using MediatR;
 
 namespace Application.Order.Commands.CancelOrder;

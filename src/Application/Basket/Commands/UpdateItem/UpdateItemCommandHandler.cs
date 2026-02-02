@@ -1,61 +1,54 @@
-﻿using Application.Catalog.Products.Queries.GetVariantById;
+﻿using Application.Abstractions;
+using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Application.Customer.Queries.GetCustomerByUserId;
 using Domain.Entities;
+using Domain.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace Application.Basket.Commands.UpdateItem;
 
 public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IBasketRepository _repository;
     private readonly IMediator _mediator;
     private readonly ICurrentUserProvider _currentUserProdvider;
+
     public UpdateItemCommandHandler(
-        IApplicationDbContext dbContext,
+        IBasketRepository repository,
         IMediator mediator,
         ICurrentUserProvider currentUserProdvider)
     {
-        _dbContext = dbContext;
+        _repository = repository;
         _mediator = mediator;
         _currentUserProdvider = currentUserProdvider;
     }
 
     public async Task<Guid> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
     {
-        // logic: get latest basket
-
         var userId = _currentUserProdvider.GetCurrentUserId();
 
-        if (userId == null)
-            throw new ArgumentException("User is required");
-        if (request.Quantity < 0)
+        if (string.IsNullOrEmpty(userId)) 
+            throw new EntityNotFoundException("User not found");
+        if (request.Quantity < 0) 
             throw new ArgumentException("Quantity cannot be negative.");
 
 #if (!GrpcOrHttp)
         // Directly call the mediatr handler instead of gRPC / http
+        // Here: we call the mediator to get customer and variant details
         var customer = await _mediator.Send(new GetCustomerByUserIdQuery(Guid.Parse(userId)))
-            ?? throw new EntityNotFoundException("Customer not found");
-#endif
-        // Validate Variant exists
-#if (!GrpcOrHttp)
-        // Directly call the mediatr handler instead of gRPC / http
+                ?? throw new EntityNotFoundException("Customer not found");
+
         var variant = await _mediator.Send(new GetVariantByIdQuery(request.Id))
                 ?? throw new EntityNotFoundException("Product variant not found");
 #endif
-        // Variant quantity not enough
         if (request.Quantity > variant.Quantity)
         {
             throw new EntityNotFoundException("Not enough product variant quanity");
         }
 
         // Get or create basket
-        var basket = await _dbContext.Baskets
-           .Include(m => m.Items)
-           .FirstOrDefaultAsync(b => b.CustomerId == customer.Id, cancellationToken);
+        var basket = await _repository.GetByCustomerIdWithItemsAsync(customer.Id, cancellationToken);
 
         if (basket == null)
         {
@@ -65,7 +58,7 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
                 Items = new List<BasketItem>(),
                 CreatedAt = DateTime.UtcNow,
             };
-            await _dbContext.Baskets.AddAsync(basket);
+            await _repository.AddAsync(basket, cancellationToken);
         }
         // Update basket items
         var existingItem = basket.Items.FirstOrDefault(x => x.VariantId == request.Id);
@@ -93,12 +86,8 @@ public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, Guid>
             }
         }
 
-        basket.LastModified = DateTime.UtcNow;
-
-#if (ConcurrencyConflict)
-        _dbContext.Baskets.Update(basket); //Scenario database conflict
-#endif
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        basket.UpdatedAt = DateTime.UtcNow;
+        await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return basket.Id;
     }

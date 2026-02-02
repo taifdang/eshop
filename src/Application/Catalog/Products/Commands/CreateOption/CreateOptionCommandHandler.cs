@@ -1,27 +1,24 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.CreateOption;
 
 public class CreateOptionCommandHandler : IRequestHandler<CreateOptionCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
 
-    public CreateOptionCommandHandler(IApplicationDbContext dbContext)
+    public CreateOptionCommandHandler(IProductService productService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
     }
 
     public async Task<Unit> Handle(CreateOptionCommand request, CancellationToken cancellationToken)
     {
-        var entityExist = await _dbContext.ProducOptions
-            .AnyAsync(x => x.ProductId == request.ProductId && x.AllowImage, cancellationToken);
-
-        if (entityExist && request.AllowImage)
+        var product = await _productService.GetByIdAsync(request.ProductId, cancellationToken);
+        if (product == null)
         {
-            throw new Exception("Only one product option can allow images per product.");
+            throw new InvalidOperationException($"Product with ID {request.ProductId} not found.");
         }
 
         var productOption = new ProductOption
@@ -31,8 +28,9 @@ public class CreateOptionCommandHandler : IRequestHandler<CreateOptionCommand, U
             AllowImage = request.AllowImage,
         };
 
-        _dbContext.ProducOptions.Add(productOption);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        product.AddOption(productOption);
+
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

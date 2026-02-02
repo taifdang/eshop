@@ -1,11 +1,11 @@
-﻿using Application.Basket.Queries.GetCartList;
+﻿using Application.Abstractions;
+using Application.Basket.Queries.GetCartList;
 using Application.Catalog.Products.Queries.GetVariantById;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
-using Application.Common.Models;
-using Application.Common.Utilities;
+using Application.Order.Dtos;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Repositories;
 using Domain.ValueObject;
 using MediatR;
 
@@ -15,20 +15,23 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IMediator _mediator;
+    private readonly IDateTimeProvider _currentTime;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
-        IMediator mediator)
+        IMediator mediator,
+        IDateTimeProvider currentTime)
     {
         _orderRepository = orderRepository;
         _mediator = mediator;
+        _currentTime = currentTime;
     }
 
     public async Task<CreateOrderResult> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
 #if (!GrpcOrHttp)
         // Directly call the mediatr handler instead of gRPC
-        var basket = await _mediator.Send(new GetBasketQuery(command.CustomerId))
+        var basket = await _mediator.Send(new GetBasketQueryByCustomer(command.CustomerId))
             ?? throw new Exception("Basket not found");
 #endif
 
@@ -74,7 +77,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
         if (command.Method == PaymentMethod.Online && command.Provider == PaymentProvider.Unknown)
             throw new Exception("Online payment requires provider");
 
-        var orderNumber = TimeHepler.GetCurrentTimeTicks();
+        //var orderNumber = TimeHepler.GetCurrentTimeTicks();
+        var orderNumber = _currentTime.OffsetUtcNow.ToUnixTimeMilliseconds();
 
         var order = Domain.Entities.Order.Create(
             Guid.NewGuid(),

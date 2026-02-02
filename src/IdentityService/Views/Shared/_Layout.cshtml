@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1240,shrink-to-fit=no" />
+    <title>@ViewData["Title"] - IdentityService</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body style="background-color: rgb(245, 245, 245)">
+    <div class="bg-white border-bottom" >
+        <nav class="d-flex align-items-center container-wrapper bg-white" style="height:84px">
+            <div class="d-flex flex-row align-items-center justify-content-between" style="width:1200px; height:32px; margin:0 20px">
+                <div class="d-flex align-items-center position-relative">
+                    <a class="mx-2 mb-2" aria-label="SmartX Home">
+                        <img src="~/images/brand.png" alt="SmartX" style="height: 42px;" />
+                    </a>
+                    <div style="font-size: 22px">@ViewData["Page"]</div>
+                </div>
+                <a class="text-decoration-none" style="font-size: 14px" href="#">Need Help?</a>
+            </div>
+        </nav>
+    </div>
+    <div class="container-wrapper">
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
