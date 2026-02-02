@@ -4,6 +4,10 @@ import { loginSchema } from "../utils/login.schema";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
+// OLD: This component is deprecated in BFF architecture
+// Login is now handled by redirecting to /bff/login?returnUrl=<url>
+// The BFF manages authentication via cookies and redirects
+
 export function LoginForm({ showPassword, setShowPassword, setShowError }) {
   const navigate = useNavigate();
   const { login } = useAuth();

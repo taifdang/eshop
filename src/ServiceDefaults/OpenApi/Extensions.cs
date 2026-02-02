@@ -16,19 +16,26 @@ public static class Extensions
 
         return services;
     }
-        public static IApplicationBuilder UseDefaultOpenApi(this WebApplication app)
+    public static IApplicationBuilder UseDefaultOpenApi(this WebApplication app)
     {
-        // Map OpenAPI documents (produces /openapi/v1.json)
         app.MapOpenApi();
 
-        // Serve Swagger UI under /openapi/swagger
+        // Swagger UI docs
         app.UseSwaggerUI(options =>
         {
+            options.RoutePrefix = "swagger";
             var openApiUrl = "/openapi/v1.json";
             var name = "Open API";
+
             options.SwaggerEndpoint(openApiUrl, name);
-            options.RoutePrefix = "openapi/swagger";
         });
+
+        // Scalar UI docs
+        app.MapScalarApiReference(
+             redocOptions =>
+             {
+                 redocOptions.WithOpenApiRoutePattern("/openapi/{documentName}.json");
+             });
 
         return app;
     }

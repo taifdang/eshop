@@ -1,40 +1,38 @@
-       using Application.Common.Interfaces;
+using Domain.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories;
 
-public class OrderRepository : IOrderRepository
+public class OrderRepository : Repository<Order, Guid>, IOrderRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _dbContext;
 
-    public IUnitOfWork UnitOfWork => _context;
-
-    public OrderRepository(ApplicationDbContext context)
+    public OrderRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
     public async Task AddAsync(Order order)
     {
-        await _context.Orders.AddAsync(order);
+        await _dbContext.Set<Order>().AddAsync(order);
     }
     public async Task<Order?> GetByIdAsync(Guid id)
     {
-        return await _context.Orders.FindAsync(id);
+        return await _dbContext.Set<Order>().FindAsync(id);
     }
     public async Task<Order?> GetAsync(Guid id)
     {                  
-        return await _context.Orders.Include(m => m.Items).Where(x => x.Id == id).FirstOrDefaultAsync();
+        return await _dbContext.Set<Order>().Include(m => m.Items).Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<List<Order>?> GetListByCustomerAsync(Guid customerId)
     {
-        return await _context.Orders.Where(x => x.CustomerId == customerId).ToListAsync();
+        return await _dbContext.Set<Order>().Where(x => x.CustomerId == customerId).ToListAsync();
     }
 
     public async Task<Order?> GetByOrderNumber(long orderNumber)
     {
-        return await _context.Orders.SingleOrDefaultAsync(x => x.OrderNumber == orderNumber);
+        return await _dbContext.Set<Order>().SingleOrDefaultAsync(x => x.OrderNumber == orderNumber);
     }
 }

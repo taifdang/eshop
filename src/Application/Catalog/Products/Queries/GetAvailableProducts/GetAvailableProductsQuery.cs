@@ -1,5 +1,5 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Common.Dtos;
+using Domain.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,18 +9,21 @@ public record GetAvailableProductsQuery(int PageIndex, int PageSize) : IRequest<
 
 public class GetAvalableProductQueryhandler : IRequestHandler<GetAvailableProductsQuery, PageList<AvailableProductsDto>>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductRepository _productRepository;
 
-    public GetAvalableProductQueryhandler(IApplicationDbContext dbContext)
+    public GetAvalableProductQueryhandler(IProductRepository productRepository)
     {
-        _dbContext = dbContext;
+        _productRepository = productRepository;
     }
 
     public async Task<PageList<AvailableProductsDto>> Handle(GetAvailableProductsQuery request, CancellationToken cancellationToken)
     {
-        var query = _dbContext.Products.AsQueryable();
-        // ***isActive filter
+        // enable queryable
+        var query = _productRepository.GetQueryableSet();
+
+        // filter
         query = query.Where(p => p.IsActive);
+
         // paging
         var page = request.PageIndex <= 0 ? 1 : request.PageIndex;
         var take = request.PageSize;
@@ -30,6 +33,7 @@ public class GetAvalableProductQueryhandler : IRequestHandler<GetAvailableProduc
             take = int.MaxValue;
         }
         query = query.OrderBy(x => x.Id).Skip(skip).Take(take);
+
         // projection    
         var productList = await query.Select(x => new AvailableProductsDto
         {
@@ -53,6 +57,5 @@ public class GetAvalableProductQueryhandler : IRequestHandler<GetAvailableProduc
            productList.Count,
            request.PageIndex,
            request.PageSize);
-
     }
 }

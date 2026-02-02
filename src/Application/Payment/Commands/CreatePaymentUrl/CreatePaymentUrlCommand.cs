@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Abstractions;
 using Domain.Enums;
 using MediatR;
 

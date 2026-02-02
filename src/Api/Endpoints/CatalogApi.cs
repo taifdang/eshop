@@ -2,6 +2,7 @@
 using Api.Models.Requests;
 using Api.Models.Responses;
 using Application.Catalog.Categories.Commands.CreateCategory;
+using Application.Catalog.Categories.Dtos;
 using Application.Catalog.Categories.Queries.GetListCategory;
 using Application.Catalog.Products.Commands.BulkUpdateVariant;
 using Application.Catalog.Products.Commands.CreateOption;
@@ -78,6 +79,7 @@ public static class CatalogApi
 
         // OptionValue
         productGroupApi.MapPost("options/values", CreateOptionValue)
+            .AddEndpointFilter<FileValidationFilter>()
             .DisableAntiforgery();
         productGroupApi.MapDelete("options/values", DeleleOptionValue);
 
@@ -211,7 +213,7 @@ public static class CatalogApi
     private static async Task<Results<NoContent, BadRequest>> UpdateVariant(
        IMediator mediator, [AsParameters] UpdateVariantRequestDto request, CancellationToken cancellationToken)
     {
-        var command = new UpdateVariantCommand(request.Id, request.RegularPrice, request.Quantity);
+        var command = new UpdateVariantCommand(request.ProductId, request.Id, request.RegularPrice, request.Quantity);
 
         var result = await mediator.Send(command, cancellationToken);
 
@@ -266,7 +268,7 @@ public static class CatalogApi
     private static async Task<Results<Created, BadRequest>> CreateOptionValue(
       IMediator mediator, [FromForm] CreateOptionValueRequestDto request, CancellationToken cancellationToken)
     {
-        var command = new CreateOptionValueCommand(request.OptionId, request.Value, request.MediaFile);
+        var command = new CreateOptionValueCommand(request.ProductId, request.OptionId, request.Value, request.MediaFile);
 
         var result = await mediator.Send(command, cancellationToken);
 

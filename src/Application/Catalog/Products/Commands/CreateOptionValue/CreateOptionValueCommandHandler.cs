@@ -1,34 +1,28 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
+using Application.Common.Interfaces;
+using Ardalis.GuardClauses;
 using Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.CreateOptionValue;
 
 public class CreateOptionValueCommandHandler : IRequestHandler<CreateOptionValueCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
     private readonly IFileService _storageService;
 
     public CreateOptionValueCommandHandler(
-        IApplicationDbContext dbContext, 
+        IProductService productService, 
         IFileService storageService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
         _storageService = storageService;
     }
 
     public async Task<Unit> Handle(CreateOptionValueCommand request, CancellationToken cancellationToken)
     {
-        // check productOption allow image
-        var productOption = await _dbContext.ProducOptions
-            .SingleOrDefaultAsync(m => m.Id == request.OptionId && m.AllowImage, cancellationToken);
-
-        // optionValue > 1 image (optional)
-        if(productOption == null)
-        {
-            throw new Exception("Product option does not exist or does not allow images.");
-        }
+        var product = await _productService.GetByIdAsync(request.ProductId, cancellationToken);
+        Guard.Against.NotFound(request.ProductId, product);
 
         var optionValue = new OptionValue
         {
@@ -36,21 +30,23 @@ public class CreateOptionValueCommandHandler : IRequestHandler<CreateOptionValue
             Value = request.Value
         };
 
+        Image? image = null;
         if (request.MediaFile != null)
         {
-            var metaData = await _storageService.AddFileAsync(request.MediaFile); // save image with local storage
+            var metaData = await _storageService.AddFileAsync(request.MediaFile);
 
-            optionValue.ImageId = Guid.CreateVersion7();
-            optionValue.Image = new Image
+            image = new Image
             {
+                Id = Guid.CreateVersion7(),
                 BaseUrl = metaData.BaseUrl,
                 FileName = $"{metaData.Path}/{metaData.Name}",
-                AllText = $"seo all text - {productOption.ProductId}"
-            };   
+                AllText = $"seo all text - {request.ProductId}"
+            };
         }
 
-        _dbContext.OptionValues.Add(optionValue);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        product.AddOptionValue(request.OptionId, optionValue, image);
+
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

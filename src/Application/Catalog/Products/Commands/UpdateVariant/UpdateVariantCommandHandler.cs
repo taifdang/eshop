@@ -1,37 +1,26 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using Ardalis.GuardClauses;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.UpdateVariant;
 
 public class UpdateVariantCommandHandler : IRequestHandler<UpdateVariantCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
 
-    public UpdateVariantCommandHandler(IApplicationDbContext dbContext)
+    public UpdateVariantCommandHandler(IProductService productService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
     }
 
     public async Task<Unit> Handle(UpdateVariantCommand request, CancellationToken cancellationToken)
     {
+        var product = await _productService.GetByIdAsync(request.ProductId, cancellationToken);
+        Guard.Against.NotFound(request.ProductId, product);
 
-        var variant = await _dbContext.Variants.FirstOrDefaultAsync(x => x.Id == request.Id);
-        Guard.Against.NotFound(request.Id, variant);
+        product.UpdateVariant(request.Id, price: request.RegularPrice, quantity: request.Quantity);
 
-        variant.Price = request.RegularPrice;
-
-        if (request.Quantity > 0)
-        {
-            variant.Quantity = request.Quantity;
-        }
-        else
-        {
-            throw new Exception("Quantity is not negative");
-        }
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

@@ -1,5 +1,4 @@
 ﻿using Application.Common.Interfaces;
-using Application.Common.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -30,7 +29,7 @@ public class LocalStorage : IFileService
 
     }
 
-    public async Task<FileUploadResult> AddFileAsync(IFormFile file)
+    public async Task<UploadFileResult> AddFileAsync(IFormFile file)
     {
         Stream mediaBinaryStream = file.OpenReadStream();
 
@@ -62,7 +61,7 @@ public class LocalStorage : IFileService
 
         //var publicUrl = $"{_baseUrl.TrimEnd('/')}/{_fileStorage.Path}/{fileName}";
 
-        return new FileUploadResult
+        return new UploadFileResult
         {
             Name = fileName,
             //Path = GetPublicUrl(fileName)

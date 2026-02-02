@@ -1,6 +1,6 @@
 ﻿using Api.Models.Requests;
 using Application.Basket.Commands.UpdateItem;
-using Application.Basket.Queries.GetBasket;
+using Application.Basket.Dtos;
 using Application.Basket.Queries.GetCartList;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -22,7 +22,7 @@ public static class BasketApi
     {
         group.MapGet("/", async (IMediator mediator, CancellationToken cancellationToken) =>
         {
-            return await mediator.Send(new GetBasketQuery());
+            return await mediator.Send(new GetBasketQueryByCustomer());
         })
         .RequireAuthorization()
         .WithName("GetBasket")
@@ -32,7 +32,7 @@ public static class BasketApi
 
         group.MapPost("/", async (IMediator mediator, [FromBody] UpdateBasketRequestDto request, CancellationToken cancellationToken) =>
         {
-            await mediator.Send(new UpdateItemCommand(request.VariantId, request.Quantity));
+            await mediator.Send(new UpdateItemCommand(request.AccountId, request.VariantId, request.Quantity));
 
             return Results.NoContent();
         })
@@ -42,6 +42,6 @@ public static class BasketApi
        .Produces<NoContent>()
        .ProducesProblem(StatusCodes.Status400BadRequest);
 
-        return group;
+        return group; 
     }
 }

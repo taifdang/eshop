@@ -6,16 +6,12 @@ using Application.Order.IntegrationEventHandlers;
 using Contracts.IntegrationEvents;
 using EventBus;
 using EventBus.Abstractions;
-using EventBus.InMemory;
+using EventBus.RabbitMQ;
 using Infrastructure.ExternalServices.Notifications.Email;
-using Infrastructure.ExternalServices.Payments;
-using Infrastructure.ExternalServices.Payments.Vnpay;
-using Infrastructure.ExternalServices.Payments.Stripe;
+using Infrastructure.ExternalServices.Payment;
+using Infrastructure.ExternalServices.Payment.Vnpay;
+using Infrastructure.ExternalServices.Payment.Stripe;
 using Infrastructure.ExternalServices.Storage;
-using Infrastructure.Identity;
-using Infrastructure.Identity.Data;
-using Infrastructure.Identity.Data.Seed;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,8 +19,9 @@ using Outbox.EF.Extensions;
 using Outbox.EF.Infrastructure.Data;
 using Shared.Constants;
 using Shared.Web;
-using Persistence.Migrations;
 using Persistence;
+using Migrator;
+using Application.Abstractions;
 
 namespace Infrastructure;
 //ref: https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-9.0&tabs=visual-studio
@@ -42,14 +39,6 @@ public static class DependencyInjection
         // Add Persistence Layer
         builder.AddPersistence();
 
-        builder.AddNpgsqlDbContext<AppIdentityDbContext>("shopdb");
-
-        // Identity
-        builder.AddCustomIdentity();
-
-        // Token
-        builder.Services.AddScoped<ITokenService, TokenService>();
-  
         // External Services
         builder.Services.AddTransient<IEmailService, SmtpEmailSender>();
         builder.Services.AddScoped<IFileService, LocalStorage>();
@@ -65,12 +54,6 @@ public static class DependencyInjection
         // bind Stripe options and gateway
         builder.Services.AddScoped<StripePaymentGateway>();
 
-        // Identity
-        builder.Services.AddScoped<IIdentityService, IdentityService>();
-
-        // Seeders    
-        builder.Services.AddScoped<IDataSeeder<AppIdentityDbContext>, IdentityDataSeeder>();
-
         // Eventbus
         if (builder.Environment.EnvironmentName == "test")
         {
@@ -78,7 +61,7 @@ public static class DependencyInjection
         }
         else
         {
-            builder.AddInMemoryEventBus()
+            builder.AddRabbitMqEventBus("rabbitmq")
            .AddSubscription<OrderCreatedIntegrationEvent, OrderCreatedIntegrationEventHandler>()
            .AddSubscription<StockReservationRequestedIntegrationEvent, StockReservationRequestedIntegrationEventHandler>()
            .AddSubscription<GracePeriodConfirmedIntegrationEvent, GracePeriodConfirmedIntegrationEventHandler>()
@@ -93,7 +76,7 @@ public static class DependencyInjection
         return builder;
     }
 
-    public static WebApplication UseInfrastructure(this WebApplication app)
+    public static WebApplication MapInfrastructure(this WebApplication app)
     {
         //app.UseCustomHealthCheck();
 
@@ -103,7 +86,6 @@ public static class DependencyInjection
     public static async Task<WebApplication> MigrateAndSeedDataAsync(this WebApplication app)
     {
         await app.MigratePersistenceAsync();
-        await app.MigrationDbContextAsync<AppIdentityDbContext>();
         await app.MigrationDbContextAsync<OutboxDbContext>();
 
         return app;

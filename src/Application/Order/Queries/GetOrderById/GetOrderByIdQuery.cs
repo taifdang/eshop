@@ -1,7 +1,8 @@
-﻿using Application.Common.Interfaces;
+﻿using Domain.Repositories;
 using Ardalis.GuardClauses;
 using AutoMapper;
 using MediatR;
+using Application.Order.Dtos;
 
 namespace Application.Order.Queries.GetOrderById;
 

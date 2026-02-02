@@ -1,15 +1,16 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Domain.Repositories;
 using MediatR;
 
 namespace Application.Catalog.Categories.Commands.CreateCategory;
 
 public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Guid>
 {
-    private readonly IApplicationDbContext _dbContext;
-    public CreateCategoryCommandHandler(IApplicationDbContext dbContext)
+    private readonly IRepository<Category, Guid> _repository;
+
+    public CreateCategoryCommandHandler(IRepository<Category, Guid> repository)
     {
-        _dbContext = dbContext;
+        _repository = repository;
     }
     public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
@@ -19,8 +20,8 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             UrlSlug = request.UrlSlug
         };
 
-        _dbContext.Categories.Add(category);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _repository.AddAsync(category);
+        await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return category.Id;
     }

@@ -1,28 +1,26 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using Ardalis.GuardClauses;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Catalog.Products.Commands.DeleteVariant;
 
 public class DeleteVariantCommandHandler : IRequestHandler<DeleteVariantCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
 
-    public DeleteVariantCommandHandler(IApplicationDbContext dbContext)
+    public DeleteVariantCommandHandler(IProductService productService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
     }
 
     public async Task<Unit> Handle(DeleteVariantCommand request, CancellationToken cancellationToken)
     {
-        var variant = await _dbContext.Variants
-            .FirstOrDefaultAsync(x => x.Id == request.Id && x.ProductId == request.ProductId);
+        var product = await _productService.GetByIdAsync(request.ProductId, cancellationToken);
+        Guard.Against.NotFound(request.ProductId, product);
 
-        Guard.Against.NotFound(request.Id, variant);
+        product.RemoveVariant(request.Id);
 
-        _dbContext.Variants.Remove(variant);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

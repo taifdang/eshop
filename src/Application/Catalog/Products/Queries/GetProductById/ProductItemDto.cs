@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Common.Dtos;
 
 namespace Application.Catalog.Products.Queries.GetProductById;
 
@@ -10,7 +10,7 @@ public class ProductItemDto
     //public decimal MaxPrice { get; init; }
     public string Description { get; init; }
     public string Category { get; init; }
-    public VariantBriefDto? VariantBrief { get; set; }
+    public VariantSummaryDto? VariantSummary { get; set; }
     public ImageLookupDto? MainImage { get; set; }
     public List<ImageLookupDto>? Images { get; set; }
     public List<ProductOptionDto> Options { get; set; }

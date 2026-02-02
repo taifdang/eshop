@@ -1,16 +1,16 @@
-﻿using Application.Common.Interfaces;
+﻿using Domain.Repositories;
 using MediatR;
 
 namespace Application.Customer.Commands;
 
 public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, Guid>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly ICustomerRepository _repository;
 
-    public CreateCustomerCommandHandler(IApplicationDbContext dbContext)
+    public CreateCustomerCommandHandler(ICustomerRepository repository)
     {
-        _dbContext = dbContext;
-    }
+        _repository = repository;
+    }   
 
     public async Task<Guid> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
@@ -20,8 +20,9 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             Email = request.Email,
         };
 
-        _dbContext.Customers.Add(customer);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _repository.AddAsync(customer);
+
+        await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return customer.Id;
     }

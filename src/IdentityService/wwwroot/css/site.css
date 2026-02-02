@@ -1,0 +1,66 @@
+.container-wrapper {
+    width: 1240px;
+    margin: 0 auto;
+}
+
+.page-with-auth-form {
+    min-height: 600px;
+    width: 1040px;
+    margin: 0 100px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.page-with-background {
+    height: 600px;
+    background-image: url('/images/brand-background.png');
+}
+/* Text Field */
+.text-field {
+    outline: 1px solid rgb(222, 226, 230);
+    display: flex;
+    align-items: center;
+    background: white;
+}
+
+.text-field:focus-within {
+    outline: 1px solid black;
+}
+
+.text-field input {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.text-field__input {
+    height: 40px;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.text-field__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 15px 0 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.text-field__button:hover {
+    opacity: 0.7;
+}
+
+.text-field__error {
+    padding-top: 4px;
+    min-height: 20px;
+    width: 100%;
+    font-size: 12px;
+    color: rgb(255, 66, 79);
+}

@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Order.Dtos;
 using Domain.Enums;
 using MediatR;
 

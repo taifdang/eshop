@@ -1,6 +1,7 @@
 ﻿using Application.Catalog.Products.Services;
-using Application.Common.Interfaces;
 using Ardalis.GuardClauses;
+using Domain.Entities;
+using Domain.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,23 +11,20 @@ public record GetVariantByIdQuery(Guid Id) : IRequest<VariantDto>;
 
 public class GetVariantByIdQueryHandler : IRequestHandler<GetVariantByIdQuery, VariantDto>
 {
-    private readonly IApplicationDbContext _dbContext;
-    private readonly IImageLookupService _imageLookupService;
+    private readonly IReadRepository<Variant, Guid> _readRepository;
+    private readonly IProductImageResolver _imageResolver;
 
     public GetVariantByIdQueryHandler(
-        IApplicationDbContext dbContext, 
-        IImageLookupService imageLookupService)
+        IReadRepository<Variant, Guid> readRepository, 
+        IProductImageResolver imageResolver)
     {
-        _dbContext = dbContext;
-        _imageLookupService = imageLookupService;
+        _readRepository = readRepository;
+        _imageResolver = imageResolver;
     }
     public async Task<VariantDto> Handle(GetVariantByIdQuery request, CancellationToken cancellationToken)
     {
-        //var spec = new ProductVariantSpec()
-        //    .ByVariantId(request.Id)
-        //    .WithProjectionOf(new ProductVariantProjectionSpec());
-
-        var variant = await _dbContext.Variants
+        var variant = await _readRepository
+            .GetQueryableSet()
             .Where(x => x.Id == request.Id)
             .Select(x => new VariantDto
             {
@@ -49,8 +47,9 @@ public class GetVariantByIdQueryHandler : IRequestHandler<GetVariantByIdQuery, V
 
         // get option value
         var optionValueIds = variant.Options.Select(x => x.Id).ToList();
+
         // get image and fallback
-        var variantImage = await _imageLookupService.GetVariantImageAndFallback(variant.ProductId, optionValueIds);
+        var variantImage = await _imageResolver.GetVariantImageAndFallback(variant.ProductId, optionValueIds);
 
         if(variantImage != null)
         {

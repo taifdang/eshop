@@ -1,23 +1,20 @@
-﻿using Application.Common.Interfaces;
+﻿using Domain.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Basket.Commands.ClearBasket;
 
 public class ClearBasketCommandHandler : IRequestHandler<ClearBasketCommand, Guid>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IBasketRepository _repository;
 
-    public ClearBasketCommandHandler(IApplicationDbContext dbContext)
+    public ClearBasketCommandHandler(IBasketRepository repository)
     {
-        _dbContext = dbContext;
+        _repository = repository;
     }
 
     public async Task<Guid> Handle(ClearBasketCommand request, CancellationToken cancellationToken)
     {
-        var basket = _dbContext.Baskets
-            .Include(m => m.Items)
-            .FirstOrDefault(b => b.CustomerId == request.CustomerId);
+        var basket = await _repository.GetByCustomerIdWithItemsAsync(request.CustomerId, cancellationToken);
 
         if (basket is null)
         {
@@ -25,8 +22,7 @@ public class ClearBasketCommandHandler : IRequestHandler<ClearBasketCommand, Gui
         }
 
         basket.ClearItems();
-        _dbContext.Baskets.Update(basket);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
         return basket.Id;
     }

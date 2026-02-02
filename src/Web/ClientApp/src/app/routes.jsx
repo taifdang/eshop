@@ -18,6 +18,7 @@ export const routes = [
     ],
     errorElement: <NoPage />,
   },
+  /* OLD: Local login and signup routes - now handled by BFF
   {
     path: "/login",
     element: <LoginPage />,
@@ -26,6 +27,10 @@ export const routes = [
     path: "/signup",
     element: <RegisterPage />,
   },
+  */
+  // NEW: Login and signup are handled by BFF at:
+  // - /bff/login?returnUrl=<url>
+  // - Registration typically handled by identity provider
   {
     path: "/cart",
     element: <BasketPage />,

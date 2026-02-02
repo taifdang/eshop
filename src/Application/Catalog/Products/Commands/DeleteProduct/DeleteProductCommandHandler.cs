@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Catalog.Products.Services;
 using Ardalis.GuardClauses;
 using MediatR;
 
@@ -6,20 +6,21 @@ namespace Application.Catalog.Products.Commands.DeleteProduct;
 
 public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Unit>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductService _productService;
 
-    public DeleteProductCommandHandler(IApplicationDbContext dbContext)
+    public DeleteProductCommandHandler(IProductService productService)
     {
-        _dbContext = dbContext;
+        _productService = productService;
     }
 
     public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
-        var product = await _dbContext.Products.FindAsync(request.Id);
+        var product = await _productService.GetByIdAsync(request.Id);
         Guard.Against.NotFound(request.Id, product);
 
-        _dbContext.Products.Remove(product);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        product.MarkAsDeleted();
+
+        await _productService.UpdateAsync(product, cancellationToken);
 
         return Unit.Value;
     }

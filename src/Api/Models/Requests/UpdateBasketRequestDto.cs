@@ -1,3 +1,3 @@
 ﻿namespace Api.Models.Requests;
 
-public record UpdateBasketRequestDto(Guid VariantId, int Quantity);
+public record UpdateBasketRequestDto(Guid AccountId, Guid VariantId, int Quantity);

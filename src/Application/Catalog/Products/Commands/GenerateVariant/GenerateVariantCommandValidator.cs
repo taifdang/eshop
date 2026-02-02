@@ -6,7 +6,7 @@ public class GenerateVariantCommandValidator : AbstractValidator<GenerateVariant
 {
     public GenerateVariantCommandValidator()
     {
-        RuleFor(x => x.OptionValueFilter)
+        RuleFor(x => x.OptionValueMap)
             .NotNull().WithMessage("Option values are required.")
             .Must(ov => ov != null && ov.Count > 0)
             .WithMessage("At least one option with values must be provided.");        

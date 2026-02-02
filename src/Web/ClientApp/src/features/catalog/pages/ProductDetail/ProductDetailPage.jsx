@@ -41,9 +41,8 @@ export function ProductDetailPage() {
 
   // filter available quantity and options ???
   const [variantId, setVariantId] = useState(null);
-  const isEnoughOption = variantId !== null;
+  
   const canSetQuantity = variantId !== null;
-  const canAddToCart = variantId !== null;
 
   // useQuery[basket]
   const { data: basket } = useQuery({

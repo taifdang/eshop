@@ -1,8 +1,10 @@
-﻿namespace Domain.Entities;
+﻿using Domain.SeedWork;
 
-public class Category
+namespace Domain.Entities;
+
+public class Category : Entity<Guid>
 {
-    public Guid Id { get; set; }
+    //public Guid Id { get; set; }
     public string Name { get; set; } = default!;
     public string UrlSlug { get; set; } = default!;
 }

@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "SignUp";
+    ViewData["Page"] = "Sign Up";
+}
+@using IdentityService.Models.Account
+@model RegisterModel
+
+<div class="page-with-auth-form page-with-background">
+    <div class="d-flex w-100 justify-content-between">
+        <div class="d-flex flex-column"></div>
+        <div>
+            <div class="rounded-1 bg-white h-auto" style="width: 400px;">
+                <div class="d-flex flex-column align-items-center justify-content-center">
+                    <div class="w-100" style="padding:22px 30px;">
+                        <div class="fs-5">Sign Up</div>
+                        <div></div>
+                    </div>
+                    <div class="w-100" style="padding: 0px 30px 30px;">
+                        <form asp-action="Register" asp-controller="Account" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div style="margin-bottom: 10px;">
+                                <div class="d-flex align-items-center text-field">
+                                    <input asp-for="UserName" class="text-field__input rounded-1" type="text" maxLength="128" autocomplete="username" placeholder="Username" />
+                                </div>
+                                <div class="d-flex align-items-center" style="height: 20px">
+                                    <span asp-validation-for="UserName" style="font-size: 13px; color: rgb(255, 66, 79)"></span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div class="d-flex align-items-center text-field">
+                                    <input asp-for="Email" class="text-field__input rounded-1" type="text" maxLength="128" autocomplete="Email" placeholder="Email" />
+                                </div>
+                                <div class="d-flex align-items-center" style="height: 20px">
+                                    <span asp-validation-for="Email" style="font-size: 13px; color: rgb(255, 66, 79)" "></span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div class="d-flex align-items-center text-field">
+                                    <input asp-for="Password" id="registerPassword" class="text-field__input rounded-1" type="password" maxLength="16" placeholder="Password" />
+                                    <button type="button" id="registerTogglePassword" class="text-field__button border-0 bg-white">
+                                        <svg id="registerEyeOffIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19.5 16l-2.475-3.396M12 17.5V14m-7.5 2l2.469-3.388M3 8c3.6 8 14.4 8 18 0" /></svg>
+                                        <svg id="registerEyeIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display: none;"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M3 13c3.6-8 14.4-8 18 0"/><path fill="currentColor" d="M12 17a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/></g></svg>
+                                    </button>
+                                </div>
+                                <div class="d-flex align-items-center" style="height: 20px">
+                                    <span asp-validation-for="Password" style="font-size: 13px; color: rgb(255, 66, 79)"></span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100" style="height: 40px; margin-bottom: 30px; border-radius: 2px">SIGN UP</button>
+                        </form>
+                        <div class="pb-3 d-flex align-items-center">
+                            <div class="flex-fill" style="height: 0.5px; background-color: rgb(219, 219, 219)"></div>
+                            <div class="px-3" style="color: rgb(219, 219, 219)">OR</div>
+                            <div class="flex-fill" style="height: 0.5px; background-color: rgb(219, 219, 219)"></div>
+                        </div>
+                        <div class="d-flex flex-wrap w-100 gap-2">
+                            <button type="button"
+                                    class="btn border-dark-subtle d-flex align-items-center justify-content-center rounded-0"
+                                    style="height:40px;width:165px">
+                                <span class="d-flex align-items-center justify-content-center me-1"
+                                      style="width:32px;height:32px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 256 256"><path fill="#1877f2" d="M256 128C256 57.308 198.692 0 128 0S0 57.308 0 128c0 63.888 46.808 116.843 108 126.445V165H75.5v-37H108V99.8c0-32.08 19.11-49.8 48.348-49.8C170.352 50 185 52.5 185 52.5V84h-16.14C152.959 84 148 93.867 148 103.99V128h35.5l-5.675 37H148v89.445c61.192-9.602 108-62.556 108-126.445" /><path fill="#fff" d="m177.825 165l5.675-37H148v-24.01C148 93.866 152.959 84 168.86 84H185V52.5S170.352 50 156.347 50C127.11 50 108 67.72 108 99.8V128H75.5v37H108v89.445A129 129 0 0 0 128 256a129 129 0 0 0 20-1.555V165z" /></svg>
+                                </span>
+                                <span>Facebook</span>
+                            </button>
+                            <button type="button"
+                                    class="btn border-dark-subtle d-flex align-items-center justify-content-center rounded-0"
+                                    style="height:40px;width:165px">
+                                <span class="d-flex align-items-center justify-content-center me-1"
+                                      style="width:32px;height:32px">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 256 262"><path fill="#4285f4" d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027" /><path fill="#34a853" d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055c-34.523 0-63.824-22.773-74.269-54.25l-1.531.13l-40.298 31.187l-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1" /><path fill="#fbbc05" d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82c0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602z" /><path fill="#eb4335" d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0C79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251" /></svg>
+                                </span>
+                                <span>Google</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="padding-bottom: 30px">
+                        <div class="d-flex justify-content-center align-items-center gap-1" style="font-size: 14px;">
+                            <span>Have an account ?</span>
+                            <a class="text-decoration-none" href="/Account/Login">Log In</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('registerTogglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('registerPassword');
+            const eyeOffIcon = document.getElementById('registerEyeOffIcon');
+            const eyeIcon = document.getElementById('registerEyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeOffIcon.style.display = 'none';
+                eyeIcon.style.display = 'block';
+            } else {
+                passwordInput.type = 'password';
+                eyeOffIcon.style.display = 'block';
+                eyeIcon.style.display = 'none';
+            }
+        });
+    </script>
+}

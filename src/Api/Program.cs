@@ -6,20 +6,20 @@ using Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
 builder.AddApplicationServices();
 builder.AddInfrastructure();
-builder.AddWebDependencies();
+builder.AddPersistence();
 
 var app = builder.Build();
 
-app.UseInfrastructure();
-app.UseWebDependencies();
+app.MapInfrastructure();
+app.MapPersistence();
 
 app.MapCatalogApi();
 app.MapBasketApi();
 app.MapOrderApi();
 app.MapCustomerApi();
-app.MapIdentityApi();
 app.MapPaymentApi();
 
 await app.MigrateAndSeedDataAsync();

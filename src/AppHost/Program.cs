@@ -4,8 +4,6 @@
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddDockerComposeEnvironment("env");
-
 var rabbitmq = builder.AddRabbitMQ("rabbitmq");
 
 var postgres = builder.AddPostgres("postgres").WithPgWeb();
@@ -33,5 +31,8 @@ var reactVite = builder.AddViteApp("webfrontend", "../Web/ClientApp")
     .WaitFor(apiService)
     .WithEndpoint("http", e => e.Port = 3000) // fixed port for frontend
     .WithEnvironment("BROWSER", "none");
+
+builder.AddProject<Projects.Bff>("bff")
+    .WaitFor(identityService);
 
 builder.Build().Run();

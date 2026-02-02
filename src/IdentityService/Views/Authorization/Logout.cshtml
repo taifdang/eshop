@@ -1,0 +1,46 @@
+@using IdentityService.Models.Account
+@model LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+    ViewData["Page"] = "Logout";
+}
+
+<div class="page-with-auth-form">
+    <div class="d-flex w-100 justify-content-center align-items-center" style="min-height: 70vh;">
+        <div class="rounded-1 bg-white h-auto" style="width: 400px;">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="padding: 40px 30px;">
+                <div class="mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(33, 37, 41, 0.1);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+                        <path fill="rgb(33, 37, 41)" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h7v2H5v14h7v2zm11-4l-1.375-1.45l2.55-2.55H9v-2h8.175l-2.55-2.55L16 7l5 5z"/>
+                    </svg>
+                </div>
+                
+                <div class="fs-4 fw-semibold text-center mb-2">Logout</div>
+                
+                <div class="text-center mb-4" style="color: rgb(107, 114, 128); font-size: 14px;">
+                    Are you sure you want to log out?
+                </div>
+                
+                <form asp-action="Logout" asp-controller="Authorization" method="post" class="w-100">
+                    @if (!string.IsNullOrEmpty(Model?.LogoutId))
+                    {
+                        <input type="hidden" name="logoutId" value="@Model.LogoutId" />
+                    }
+                    
+                    <button type="submit" class="btn btn-dark w-100 mb-2" style="height: 40px; border-radius: 2px;">
+                        Yes, Logout
+                    </button>
+                </form>
+                
+                <a href="/" class="btn btn-outline-dark w-100" style="height: 40px; border-radius: 2px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                    Cancel
+                </a>
+                
+                <div class="d-flex justify-content-center align-items-center gap-1 mt-3" style="font-size: 14px;">
+                    <span style="color: rgb(107, 114, 128);">Want to switch accounts?</span>
+                    <a class="text-decoration-none" href="/Account/Login">Log In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

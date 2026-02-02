@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Abstractions;
 using Ardalis.GuardClauses;
 using Contracts.IntegrationEvents;
 using EventBus.Abstractions;

@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Abstractions;
+using Application.Customer.Dtos;
 using Application.Customer.Queries.GetCustomerByUserId;
 using MediatR;
 
@@ -22,7 +23,7 @@ public static class CustomerApi
             {
                 var userId = currentUserProvider.GetCurrentUserId();
 
-                var result = await mediator.Send(new GetCustomerByUserIdQuery(Guid.Parse(userId!)));
+                var result = await mediator.Send(new GetCustomerByUserIdQuery(Guid.Parse(userId)));
 
                 return result;
             })

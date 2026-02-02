@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Domain.Repositories;
 using Ardalis.GuardClauses;
 using Contracts.IntegrationEvents;
 using Domain.Events;

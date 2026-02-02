@@ -18,6 +18,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const trackuser = useRef(false);
 
+  /* OLD: Token-based login via direct API
   const login = async (username, password) => {
     try {
       const res = await loginRequest(username, password);
@@ -34,7 +35,17 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: "Server error" };
     }
   };
+  */
 
+  // NEW: BFF-based login via redirect
+  const login = async (username, password) => {
+    // In BFF architecture, login is handled by redirecting to BFF login page
+    // This function is deprecated - use window.location.href to redirect
+    const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = `${import.meta.env.VITE_BFF_URL || import.meta.env.REACT_APP_BFF_URL || "https://localhost:5002/bff"}/login?returnUrl=${returnUrl}`;
+  };
+
+  /* OLD: Token-based logout via direct API
   const logout = async () => {
     try {
       await logoutRequest();
@@ -49,7 +60,24 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+  */
 
+  // NEW: BFF-based logout via redirect
+  const logout = async () => {
+    try {
+      // Clear client storage
+      tokenStorage.clear();
+      profileStorage.clear();
+      // Redirect to BFF logout endpoint
+      //await logoutRequest();
+    } catch (error) {
+      tokenStorage.clear();
+      profileStorage.clear();
+      throw error;
+    }
+  };
+
+  /* OLD: Direct registration via API
   const signup = async (username, email, password) => {
     try {
       var res = await registerNewUser(username, email, password);
@@ -65,7 +93,16 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: "Server error" };
     }
   };
+  */
 
+  // NEW: BFF architecture - signup handled by identity provider
+  const signup = async (username, email, password) => {
+    // In BFF architecture, registration is typically handled by the identity provider
+    // This function is deprecated
+    throw new Error("Direct registration not supported in BFF architecture. Use identity provider registration.");
+  };
+
+  /* OLD: Set user from token
   const handleLoadProfile = async () => {
     try {
       const { data } = await fetchProfile();
@@ -77,6 +114,22 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     }
   };
+  */
+
+  // NEW: Load profile from BFF user endpoint
+  const handleLoadProfile = async () => {
+    try {
+      const { data } = await fetchProfile();
+      if (data) {
+        profileStorage.set(data);
+      }
+    } catch {
+      // If profile fetch fails, clear storage
+      // BFF will handle redirecting to login if needed
+      tokenStorage.clear();
+      profileStorage.clear();
+    }
+  };
 
   useEffect(() => {
     const initAuth = async () => {
@@ -86,11 +139,17 @@ export const AuthProvider = ({ children }) => {
         const { data } = await fetchProfile();
         if (data) {
           profileStorage.set(data);
+          console.log('User info:', data);
+        }
+        else{
+          console.log('User not authenticated');
+          return;
         }
       } catch {
         // clear storage
         tokenStorage.clear();
         profileStorage.clear();
+        // BFF will handle authentication state
       }
     };
     initAuth();

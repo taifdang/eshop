@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+    ViewData["Page"] = "Access Denied";
+}
+
+<div class="page-with-auth-form">
+    <div class="d-flex w-100 justify-content-center align-items-center" style="min-height: 70vh;">
+        <div class="rounded-1 bg-white h-auto" style="width: 500px;">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="padding: 40px 30px;">
+                <div class="mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 50%; background-color: rgba(255, 66, 79, 0.1);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+                        <path fill="rgb(255, 66, 79)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 11c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1m1 4h-2v-2h2z"/>
+                    </svg>
+                </div>
+                
+                <div class="fs-4 fw-semibold text-center mb-2">Access Denied</div>
+                
+                <div class="text-center mb-4" style="color: rgb(107, 114, 128); font-size: 14px;">
+                    You do not have permission to access this resource.
+                </div>
+                
+                <a href="/" class="btn btn-dark " style="height: 40px; width: 300px ; border-radius: 2px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                   OK
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

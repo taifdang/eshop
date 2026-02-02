@@ -1,5 +1,6 @@
 ---
 agent: agent
+model: GPT-5.2 (copilot)
 ---
 Define the task to achieve, including specific requirements, constraints, and success criteria.
 

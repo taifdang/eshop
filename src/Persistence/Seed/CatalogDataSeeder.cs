@@ -1,4 +1,4 @@
-using Persistence.Migrations;
+using Migrator;
 
 namespace Persistence.Seed;
 

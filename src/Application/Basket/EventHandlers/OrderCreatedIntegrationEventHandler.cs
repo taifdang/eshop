@@ -1,36 +1,32 @@
-﻿using Application.Common.Interfaces;
-using Contracts.IntegrationEvents;
+﻿using Contracts.IntegrationEvents;
+using Domain.Repositories;
 using EventBus.Abstractions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Basket.EventHandlers;
 
 public class OrderCreatedIntegrationEventHandler : IIntegrationEventHandler<OrderCreatedIntegrationEvent>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IBasketRepository _repository;
     private readonly ILogger<OrderCreatedIntegrationEventHandler> _logger;
 
     public OrderCreatedIntegrationEventHandler(
-        IApplicationDbContext dbContext, 
-        ILogger<OrderCreatedIntegrationEventHandler> logger)
+        IBasketRepository repository,
+        ILogger<OrderCreatedIntegrationEventHandler> logger
+        )
     {
-        _dbContext = dbContext;
         _logger = logger;
+        _repository = repository;
     }
 
     public async Task Handle(OrderCreatedIntegrationEvent @event)
     {
-        var basket = await _dbContext.Baskets
-            .Include(m => m.Items)
-            .FirstOrDefaultAsync(x => x.CustomerId == @event.CustomerId);
+        var basket = await _repository.GetByCustomerIdWithItemsAsync(@event.CustomerId);
 
         if (basket is not null)
         {
             basket.ClearItems();
-            _dbContext.Baskets.Update(basket);
-            await _dbContext.SaveChangesAsync();
-
+            await _repository.UnitOfWork.SaveChangesAsync();
         }
         else
         {

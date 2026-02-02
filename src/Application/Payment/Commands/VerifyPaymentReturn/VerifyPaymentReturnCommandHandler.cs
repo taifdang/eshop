@@ -1,5 +1,5 @@
-﻿using Application.Common.Interfaces;
-using Application.Common.Models;
+﻿using Application.Abstractions;
+using Application.Payment.Dtos;
 using MediatR;
 
 namespace Application.Payment.Commands.VerifyPaymentReturn;
