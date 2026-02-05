@@ -16,7 +16,7 @@ import {
   fetchVariantByOptions,
 } from "../../services/product-service";
 
-import { formatCurrency } from "@/shared/lib/currency";
+import { formatCurrency } from "@/shared/lib/format";
 import fallbackImage from "@/assets/images/default.jpg";
 import {
   fetchBasket,
@@ -167,7 +167,7 @@ export function ProductDetailPage() {
 
   const resolveStock = () => {
     if (variant) return variant.totalStock ?? 0;
-    if (product?.variantBrief) return product.variantBrief.quantity ?? 0;
+    if (product?.variantSummary) return product.variantSummary.quantity ?? 0;
     return 0;
   };
 
@@ -180,10 +180,10 @@ export function ProductDetailPage() {
       };
     }
 
-    if (product?.variantBrief) {
+    if (product?.variantSummary) {
       return {
-        minPrice: product.variantBrief.minPrice,
-        maxPrice: product.variantBrief.maxPrice,
+        minPrice: product.variantSummary.minPrice,
+        maxPrice: product.variantSummary.maxPrice,
       };
     }
     return null;
@@ -219,8 +219,8 @@ export function ProductDetailPage() {
   useEffect(() => {
     if (variant?.variants.length === 1) {
       setVariantId(variant.variants[0].id);
-    } else if (product?.variantBrief?.id) {
-      setVariantId(product.variantBrief.id);
+    } else if (product?.variantSummary?.id) {
+      setVariantId(product.variantSummary.id);
     } else {
       setVariantId(null);
     }

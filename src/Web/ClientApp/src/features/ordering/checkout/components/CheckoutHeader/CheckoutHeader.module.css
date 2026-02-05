@@ -1,0 +1,34 @@
+.checkout-section {
+    padding: 16px 0 10px 0;
+    height: 90px;
+    margin: 0 auto;
+    width: 1200px;
+}
+
+/* ---------- CHECKOUT HEADER ---------- */
+
+.checkout-section__header {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout-header {
+    position: relative;
+    top: -3px;
+}
+
+.checkout-header-brand {
+    display: flex;
+    align-items: end;
+}
+
+.checkout-header-brand__title {
+    display: block;
+    height: 30px;
+    font-size: 20px;
+    line-height: 30px;
+    margin-left: 15px;
+    padding-left: 15px;
+    margin-bottom: 1px;
+    border-left: 1px solid;
+}

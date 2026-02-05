@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import s from "./BasketItem.module.css";
-import { Skeleton } from "@/shared/components/LoadingSkeleton";
+import { CardSkeleton, TextSkeleton } from "@/shared/components";
 
 export const BasketItemSkeleton = () => {
   return (
@@ -18,9 +18,9 @@ export const BasketItemSkeleton = () => {
           <div
             className={clsx("flex", s["table-col"], s["table-col--product"])}
           >
-            <Skeleton className={s["product__image"]} />
+            <CardSkeleton className={s["product__image"]} />
             <div className={s["product__info"]}>
-              <Skeleton className={"card-text"} />
+              <TextSkeleton />
             </div>
           </div>
           {/* produc-variant */}
@@ -31,8 +31,8 @@ export const BasketItemSkeleton = () => {
               s["table-col--variant"]
             )}
           >
-            <Skeleton className="card-text card-body" />
-            <Skeleton className="card-text card-body mt-[5px]" />
+            <TextSkeleton className="card-body" />
+            <TextSkeleton className="card-body mt-[5px]" />
           </div>
           {/* price */}
           <div
@@ -42,11 +42,11 @@ export const BasketItemSkeleton = () => {
               s["table-col--unit"]
             )}
           >
-            <Skeleton className="card-text card-body" />
+            <TextSkeleton className="card-body" />
           </div>
           {/* quantity */}
           <div className={clsx(s["table-col"], s["table-col--quantity"])}>
-            <Skeleton className="card-input" />
+            <CardSkeleton className="card-input" />
           </div>
           {/* total price */}
           <div
@@ -56,7 +56,7 @@ export const BasketItemSkeleton = () => {
               s["table-col--total"]
             )}
           >
-            <Skeleton className="card-text card-body" />
+            <TextSkeleton className="card-body" />
           </div>
           {/* actions */}
           <div
@@ -66,7 +66,7 @@ export const BasketItemSkeleton = () => {
               s["table-col--actions"]
             )}
           >
-            <Skeleton className="card-body card-button" />
+            <CardSkeleton className="card-body card-button" />
           </div>
         </div>
       </div>

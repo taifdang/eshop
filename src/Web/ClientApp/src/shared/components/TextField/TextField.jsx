@@ -15,11 +15,11 @@ export const TextField = ({
   ...rest
 }) => {
   return (
-    <div className={s.textFieldContainer}>
-      <div className={s.textField}>
-        <div className={s.textFieldLabel}>{label}</div>
+    <div className={s['text-field__container']}>
+      <div className={s['text-field']}>
+        <div className={s['text-field__label']}>{label}</div>
         <input
-          className={clsx(s.textFieldInput)}
+          className={clsx(s['text-field__input'])}
           type={type}
           name={name}
           value={value}
@@ -30,7 +30,7 @@ export const TextField = ({
           {...rest}
         />
       </div>
-      {error && <span className={s.textFieldInputError}>{error}</span>}
+      {error && <span className={s['text-field__error']}>{error}</span>}
     </div>
   );
 };

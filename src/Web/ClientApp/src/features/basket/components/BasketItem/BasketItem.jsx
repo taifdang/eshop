@@ -1,7 +1,7 @@
 import s from "./BasketItem.module.css";
 import clsx from "clsx";
 import fallbackImage from "@/assets/images/default.jpg";
-import { formatCurrency } from "@/shared/lib/currency";
+import { formatCurrency } from "@/shared/lib/format";
 import { BasketItemSkeleton } from "./BasketItemSkeleton";
 
 export default function BasketItem({

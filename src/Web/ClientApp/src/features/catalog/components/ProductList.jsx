@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { fetchProducts } from "../services/product-service";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Pagination } from "@/shared/components";
 
 export function ProductList() {
   const location = useLocation();
@@ -50,7 +51,7 @@ export function ProductList() {
     <div>
       {hasResults && (
         <>
-          <div className="container-wrapper h-full mx-auto layout-section">
+          <div className="container-wrapper h-full mx-auto">
             <div className="flex flex-wrap mx-auto">
               {data.items.map((product) => (
                 <ProductCard key={product.id} product={product} />

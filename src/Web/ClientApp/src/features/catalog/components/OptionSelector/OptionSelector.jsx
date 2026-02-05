@@ -2,6 +2,7 @@ import { usePreview } from "../../contexts/PreviewContext";
 import s from "./OptionSelector.module.css";
 import clsx from "clsx";
 import fallbackImage from "@/assets/images/default.jpg";
+import { Checkbox } from "@/shared/components";
 
 export function OptionSelector({ options, selectedOption, onChange }) {
   // context
@@ -29,22 +30,18 @@ export function OptionSelector({ options, selectedOption, onChange }) {
                 //
                 return (
                   <div key={ov.id}>
-                    <button
-                      key={ov.value}
+                    <Checkbox
+                      checked={__selected}
+                      onChange={() => onChange(o.id, ov.id)}
                       onMouseEnter={() => {
                         if (ov.image) setImage(displayImage);
                       }}
                       onMouseLeave={() => {}}
-                      onClick={() => onChange(o.id, ov.id)}
                       className={clsx(
                         !ov.image
                           ? s["option-value-no-image"]
                           : s["option-value-with-image"],
-                        s["option-value__button"],
-                        "selection__box",
-                        __selected
-                          ? "selection__box--selected"
-                          : "selection__box--unselected"
+                        s["option-value__button"]
                       )}
                     >
                       {ov.image && (
@@ -55,8 +52,7 @@ export function OptionSelector({ options, selectedOption, onChange }) {
                       <span className={s["option-value__title"]}>
                         {ov.value}
                       </span>
-                      {__selected && <div className="selection__box-icon" />}
-                    </button>
+                    </Checkbox>
                   </div>
                 );
               })}

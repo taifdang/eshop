@@ -1,46 +1,23 @@
-
-import NoPage from "@/pages/NoPage";
-import Layout from "@/shared/components/layout/Layout";
-import LoginPage from "@/features/identity/pages/LoginPage";
-import RegisterPage from "@/features/identity/pages/RegisterPage";
-import CheckoutPage from "@/features/order/pages/Checkout/CheckoutPage";
-import HomePage from "../pages/HomePage";
+import HomePage from "@/features/home/HomePage";
 import { ProductDetailPage } from "@/features/catalog/pages/ProductDetail/ProductDetailPage";
 import { BasketPage } from "../features/basket/pages/Basket/BasketPage";
-import { CheckoutResultPage } from "../features/order/pages/CheckoutResult/CheckoutResultPage";
+
+import NotFound from "./not-found";
+import UserLayout from "../layouts/user/layout";
+
+import { CheckoutPage } from "../features/ordering/checkout/pages/Checkout/CheckoutPage";
+import { CheckoutResultPage } from "../features/ordering/checkout/pages/CheckoutResult/CheckoutResultPage";
 
 export const routes = [
   {
-    element: <Layout />,
+    element: <UserLayout />,
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/product/:id", element: <ProductDetailPage /> },
     ],
-    errorElement: <NoPage />,
+    errorElement: <NotFound />,
   },
-  /* OLD: Local login and signup routes - now handled by BFF
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/signup",
-    element: <RegisterPage />,
-  },
-  */
-  // NEW: Login and signup are handled by BFF at:
-  // - /bff/login?returnUrl=<url>
-  // - Registration typically handled by identity provider
-  {
-    path: "/cart",
-    element: <BasketPage />,
-  },
-  {
-    path: "/checkout",
-    element: <CheckoutPage />,
-  },
-  {
-    path: "/checkout/result",
-    element: <CheckoutResultPage/>
-  }
+  { path: "/cart", element: <BasketPage /> },
+  { path: "/checkout", element:  <CheckoutPage /> },
+  { path: "/checkout/result", element:  <CheckoutResultPage /> },
 ];

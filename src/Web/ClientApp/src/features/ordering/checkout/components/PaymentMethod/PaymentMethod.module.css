@@ -1,0 +1,46 @@
+/* BEM naming convention */
+
+.payment-method {
+  display: block;
+  font-size: 14px;
+  line-height: 16.8px;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.payment-method__view {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-height: 90px;
+  padding: 10px 30px 20px 30px;
+}
+
+.payment-method__title {
+  display: block;
+  flex: 0 0 200px;
+  width: 200px;
+  font-size: 18px;
+  line-height: 21.6px;
+  color: rgb(34, 34, 34);
+}
+
+.payment-method__tabs {
+  display: flex;
+}
+
+.payment-method__option {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 8px 0 0;
+  padding: 4px 12px;
+  min-width: 80px;
+  min-height: 34px;
+  height: 40px;
+  font-size: 14px;
+  line-height: 16.8px;
+  font-weight: 500;
+}
