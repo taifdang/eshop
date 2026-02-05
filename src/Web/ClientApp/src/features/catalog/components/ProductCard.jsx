@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/shared/lib/currency";
+import { formatCurrency } from "@/shared/lib/format";
 import fallbackImage from "@/assets/images/default.jpg";
 import { Link } from "react-router-dom";
 

@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
       // },
       proxy: {
         "/bff": {
-          target: "https://localhost:5002",         
+          target: "https://localhost:5002",
           changeOrigin: true,
           secure: false,
         },
@@ -40,6 +40,10 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": p.resolve(__dirname, "./src"),
+        "@app": p.resolve(__dirname, "src/app"),
+        "@features": p.resolve(__dirname, "src/features"),
+        "@shared": p.resolve(__dirname, "src/shared"),
+        "@assets": p.resolve(__dirname, "src/assets"),
       },
     },
     css: {

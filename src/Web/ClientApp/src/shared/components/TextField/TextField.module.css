@@ -1,11 +1,11 @@
-.textFieldContainer {
+.text-field__container {
     position: relative;
     margin-top: 6px;
     margin-bottom: 15px;
     flex: 1 1 0%;
 }
 
-.textField {
+.text-field {
     position: relative;
     display: flex;
     align-items: center;
@@ -14,7 +14,7 @@
     border-radius: 2px;
 }
 
-.textFieldLabel {
+.text-field__label {
     display: none;
     position: absolute;
     left: 10px;
@@ -26,19 +26,17 @@
     line-height: 14.4px;
     color: rgba(0, 0, 0, 0.4);
     background-color: rgb(255, 255, 255);
-
 }
 
-.textField:focus-within {
+.text-field:focus-within {
     border: 1px solid rgba(0, 0, 0, 0.54);
-
-    .textFieldLabel {
-        display: block;
-    }
 }
 
+.text-field:focus-within .text-field__label {
+    display: block;
+}
 
-.textFieldInput {
+.text-field__input {
     display: block;
     box-sizing: border-box;
     flex: 1 1 0%;
@@ -48,18 +46,15 @@
     font-size: 14px;
     line-height: normal;
     color: rgb(34, 34, 34);
-}
-
-.textFieldInputError {
-    display: block;
-    padding: 8px 0 2px 0;
-    font: 12px;
-    line-height: 14px;
-    color: rgb(255, 66, 79);
-}
-
-.textFieldInput {
     outline: none;
     border: none;
     box-shadow: none;
+}
+
+.text-field__error {
+    display: block;
+    padding: 8px 0 2px 0;
+    font-size: 12px;
+    line-height: 14px;
+    color: rgb(255, 66, 79);
 }

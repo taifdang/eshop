@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './BasketHeader.module.css';
 
 export default function BasketHeader() {

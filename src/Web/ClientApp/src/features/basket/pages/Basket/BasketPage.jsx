@@ -1,15 +1,14 @@
-import { NavBar } from "@/shared/components/layout/NavBar";
+import { NavBar } from "@/layouts/user/components/Navbar";
 import s from "./BasketPage.module.css";
 import clsx from "clsx";
-
+import { Modal } from "@/shared/components";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchBasket, updateBasket } from "../../services/basket-service";
 import { useEffect, useState } from "react";
-import { formatCurrency } from "@/shared/lib/currency";
+import { formatCurrency } from "@/shared/lib/format";
 import { BasketItem, BasketEmpty, BasketHeader } from "../../components";
-import Modal from "@/shared/components/Modal";
-import { PageLoadingSkeleton } from "@/shared/components/LoadingSkeleton";
+import { PageLoading } from "@/shared/components";
 
 export function BasketPage() {
   const navigate = useNavigate();
@@ -66,7 +65,9 @@ export function BasketPage() {
           ...old,
           items: old.items
             .map((item) =>
-              item.productVariantId === variantId ? { ...item, quantity } : item
+              item.productVariantId === variantId
+                ? { ...item, quantity }
+                : item,
             )
             .filter((item) => item.quantity > 0),
         };
@@ -100,7 +101,7 @@ export function BasketPage() {
   // mutation price: reduce(func, initValue)
   const totalResult = basket.items?.reduce(
     (sum, item) => (sum = sum + item.regularPrice * item.quantity),
-    0
+    0,
   );
 
   const handleUpdateBasket = (variantId, quantity) => {
@@ -108,7 +109,7 @@ export function BasketPage() {
       setConfirmDelete(true);
 
       const variant = basket.items.find(
-        (item) => item.productVariantId === variantId
+        (item) => item.productVariantId === variantId,
       );
       if (!variant) return;
 
@@ -172,14 +173,17 @@ export function BasketPage() {
   }, [isFetched]);
 
   if (isFirstLoad || showLoading) {
-    return <PageLoadingSkeleton />;
+    /* OLD - version */
+    // return <PageLoadingSkeleton />;
+    /* NEW - version */
+    return <PageLoading />;
   }
 
   return (
     <div>
       <NavBar />
+      <BasketHeader />
       <div>
-        <BasketHeader />
         <div className="mx-auto container-wrapper">
           {basket && basket.items.length === 0 ? (
             <>
@@ -194,7 +198,7 @@ export function BasketPage() {
                   <div
                     className={clsx(
                       s["div-checkbox"],
-                      s["table-col--checkbox"]
+                      s["table-col--checkbox"],
                     )}
                   >
                     <label htmlFor="">
@@ -211,7 +215,7 @@ export function BasketPage() {
                     className={clsx(
                       s["table-col"],
                       s["table-col--unit"],
-                      "text-center"
+                      "text-center",
                     )}
                   >
                     Unit Price
@@ -220,7 +224,7 @@ export function BasketPage() {
                     className={clsx(
                       s["table-col"],
                       s["table-col--quantity"],
-                      "text-center"
+                      "text-center",
                     )}
                   >
                     Quantity
@@ -229,7 +233,7 @@ export function BasketPage() {
                     className={clsx(
                       s["table-col"],
                       s["table-col--total"],
-                      "text-center"
+                      "text-center",
                     )}
                   >
                     Total Price
@@ -238,7 +242,7 @@ export function BasketPage() {
                     className={clsx(
                       s["table-col"],
                       s["table-col--actions"],
-                      "text-center"
+                      "text-center",
                     )}
                   >
                     Actions
@@ -279,7 +283,7 @@ export function BasketPage() {
                                 onUpdate={(quantity) => {
                                   handleUpdateBasket(
                                     item.productVariantId,
-                                    quantity
+                                    quantity,
                                   );
                                 }}
                               />
@@ -318,7 +322,7 @@ export function BasketPage() {
                   <div
                     className={clsx(
                       s["div-checkbox"],
-                      s["table-col--checkbox"]
+                      s["table-col--checkbox"],
                     )}
                   >
                     <label htmlFor="">
@@ -341,7 +345,7 @@ export function BasketPage() {
                       <div
                         className={clsx(
                           "flex items-center",
-                          s["basket__footer-total-title"]
+                          s["basket__footer-total-title"],
                         )}
                       >
                         Total ({showItemLoading ? "0" : basket.items.length}{" "}
