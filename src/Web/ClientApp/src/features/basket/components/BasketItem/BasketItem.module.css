@@ -5,54 +5,6 @@
     line-height: 16.8px;
 }
 
-.table-content__section {
-    border: 1px solid;
-    margin: 20px 22px;
-    border-color: rgb(204, 204, 204);
-}
-
-.table-content__title {
-    font-size: 14px;
-    line-height: 16px;
-    font-weight: 500;
-    padding: 9px 12px;
-    background-color: gray;
-    color: white;
-}
-
-.table-col {
-    flex: 1 1 0;
-    min-width: 0;
-}
-
-.table-col--checkbox {
-    flex: 0 0 58px;
-}
-
-.table-col--product {
-    flex: 3.5;
-}
-
-.table-col--unit {
-    flex: 2;
-}
-
-.table-col--quantity {
-    flex: 2;
-}
-
-.table-col--total {
-    flex: 1.5;
-}
-
-.table-col--actions {
-    flex: 1.75;
-}
-
-.table-col--variant {
-    flex: 1.75;
-}
-
 .div-checkbox {
     display: flex;
     flex-direction: row-reverse;
@@ -70,9 +22,6 @@
     border-radius: 2px;
 }
 
-/* 
-
-*/
 .product__info {
     display: flex;
     flex-direction: column;
@@ -123,9 +72,6 @@
 }
 
 
-/* 
-
-*/
 .quantity-selector__button-wrapper {
     display: flex;
     align-items: center;

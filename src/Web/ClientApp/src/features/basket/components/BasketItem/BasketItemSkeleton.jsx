@@ -1,75 +1,61 @@
-import clsx from "clsx";
 import s from "./BasketItem.module.css";
-import { CardSkeleton, TextSkeleton } from "@/shared/components";
+import {
+  CardSkeleton,
+  TextSkeleton,
+  TableRow,
+  TableCell,
+} from "@/shared/components";
 
 export const BasketItemSkeleton = () => {
   return (
-    <>
-      <div className={s["basket-item"]} role="listitem">
-        <div className="flex items-center">
-          {/*  */}
-          <div className={clsx(s["div-checkbox"], s["table-col--checkbox"])}>
-            <label htmlFor="">
-              <input type="text" hidden />
-              <div className={s["div-checkbox-wrap-input"]}></div>
-            </label>
+    <div className={s["basket-item"]} role="listitem">
+      <TableRow>
+        {/* Checkbox */}
+        <TableCell className={s["div-checkbox"]} flex="0 0 58px">
+          <label htmlFor="">
+            <input type="text" hidden />
+            <div className={s["div-checkbox-wrap-input"]}></div>
+          </label>
+        </TableCell>
+
+        {/* Product */}
+        <TableCell flex="3.5">
+          <CardSkeleton className={s["product__image"]} />
+          <div className={s["product__info"]}>
+            <TextSkeleton />
           </div>
-          {/* product */}
-          <div
-            className={clsx("flex", s["table-col"], s["table-col--product"])}
-          >
-            <CardSkeleton className={s["product__image"]} />
-            <div className={s["product__info"]}>
-              <TextSkeleton />
-            </div>
-          </div>
-          {/* produc-variant */}
-          <div
-            className={clsx(
-              "flex flex-col items-start",
-              s["table-col"],
-              s["table-col--variant"]
-            )}
-          >
-            <TextSkeleton className="card-body" />
-            <TextSkeleton className="card-body mt-[5px]" />
-          </div>
-          {/* price */}
-          <div
-            className={clsx(
-              "flex items-center justify-center",
-              s["table-col"],
-              s["table-col--unit"]
-            )}
-          >
-            <TextSkeleton className="card-body" />
-          </div>
-          {/* quantity */}
-          <div className={clsx(s["table-col"], s["table-col--quantity"])}>
-            <CardSkeleton className="card-input" />
-          </div>
-          {/* total price */}
-          <div
-            className={clsx(
-              "flex flex-col justify-center items-center",
-              s["table-col"],
-              s["table-col--total"]
-            )}
-          >
-            <TextSkeleton className="card-body" />
-          </div>
-          {/* actions */}
-          <div
-            className={clsx(
-              "flex flex-col justify-center items-center ",
-              s["table-col"],
-              s["table-col--actions"]
-            )}
-          >
-            <CardSkeleton className="card-body card-button" />
-          </div>
-        </div>
-      </div>
-    </>
+        </TableCell>
+
+        {/* Product Variant */}
+        <TableCell
+          className={"flex-col items-start"}
+          flex="1.75"
+          align="center"
+        >
+          <TextSkeleton className="card-body" />
+          <TextSkeleton className="card-body mt-[5px]" />
+        </TableCell>
+
+        {/* Unit Price */}
+        <TableCell flex="2" align="center">
+          <TextSkeleton className="card-body" />
+        </TableCell>
+
+        {/* Quantity */}
+        <TableCell flex="2" align="center">
+          <CardSkeleton className="card-input" />
+        </TableCell>
+
+        {/* Total Price */}
+        <TableCell flex="1.5" align="center">
+          <TextSkeleton className="card-body" />
+        </TableCell>
+
+        {/* Actions */}
+        <TableCell flex="1.75" align="center">
+          <CardSkeleton className="card-body card-button" />
+        </TableCell>
+      </TableRow>
+    </div>
   );
 };

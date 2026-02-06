@@ -6,5 +6,6 @@ export { default as RadioGroup } from './RadioGroup/RadioGroup';
 export { Skeleton } from './Skeleton/Skeleton';
 export { CardSkeleton } from './Skeleton/CardSkeleton';
 export { TextSkeleton } from './Skeleton/TextSkeleton';
-export { ImageSkeleton } from './Skeleton/ImageSkeleton';
+export { AvatarSkeleton as AvatarSkeleton } from './Skeleton/AvatarSkeleton';
 export { TextField } from './TextField/TextField';
+export { Table, TableHeader, TableHeaderCell, TableBody, TableRow, TableCell } from './Table';

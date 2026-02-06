@@ -1,7 +1,8 @@
 import CheckoutItem from "./CheckoutItem";
-import { formatCurrency } from "../../../../../shared/lib/format";
+import { formatCurrency } from "@shared/lib/format";
 import s from "./CheckoutSummary.module.css";
 import clsx from "clsx";
+import { Table, TableHeader, TableHeaderCell, TableBody } from "@/shared/components";
 
 export default function CheckoutSummary({ items = [] }) {
   const totalResult = items?.reduce(
@@ -11,78 +12,61 @@ export default function CheckoutSummary({ items = [] }) {
 
   return (
     <div>
-      {/* HEADER */}
-      <div
-        className={clsx(
-          s["checkout-content-table__row"],
-          s["checkout-content__container"],
-        )}
-      >
-        <div
-          className={clsx(
-            s["checkout-content-table__row"],
-            s["checkout-content"],
-          )}
-        >
-          <div
-            className={clsx(
-              s["checkout-content-table__col"],
-              s["checkout-content-table__col--main"],
-              "text-left",
-            )}
-          >
-            <h2
-              className={clsx(
-                s["checkout-content-table__row"],
-                s["checkout-content-table-header__text"],
-              )}
+      {/* Table Container */}
+      <div className={clsx(s["checkout-content-table__row"], s["checkout-content__container"])}>
+        <Table className={clsx(s["checkout-content-table__row"], s["checkout-content"])}>
+          {/* Table Header */}
+          <TableHeader>
+            <TableHeaderCell
+              className={clsx(s["checkout-content-table__col--main"], "text-left")}
+              flex="4 1 0%"
             >
-              Product Ordered
-            </h2>
-          </div>
-          <div className={s["checkout-content-table__col--sub"]}></div>
-          <div
-            className={clsx(
-              s["checkout-content-table__col--sub"],
-              s["checkout-content-table-content__text"],
-            )}
-          >
-            Unit Price
-          </div>
-          <div
-            className={clsx(
-              s["checkout-content-table__col--sub"],
-              s["checkout-content-table-content__text"],
-            )}
-          >
-            Amount
-          </div>
-          <div
-            className={clsx(
-              s["checkout-content-table__col--sub"],
-              s["checkout-content-table-content__text"],
-            )}
-          >
-            Item Subtotal
-          </div>
-        </div>
+              <h2 className={clsx(s["checkout-content-table__row"], s["checkout-content-table-header__text"])}>
+                Product Ordered
+              </h2>
+            </TableHeaderCell>
+            <TableHeaderCell className={s["checkout-content-table__col--sub"]} flex="2 1 0%" align="right">
+            </TableHeaderCell>
+            <TableHeaderCell
+              className={clsx(s["checkout-content-table__col--sub"], s["checkout-content-table-content__text"])}
+              flex="2 1 0%"
+              align="right"
+            >
+              Unit Price
+            </TableHeaderCell>
+            <TableHeaderCell
+              className={clsx(s["checkout-content-table__col--sub"], s["checkout-content-table-content__text"])}
+              flex="2 1 0%"
+              align="right"
+            >
+              Amount
+            </TableHeaderCell>
+            <TableHeaderCell
+              className={clsx(s["checkout-content-table__col--sub"], s["checkout-content-table-content__text"])}
+              flex="2 1 0%"
+              align="right"
+            >
+              Item Subtotal
+            </TableHeaderCell>
+          </TableHeader>
+        </Table>
       </div>
+      
       {/* ORDER SECTION */}
       <div className={s["checkout-list__section"]}>
         {/* ORDER ITEMS */}
-        <div className={s["checkout-list"]}>
+        <TableBody className={s["checkout-list"]}>
           {!items ? (
             <>null</>
           ) : (
             <>
               {items.map((item) => (
-                <>
-                  <CheckoutItem key={item.id} item={item} />
-                </>
+                <CheckoutItem key={item.id} item={item} />
               ))}
             </>
           )}
-        </div>
+        </TableBody>
+        
         {/* ORDER TOTALS */}
         <div className={s["checkout-total__section"]}>
           <div className={s["checkout-total"]}>
