@@ -33,7 +33,15 @@
     color: white;
 }
 
-.table-col {
+/* NOTE: The `table-col*` helpers were used across multiple files
+   (components and page-level). During the Table component migration
+   the column sizing is now provided by `TableCell`'s `flex` prop.
+
+   The original definitions are kept commented below for reference
+   to make rollback or fine-tuning easier.
+*/
+
+/* .table-col {
     flex: 1 1 0;
     min-width: 0;
 }
@@ -64,7 +72,7 @@
 
 .table-col--variant {
     flex: 1.75;
-}
+} */
 
 .div-checkbox {
     display: flex;
@@ -180,6 +188,3 @@
     margin: 0 20px 0 50px;
 }
 
-/* 
-
-*/

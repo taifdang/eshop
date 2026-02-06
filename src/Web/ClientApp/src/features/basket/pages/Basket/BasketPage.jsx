@@ -1,7 +1,13 @@
 import { NavBar } from "@/layouts/user/components/Navbar";
 import s from "./BasketPage.module.css";
 import clsx from "clsx";
-import { Modal } from "@/shared/components";
+import {
+  Modal,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableBody,
+} from "@/shared/components";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchBasket, updateBasket } from "../../services/basket-service";
@@ -173,9 +179,6 @@ export function BasketPage() {
   }, [isFetched]);
 
   if (isFirstLoad || showLoading) {
-    /* OLD - version */
-    // return <PageLoadingSkeleton />;
-    /* NEW - version */
     return <PageLoading />;
   }
 
@@ -191,114 +194,88 @@ export function BasketPage() {
             </>
           ) : (
             <>
-              {/* table section */}
               <div className="flex flex-col pt-[20px]">
-                {/* Table header */}
-                <div className={s["basket__table-header"]}>
-                  <div
-                    className={clsx(
-                      s["div-checkbox"],
-                      s["table-col--checkbox"],
-                    )}
-                  >
-                    <label htmlFor="">
-                      <input type="text" hidden />
-                      <div className={s["div-checkbox-wrap-input"]}></div>
-                    </label>
-                  </div>
-                  <div
-                    className={clsx(s["table-col"], s["table-col--product"])}
-                  >
-                    Product
-                  </div>
-                  <div
-                    className={clsx(
-                      s["table-col"],
-                      s["table-col--unit"],
-                      "text-center",
-                    )}
-                  >
-                    Unit Price
-                  </div>
-                  <div
-                    className={clsx(
-                      s["table-col"],
-                      s["table-col--quantity"],
-                      "text-center",
-                    )}
-                  >
-                    Quantity
-                  </div>
-                  <div
-                    className={clsx(
-                      s["table-col"],
-                      s["table-col--total"],
-                      "text-center",
-                    )}
-                  >
-                    Total Price
-                  </div>
-                  <div
-                    className={clsx(
-                      s["table-col"],
-                      s["table-col--actions"],
-                      "text-center",
-                    )}
-                  >
-                    Actions
-                  </div>
-                </div>
-                {/* Table content */}
-                <div className={s["basket__table-content"]}>
-                  <section className={s["table-content__section"]}>
-                    {/* Title */}
-                    <div className={s["table-content__title"]}>
-                      <span>
-                        Items: {showItemLoading ? "0" : basket.items.length}
-                      </span>
-                    </div>
-                    {/* CartItem */}
-                    <div>
-                      {basket && basket.items.length === 0 ? (
-                        <>
-                          <span></span>
-                        </>
-                      ) : (
-                        <>
-                          {basket.items.map((item, index) => (
-                            <>
-                              <BasketItem
-                                key={item.id}
-                                item={item}
-                                error={
-                                  hasError.isError &&
-                                  hasError.id === item.productVariantId
-                                }
-                                errorMessage={hasError.message}
-                                isUpdating={
-                                  showItemLoading &&
-                                  updateMutation.variables?.variantId ===
-                                    item.productVariantId
-                                }
-                                onUpdate={(quantity) => {
-                                  handleUpdateBasket(
-                                    item.productVariantId,
-                                    quantity,
-                                  );
-                                }}
-                              />
-                              {index < basket.items.length - 1 && (
-                                <div
-                                  className={s["basket__item-divider"]}
-                                ></div>
-                              )}
-                            </>
-                          ))}
-                        </>
-                      )}
-                    </div>
-                  </section>
-                </div>
+                {/* Table */}
+                <Table>
+                  {/* Table Header */}
+                  <TableHeader className={s["basket__table-header"]}>
+                    <TableHeaderCell
+                      className={s["div-checkbox"]}
+                      flex="0 0 58px"
+                    >
+                      <label htmlFor="">
+                        <input type="text" hidden />
+                        <div className={s["div-checkbox-wrap-input"]}></div>
+                      </label>
+                    </TableHeaderCell>
+                    <TableHeaderCell flex="3.5">Product</TableHeaderCell>
+                    <TableHeaderCell flex="1.75"></TableHeaderCell>
+                    <TableHeaderCell flex="2" align="center">
+                      Unit Price
+                    </TableHeaderCell>
+                    <TableHeaderCell flex="2" align="center">
+                      Quantity
+                    </TableHeaderCell>
+                    <TableHeaderCell flex="1.5" align="center">
+                      Total Price
+                    </TableHeaderCell>
+                    <TableHeaderCell flex="1.75" align="center">
+                      Actions
+                    </TableHeaderCell>
+                  </TableHeader>
+
+                  {/* Table Body */}
+                  <TableBody className={s["basket__table-content"]}>
+                    <section className={s["table-content__section"]}>
+                      {/* Title */}
+                      <div className={s["table-content__title"]}>
+                        <span>
+                          Items: {showItemLoading ? "0" : basket.items.length}
+                        </span>
+                      </div>
+                      {/* CartItem */}
+                      <div>
+                        {basket && basket.items.length === 0 ? (
+                          <>
+                            <span></span>
+                          </>
+                        ) : (
+                          <>
+                            {basket.items.map((item, index) => (
+                              <>
+                                <BasketItem
+                                  key={item.id}
+                                  item={item}
+                                  error={
+                                    hasError.isError &&
+                                    hasError.id === item.productVariantId
+                                  }
+                                  errorMessage={hasError.message}
+                                  isUpdating={
+                                    showItemLoading &&
+                                    updateMutation.variables?.variantId ===
+                                      item.productVariantId
+                                  }
+                                  onUpdate={(quantity) => {
+                                    handleUpdateBasket(
+                                      item.productVariantId,
+                                      quantity,
+                                    );
+                                  }}
+                                />
+                                {index < basket.items.length - 1 && (
+                                  <div
+                                    className={s["basket__item-divider"]}
+                                  ></div>
+                                )}
+                              </>
+                            ))}
+                          </>
+                        )}
+                      </div>
+                    </section>
+                  </TableBody>
+                </Table>
               </div>
               {/* basket footer */}
               <section className={s["basket__footer"]}>
@@ -319,12 +296,7 @@ export function BasketPage() {
                 {/* total */}
                 <div className={s["basket__footer-total"]}>
                   {/* selection */}
-                  <div
-                    className={clsx(
-                      s["div-checkbox"],
-                      s["table-col--checkbox"],
-                    )}
-                  >
+                  <div className={clsx(s["div-checkbox"])}>
                     <label htmlFor="">
                       <input type="text" hidden />
                       <div className={s["div-checkbox-wrap-input"]}></div>
