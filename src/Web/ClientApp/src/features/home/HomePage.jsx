@@ -1,4 +1,4 @@
-import { ProductList } from "../catalog/components/ProductList";
+import { ProductList } from "../catalog/product/components";
 import s from "./HomePage.module.css";
 import clsx from "clsx";
 

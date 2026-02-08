@@ -1,7 +1,3 @@
-import { NavBar } from "@/layouts/user/components/Navbar";
-
-
-
 import s from "./CheckoutPage.module.css";
 import clsx from "clsx";
 
@@ -13,10 +9,12 @@ import { fetchBasket } from "../../../../basket/services/basket-service";
 import { formatCurrency } from "@/shared/lib/format";
 import { placeOrder, createPaymentUrl } from "../../services/order-service";
 import { Modal } from "@/shared/components";
+
 import CheckoutHeader from "../../components/CheckoutHeader/CheckoutHeader";
 import ShippingAddress from "../../components/ShippingAddress/ShippingAddress";
 import CheckoutSummary from "../../components/CheckoutSummary/CheckoutSummary";
 import PaymentMethod from "../../components/PaymentMethod/PaymentMethod";
+import NavBar from "@/layouts/storefront/components/Navbar/Navbar";
 
 export function CheckoutPage() {
   const navigate = useNavigate();

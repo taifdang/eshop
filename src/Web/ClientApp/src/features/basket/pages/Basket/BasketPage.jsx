@@ -1,4 +1,4 @@
-import { NavBar } from "@/layouts/user/components/Navbar";
+import NavBar from "@/layouts/storefront/components/Navbar/Navbar";
 import s from "./BasketPage.module.css";
 import clsx from "clsx";
 import {
@@ -242,9 +242,8 @@ export function BasketPage() {
                         ) : (
                           <>
                             {basket.items.map((item, index) => (
-                              <>
+                              <div key={item.productVariantId}>
                                 <BasketItem
-                                  key={item.id}
                                   item={item}
                                   error={
                                     hasError.isError &&
@@ -264,11 +263,9 @@ export function BasketPage() {
                                   }}
                                 />
                                 {index < basket.items.length - 1 && (
-                                  <div
-                                    className={s["basket__item-divider"]}
-                                  ></div>
+                                  <div className={s["basket__item-divider"]} />
                                 )}
-                              </>
+                              </div>
                             ))}
                           </>
                         )}
