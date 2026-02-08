@@ -1,6 +1,6 @@
 import logo from "@/assets/images/logo-brand-no-bg.png";
 
-export function Header() {
+export default function Header() {
   return (
     <div
       className="container-wrapper mx-auto"
@@ -36,7 +36,7 @@ export function Header() {
                     className="grow p-0"
                   />
                 </div>
-                {/* <div className="search-popover"></div> */}
+                <div className="search-popover"></div>
               </div>
               <button type="button" className="search-bar__search-button">
                 <svg

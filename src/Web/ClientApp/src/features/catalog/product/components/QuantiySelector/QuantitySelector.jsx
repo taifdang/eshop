@@ -28,7 +28,7 @@ export function QuantitySelector({
               aria-label="Decrease"
               className={clsx(
                 s["quantity-selector__button"],
-                onShow && quantity > 1 && s["active"]
+                onShow && quantity > 1 && s["active"],
               )}
             >
               <svg
@@ -57,7 +57,7 @@ export function QuantitySelector({
               aria-label="Increase"
               className={clsx(
                 s["quantity-selector__button"],
-                onShow && s["active"]
+                onShow && s["active"],
               )}
             >
               <svg

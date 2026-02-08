@@ -10,24 +10,22 @@ export function OptionSelector({ options, selectedOption, onChange }) {
 
   return (
     <div>
-      {options.map((o,index) => {
-        //
+      {options.map((o, index) => {
         const __isMax = o.values.length > 20;
-        //
         return (
           <section key={o.id} className={s["option-section"]}>
             <h2 className={s["option__title"]}>{o.title}</h2>
             <div
               className={clsx(
                 s["option-area"],
-                __isMax && s["option-area-view"]
+                __isMax && s["option-area-view"],
               )}
             >
               {o.values.map((ov) => {
-                //
+
                 const __selected = selectedOption[o.id] === ov.id;
                 const displayImage = ov?.image?.url ?? fallbackImage;
-                //
+
                 return (
                   <div key={ov.id}>
                     <Checkbox
@@ -41,12 +39,12 @@ export function OptionSelector({ options, selectedOption, onChange }) {
                         !ov.image
                           ? s["option-value-no-image"]
                           : s["option-value-with-image"],
-                        s["option-value__button"]
+                        s["option-value__button"],
                       )}
                     >
                       {ov.image && (
                         <div className={s["option-value__image"]}>
-                          <img src={displayImage} loading="lazy" />
+                          <img src={displayImage} />
                         </div>
                       )}
                       <span className={s["option-value__title"]}>

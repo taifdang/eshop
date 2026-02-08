@@ -1,6 +1,6 @@
-import styles from './ProductInfo.module.css';
+import styles from './ProductSummary.module.css';
 
-export function PriceBox({ price, regularPrice, discount }) {
+export function ProductPrice({ price, regularPrice, discount }) {
   return (
     <div className={styles['product-info__price-container']}>
       <div className={styles['product-info__card']}>

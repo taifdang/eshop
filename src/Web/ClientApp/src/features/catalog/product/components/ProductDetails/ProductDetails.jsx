@@ -1,6 +1,6 @@
-import s from "./ProductDescription.module.css";
+import s from "./ProductDetails.module.css";
 
-export function Description({ category, description }) {
+export function ProductDetails({ category, description }) {
   return (
     <div className="container-wrapper">
       <div className="section-wrapper">

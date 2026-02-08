@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-export const api = axios.create({
+export const apiClient = axios.create({
   baseURL: "/bff",
   withCredentials: true,
   headers: {

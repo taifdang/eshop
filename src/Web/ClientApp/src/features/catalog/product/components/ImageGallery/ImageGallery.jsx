@@ -53,7 +53,6 @@ const ImageGallery = ({
             <img
               src={img.url}
               alt={`Thumbnail ${index}`}
-              loading="lazy"
               className={`${s["image-box"]} ${__active ? s["active"] : ""}`}
             />
           </div>
@@ -62,14 +61,14 @@ const ImageGallery = ({
       {shouldShowButton && (
         <>
           <button
-            className={clsx(s["gallary__button"], s["gallery__button--left"])}
+            className={clsx(s["gallery__button"], s["gallery__button--left"])}
             disabled={galleryIndex === 0}
             onClick={prevItem}
           >
             <img src={arrowLeft} />
           </button>
           <button
-            className={clsx(s["gallary__button"], s["gallery__button--right"])}
+            className={clsx(s["gallery__button"], s["gallery__button--right"])}
             disabled={galleryIndex + limit >= images.length}
             onClick={nextItem}
           >

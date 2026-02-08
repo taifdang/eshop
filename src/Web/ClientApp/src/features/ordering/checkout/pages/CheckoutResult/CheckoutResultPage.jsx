@@ -3,6 +3,7 @@ import s from "./CheckoutResultPage.module.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCheckoutOrder } from "../../services/order-service";
+import { PageLoading } from "@shared/components/Loading/PageLoading";
 
 export const CheckoutResultPage = () => {
   const navigate = useNavigate();
@@ -51,13 +52,7 @@ export const CheckoutResultPage = () => {
 
   if (showLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-gray-600 text-lg">
-        <span className="ml-2 flex items-end gap-1">
-          <span className="dot-wave step-1" />
-          <span className="dot-wave step-2" />
-          <span className="dot-wave step-3" />
-        </span>
-      </div>
+      <PageLoading />
     );
   }
 

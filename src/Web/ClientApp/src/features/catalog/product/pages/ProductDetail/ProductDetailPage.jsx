@@ -3,10 +3,10 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import {
   ImagePreview,
   ImageGallery,
-  ProductInfo,
+  ProductSummary,
   OptionSelector,
   QuantitySelector,
-  Description,
+  ProductDetails
 } from "../../components";
 import { PreviewProvider } from "../../contexts/PreviewContext";
 import { useParams } from "react-router-dom";
@@ -21,7 +21,7 @@ import fallbackImage from "@/assets/images/default.jpg";
 import {
   fetchBasket,
   updateBasket,
-} from "../../../basket/services/basket-service";
+} from "../../../../basket/services/basket-service";
 import clsx from "clsx";
 
 export function ProductDetailPage() {
@@ -41,7 +41,7 @@ export function ProductDetailPage() {
 
   // filter available quantity and options ???
   const [variantId, setVariantId] = useState(null);
-  
+
   const canSetQuantity = variantId !== null;
 
   // useQuery[basket]
@@ -96,7 +96,7 @@ export function ProductDetailPage() {
   useEffect(() => {
     if (!variantId) return;
     const existingItem = basket?.items.find(
-      (item) => item.productVariantId === variantId
+      (item) => item.productVariantId === variantId,
     );
     if (existingItem) {
       setQuantity(existingItem.quantity);
@@ -114,7 +114,7 @@ export function ProductDetailPage() {
 
   const optionValueIds = useMemo(
     () => Object.values(selectedOptions || {}),
-    [selectedOptions]
+    [selectedOptions],
   );
 
   // useQuery[variant]
@@ -195,7 +195,7 @@ export function ProductDetailPage() {
 
     const newPrice = handleSetPriceText(
       priceSource.minPrice,
-      priceSource.maxPrice
+      priceSource.maxPrice,
     );
 
     const timer = setTimeout(() => {
@@ -261,12 +261,12 @@ export function ProductDetailPage() {
               {/* Right */}
               <div className={s["detail__section--right"]}>
                 {/* PriceBox(regular price, price, discount/percent) */}
-                <ProductInfo price={displayPrice} name={product.title} />
+                <ProductSummary price={displayPrice} name={product.title} />
                 {/* Configuration behavior */}
                 <div
                   className={clsx(
                     s["selector__section"],
-                    hasError.isError && s["error"]
+                    hasError.isError && s["error"],
                   )}
                 >
                   <div className="flex flex-col">
@@ -327,7 +327,7 @@ export function ProductDetailPage() {
             </PreviewProvider>
           </div>
           {/* Description: product description, dimestions, ...*/}
-          <Description
+          <ProductDetails
             category={product.category}
             description={product.description}
           />
@@ -348,8 +348,8 @@ export function ProductDetailPage() {
                 viewBox="0 0 24 24"
               >
                 <path
-                  fill="currentColor"
-                  d="m10.6 13.8l-2.15-2.15q-.275-.275-.7-.275t-.7.275t-.275.7t.275.7L9.9 15.9q.3.3.7.3t.7-.3l5.65-5.65q.275-.275.275-.7t-.275-.7t-.7-.275t-.7.275zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"
+                  fill="#fff"
+                  d="m10.6 13.8l-2.15-2.15q-.275-.275-.7-.275t-.7.275t-.275.7t.275.7L9.9 15.9q.3.3.7.3t.7-.3l5.65-5.65q.275-.275.275-.7t-.275-.7t-.7-.275t-.7.275zM12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"
                 ></path>
               </svg>
             </div>
